@@ -113,7 +113,6 @@ export default {
     },
     handleCustomEvent(data) {
       this.myList =data;
-
     },
     async copuns() {
       this.loading = true; // Start loading

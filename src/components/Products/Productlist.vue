@@ -3,7 +3,7 @@
     <div class="tab-menu-heading">
       <div class="tabs-menu d-flex justify-content-between">
         <div class="d-flex align-items-center">
-          <Prouductdrop/>
+          <Prouductdrop @customEvent="handleCustomEvent"/>
           <div
             v-if="listofproducr.length >= 1"
             class="px-3 py-1 ms-2 border rounded pos-relative"
@@ -1307,6 +1307,9 @@ export default {
         this.loading = false; // End loading regardless of success or failure
       }
     },
+    handleCustomEvent(data) {
+      this.items =data;
+    },
     async paginag(p) {
       let res = await crudDataService.getAll(`products?page=${this.page}`);
       this.items = res.data.data.data;
@@ -1317,7 +1320,8 @@ export default {
       let res = await crudDataService.getAll(`products/${this.id}/variants`);
       this.variant = res.data.data;
       this.ShowModelEdit = true;
-      this.formData.name.ar = data.name;
+      this.formData.name.ar = data.name.ar;
+      this.formData.name.en = data.name.en;
       this.formData.description.ar = data.description;
       this.formData.brand_id = data.brand ? data.brand.id : "";
       this.formData.description.en = data.description.en;

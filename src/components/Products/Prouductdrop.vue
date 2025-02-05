@@ -230,7 +230,7 @@ import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import { reactive } from "vue";
 import crudDataService from "../../Services/crudDataService";
 import Multiselect from "@vueform/multiselect";
-
+import { useToast } from "vue-toastification";
 export default {
   components: {
     Multiselect,
@@ -276,6 +276,10 @@ export default {
   },
 
   methods: {
+    async getproducts() {
+      let res = await crudDataService.getAll("products");
+      this.$emit('allproducts',res.data.data.data);
+    },
     getOptionStyle(option) {
       return {
         background: option.options ? "#d6d8dddb" : "",
@@ -357,11 +361,17 @@ export default {
     },
 
     async add() {
+        const toast = useToast();
+
       let res = await crudDataService.create(`products`, this.formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
       }).then((res)=>{
+        toast.error(res.data.message, {
+              position: "top-center",
+              timeout: 5000,
+            });
         this.ShowModelEdit = false;
       this.formData.name.ar = "";
       this.formData.name.en = "";
@@ -377,15 +387,16 @@ export default {
       this.formData.cost_price = "";
       this.formData.discounted_price = "";
       this.formData.discount_end_date = "";
-      this.formData.categories_ids = "";
-      this.formData.brand_id = "";
+      this.formData.categories_ids = [];
+      this.formData.brand_id = [];
       this.formData.images = "";
-      this.categories_ids = "";
-      (this.formData.brand_id = ""), (this.imageUrl = "");
+       (this.imageUrl = "");
     
       }).catch((error)=>{
-        this.ShowModelEdit = false;
-        console.log(error);
+        toast.error(error.data.message, {
+              position: "top-center",
+              timeout: 5000,
+            });
       })
     },
   },
