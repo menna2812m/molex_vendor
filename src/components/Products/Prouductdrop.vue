@@ -372,6 +372,7 @@ export default {
               position: "top-center",
               timeout: 5000,
             });
+            this.getproducts(); // Fetch all products after adding a new one
         this.ShowModelEdit = false;
       this.formData.name.ar = "";
       this.formData.name.en = "";

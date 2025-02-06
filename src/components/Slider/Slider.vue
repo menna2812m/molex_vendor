@@ -43,7 +43,7 @@
                 {{ item.title.ar }}
               </td>
               <td>
-                {{ item.link.ar }}
+                {{ item.link }}
               </td>
 
               <td>
@@ -117,26 +117,17 @@ background: #E66239;
                   />
                 </div>
               </div>
-              <div class="col-md-6">
+              <div class="col-md-12">
                 <div class="mt-1">
-                  <label >اللينك عربي</label>
+                  <label >اللينك </label>
                   <input
                     type="text"
                     class="form-control"
-                    v-model="formData.link.ar"
+                    v-model="formData.link"
                   />
                 </div>
               </div>
-              <div class="col-md-6">
-                <div class="mt-1">
-                  <label >اللينك انجليزي</label>
-                  <input
-                    type="text"
-                    class="form-control"
-                    v-model="formData.link.en"
-                  />
-                </div>
-              </div>
+           
               <div class="col-md-6">
                 <div class="mt-1">
                   <label >الصورة</label>
@@ -189,26 +180,17 @@ background: #E66239;
                   />
                 </div>
               </div>
-              <div class="col-md-6">
+              <div class="col-md-12">
                 <div class="mt-1">
-                  <label >اللينك عربي</label>
+                  <label >اللينك </label>
                   <input
                     type="text"
                     class="form-control"
-                    v-model="EditData.link.ar"
+                    v-model="EditData.link"
                   />
                 </div>
               </div>
-              <div class="col-md-6">
-                <div class="mt-1">
-                  <label >اللينك انجليزي</label>
-                  <input
-                    type="text"
-                    class="form-control"
-                    v-model="EditData.link.en"
-                  />
-                </div>
-              </div>
+            
               <div class="col-md-6">
                 <div class="mt-1">
                   <label >الصورة</label>
@@ -221,9 +203,7 @@ background: #E66239;
                     accept=".pdf, image/jpeg, image/png"
                   />
 
-                  <p class="pos-absolute mb-0 bg-white overflow-scroll h-75 w-50" v-if="changeedit" style="top: 5px;
-    left: 5px;
-  ">{{ textimage }}</p>
+                 
   </div>
                   <img :src="imageedit"  
                   style="width: 180px; height: 180px; object-fit: fill"
@@ -267,10 +247,7 @@ export default {
           ar: "",
           en: "",
         },
-        link: {
-          ar: "",
-          en: "",
-        },
+        link: "",
         image: "",
       },
       EditData:{
@@ -278,10 +255,7 @@ export default {
           ar: "",
           en: "",
         },
-        link: {
-          ar: "",
-          en: "",
-        },
+        link: "",
         image: "",
       },
       
@@ -291,7 +265,7 @@ export default {
     async toggleactive(id) {
       let res = await crudDataService.create(`sliders/${id}/toggle`, "");
       const toast = useToast();
-      if (res.data.success) {
+      if (res.data.status) {
         toast.success(res.data.message, {
           position: "top-center",
           timeout: 5000,
@@ -330,13 +304,13 @@ editFileSelected(event) {
         this.ShowEditModel = true;
         this.EditData.title.ar = data.title.ar;       
         this.EditData.title.en = data.title.en;
-        this.EditData.link.ar = data.link.ar;
-        this.EditData.link.en = data.link.en;
+        this.EditData.link = data.link;
         this.textimage=data.image,
         this.EditData.image= this.editFileSelected(data.image) ;
         this.imageedit=data.image;   
       },
       async update() {
+    const toast = useToast();
         let res = await crudDataService.create(
           `sliders/${this.id}?_method=put`,
           this.EditData,
@@ -354,15 +328,28 @@ editFileSelected(event) {
             timeout: 5000,
           });
         }) .catch((error) => {
-          this.ShowEditModel = false;
-
-          const toast = useToast();
-          toast.error(error.data.message, {
-            position: "top-center",
-            timeout: 5000,
-          });
+          const errorData = error?.data?.errors || {};
+          console.log(errorData);
+          
+          if (typeof errorData === "object" ) {
+            console.log("ojoqw");
+            
+            const errorMessages = Object.values(errorData)
+              .flat()
+              .filter((msg) => typeof msg === "string");
+            if (errorMessages.length) {
+              toast.error(errorMessages[0], {
+                position: "top-center",
+                timeout: 5000,
+              });
+            }
+          }else{
+            toast.error(error.data.errors, {
+                position: "top-center",
+                timeout: 5000,
+              });
+          }
         });
-       
       },
     async sliders() {
       this.loading = true; // Start loading
@@ -380,6 +367,7 @@ this.loading = false; // End loading regardless of success or failure
      
     },
    async add(){
+    const toast = useToast();
     let res = await crudDataService.create(`sliders`, this.formData, {
         headers: {
           "Content-Type": "multipart/form-data",
@@ -389,8 +377,7 @@ this.loading = false; // End loading regardless of success or failure
       this.ShowModel = false;
         this.formData.title.ar= "",
         this.formData.title.en= "",
-        this.formData.link.ar= "",
-        this.formData.link.en= "",
+        this.formData.link= "",
         this.formData.image= "",
         this.imgurl='';
         const toast = useToast();
@@ -398,15 +385,29 @@ this.loading = false; // End loading regardless of success or failure
             position: "top-center",
             timeout: 5000,
           });
-      }) .catch((error) => {
-        this.ShowModel = false;
-          const toast = useToast();
-          toast.error(error.data.message, {
-            position: "top-center",
-            timeout: 5000,
-          });
+      })   .catch((error) => {
+          const errorData = error?.data?.errors || {};
+          console.log(errorData);
+          
+          if (typeof errorData === "object" ) {
+            console.log("ojoqw");
+            
+            const errorMessages = Object.values(errorData)
+              .flat()
+              .filter((msg) => typeof msg === "string");
+            if (errorMessages.length) {
+              toast.error(errorMessages[0], {
+                position: "top-center",
+                timeout: 5000,
+              });
+            }
+          }else{
+            toast.error(error.data.errors, {
+                position: "top-center",
+                timeout: 5000,
+              });
+          }
         });
-       
      
    },
     del(data, index, name) {

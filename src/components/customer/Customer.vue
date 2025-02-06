@@ -169,7 +169,7 @@ try {
       this.last = res.data.data.last_page;
 
       this.myList.forEach((ele) => {
-        this.loc = ele.country.name;
+        this.loc = ele?.address?.address||'';
       });
  
 }catch (error) {

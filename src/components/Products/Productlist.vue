@@ -3,8 +3,8 @@
     <div class="tab-menu-heading">
       <div class="tabs-menu d-flex justify-content-between">
         <div class="d-flex align-items-center">
-          <Prouductdrop @customEvent="handleCustomEvent"/>
-          <div
+          <Prouductdrop @allproducts="updateProductsList"/>
+          <!-- <div
             v-if="listofproducr.length >= 1"
             class="px-3 py-1 ms-2 border rounded pos-relative"
           >
@@ -41,7 +41,7 @@
                 </a>
               </div>
             </div>
-          </div>
+          </div> -->
         </div>
         <!-- Tabs -->
         <ul class="nav panel-tabs edit-nav">
@@ -80,11 +80,11 @@
                   class="d-flex justify-content-between py-2"
                   style="width: max-content"
                 >
-                  <input
+                  <!-- <input
                     type="checkbox"
                     class="my-3 ms-0 me-2"
                     @change="selectthis($event.target.checked, $event.target)"
-                  />
+                  /> -->
 
                   <vueper-slides fade>
                     <vueper-slide
@@ -195,13 +195,13 @@
             <div class="row">
               <div class="col-md-4" v-for="(item, index) in items" :key="index">
                 <div class="card mb-2 align-start overflow-hidden">
-                  <input
+                  <!-- <input
                     class="ms-2 mt-2"
                     type="checkbox"
                     @change="selectthis($event.target.checked, $event.target)"
-                  />
+                  /> -->
 
-                  <div class="py-2">
+                  <div class="pb-2">
                     <vueper-slides fade>
                       <vueper-slide
                         v-for="img in item.images"
@@ -1025,6 +1025,9 @@ export default {
   },
 
   methods: {
+    updateProductsList(products) {
+      this.items = products; // Update the product list in the parent component
+  },
     handleSelectChange(selectedValue) {
       this.valfirstid = selectedValue.target.value;
     },
@@ -1037,7 +1040,7 @@ export default {
     async toggleactive(id) {
       let res = await crudDataService.create(`products/${id}/toggle`, "");
       const toast = useToast();
-      if (res.data.success) {
+      if (res.data.status) {        
         toast.success(res.data.message, {
           position: "top-center",
           timeout: 5000,
@@ -1322,7 +1325,8 @@ export default {
       this.ShowModelEdit = true;
       this.formData.name.ar = data.name.ar;
       this.formData.name.en = data.name.en;
-      this.formData.description.ar = data.description;
+      this.formData.description.ar = data.description.ar;
+      this.formData.description.en = data.description.en;
       this.formData.brand_id = data.brand ? data.brand.id : "";
       this.formData.description.en = data.description.en;
       this.formData.barcode = data.barcode;
@@ -1335,27 +1339,22 @@ export default {
       this.formData.cost_price = data.cost_price;
       this.formData.discounted_price = data.discounted_price;
       this.formData.discount_end_date = data.discount_end_date?moment(data.discount_end_date).format('YYYY-MM-DD'):data.discount_end_date;
-      this.formData.categories_ids = data.categories.map((category) =>
-        category ? category.id : ""
-      );
+      this.formData.categories_ids = Array.isArray(data.categories) 
+  ? data.categories.map(category => category ? category.id : "") 
+  : [];
       this.imageUrls=[];
       this.videoUrls=[];
-      data.images.forEach(element => {
-  const extension = element.path.split(".").pop().toLowerCase();
-  if (["png", "jpg", "jpeg", "gif"].includes(extension)) {
-    // Assign 'image' type
-    this.imageUrls.push({
-      ...element,
-      type: 'image/' + extension // Adds MIME type-like string
-    });
-  } else if (["mp4", "avi", "webm"].includes(extension)) {
-    // Assign 'video' type
-    this.videoUrls.push({
-      ...element,
-      type: 'video/' + extension // Adds MIME type-like string
-    });
-  }
-});
+      if (Array.isArray(data.images)) {
+  data.images.forEach(element => {
+    const extension = element.path.split(".").pop().toLowerCase();
+    if (["png", "jpg", "jpeg", "gif"].includes(extension)) {
+      this.imageUrls.push({ ...element, type: `image/${extension}` });
+    } else if (["mp4", "avi", "webm"].includes(extension)) {
+      this.videoUrls.push({ ...element, type: `video/${extension}` });
+    }
+  });
+}
+  
 
     },
     async update() {

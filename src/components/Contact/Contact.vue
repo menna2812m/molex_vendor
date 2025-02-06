@@ -144,7 +144,7 @@ this.loading = false; // End loading regardless of success or failure
  this.getContact()
  // localStorage.clear('notificationCount');
  localStorage.setItem('notificationCount', this.notifications.length);
-   if (res.data.success) {
+   if (res.data.status) {
      toast.success(res.data.message, {
        position: "top-center",
        timeout: 3000,

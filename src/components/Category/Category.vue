@@ -180,10 +180,10 @@
                     accept=".pdf, image/jpeg, image/png"
                     class="form-control"
                   />
-                  <p class="pos-absolute mb-0 bg-white overflow-y-auto w-75" v-if="changeedit" style="top: 5px;
+                  <!-- <p class="pos-absolute mb-0 bg-white overflow-y-auto w-75" v-if="changeedit" style="top: 5px;
     left: 15px;
     height: 30px;
-  ">{{ textimage }}</p>
+  ">{{ textimage }}</p> -->
 
                 </div>
                 <img :src="imageUrl" alt="صورة" 
@@ -257,7 +257,7 @@ export default {
     async toggleactive(id){
  let res=  await crudDataService.create(`categories/${id}/toggle`,"");
    const toast = useToast(); 
-   if(res.data.success){
+   if(res.data.status){
    toast.success(res.data.message, {
      position: "top-center",
      timeout: 5000,

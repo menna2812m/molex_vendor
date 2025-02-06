@@ -478,7 +478,7 @@ if (e.target.checked) {
     async toggleactive(id) {
       let res = await crudDataService.create(`offers/${id}/toggle`, "");
       const toast = useToast();
-      if (res.data.success) {
+      if (res.data.status) {
         toast.success(res.data.message, {
           position: "top-center",
           timeout: 5000,

@@ -288,6 +288,7 @@ export default {
       this.isDropdownOpen = !this.isDropdownOpen;
     },
     async add() {
+      const toast = useToast();
       let res = await crudDataService.create(`coupons`, this.formData).then((response)=>{
         this.ShowModel=false;
       this.getcoupons()
@@ -317,13 +318,24 @@ export default {
             timeout: 5000,
           });
         
-      }).catch((error) => {
-        this.ShowModel=false;
-          const toast = useToast();
-          toast.error(error.data.message, {
-            position: "top-center",
-            timeout: 5000,
-          });
+      })
+      .catch((error) => {
+          const errorData = error?.data?.errors || {};
+          console.log(errorData);
+          
+          if (typeof errorData === "object" ) {
+            console.log("ojoqw");
+            
+            const errorMessages = Object.values(errorData)
+              .flat()
+              .filter((msg) => typeof msg === "string");
+            if (errorMessages.length) {
+              toast.error(errorMessages[0], {
+                position: "top-center",
+                timeout: 5000,
+              });
+            }
+          }
         });
      
       
