@@ -417,5 +417,9 @@ table.vgt-table td {
 }
 .custom-switch-input:checked~.custom-switch-indicator {
     background: #fb99bf !important;
+    left: 1px !important;
+}
+.custom-switch-input:checked ~ .custom-switch-indicator::before {
+  left: 1px !important;
 }
 </style>

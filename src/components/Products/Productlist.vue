@@ -1412,8 +1412,8 @@ export default {
 
   mounted() {
     this.getAllData();
-    // this.getbrands();
-    // this.getcategories();
+    this.getbrands();
+    this.getcategories();
     // this.generateCombinations();
   },
 };

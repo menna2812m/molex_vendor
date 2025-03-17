@@ -69288,9 +69288,12 @@ a.tag-addon:hover {
     z-index: -1;
     opacity: 0;
 }
-
+.custom-switch-indicator::before{
+    right:1px;
+    left:auto;
+}
 .custom-switch-input:checked~.custom-switch-indicator:before {
-    left: calc(1rem + 1px);
+    left:  1px;
 }
 
 .custom-switch-input:focus~.custom-switch-indicator {

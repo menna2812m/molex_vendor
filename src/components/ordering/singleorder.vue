@@ -88,18 +88,29 @@
         <div>
           <h5 class="mb-0 text-muted">
             <i class="fa fa-motorcycle"></i>
-             مندوب للتسليم
+            اختيار مندوب للتسليم
           </h5>
           <p
             class="mt-4 border text-center p-1"
             style="border-radius: 25px; cursor: pointer"
+            @click="showdeliveries = true"
           >
             {{ list.delivery?.full_name }}
+            <i class="fa fa-angle-left ms-1"></i>
           </p>
         </div>
       </div>
-     
+      <div class="text-danger" v-if="list.delivery">
+        *
+        اذا كنت تريد الغاء هذا المندوب من هذا الاوردر
+        <button class="btn "         
+          @click="removedelivery(list.delivery, list.id)"
+        >
+          اضغط هنا
+        </button>
+      </div>
     </div>
+    
     
    
   </div>
@@ -218,6 +229,29 @@
       </div>
     </b-modal>
   </teleport>
+  <teleport to="body">
+    <b-modal id="add-body" v-model="showdeliveries" hide-footer title="اضافة مندوب  ">
+      <div class="pos-relative" style="z-index: 5555">
+        <form @submit.prevent="adddelivery(delivery_id)">
+          <div class="m-2">
+            <Multiselect
+              label="name"
+              :searchable="true"
+              :options="deliveries"
+              placeholder="المندوب"
+              v-model="delivery_id"
+            />
+          </div>
+          <div class="text-center">
+            <button class="fs-15 btn-save mx-1">حفظ</button>
+            <button class="fs-15 btn-cancel mx-1" @click="showmodal = false">
+              الغاء
+            </button>
+          </div>
+        </form>
+      </div>
+    </b-modal>
+  </teleport>
 </template>
 <script>
 import Multiselect from "@vueform/multiselect";
@@ -239,16 +273,62 @@ export default {
       userData: "",
       showmodal: false,
       status: "",
+      deliveries:[],
       showdeliveries:false,
       delivery_id:null
     };
   },
   methods: {
- 
+    async alldeliveries() {
+      try {
+        let res = await crudDataService.getAll("deliveries");
+        this.deliveries = res.data.data.map((delivery) => ({
+        value: delivery.id,
+        name: delivery.full_name,
+      }));
+      } catch (error) {
+        console.error("Failed to fetch data:", error);
+      } finally {
+        this.loading = false; // End loading regardless of success or failure
+      }
+    },
     googleMapsUrl(lat, lng) {
       return `https://www.google.com/maps/?q=${lat},${lng}`;
     },
- 
+    removedelivery(data, orderid) {
+      this.$swal
+        .fire({
+          title: `؟"${data.full_name}" هل تريد حذف المندوب  `,
+           showCancelButton: true,
+          cancelButtonText: "إلغاء",
+          confirmButtonText: "نعم",
+        })
+        .then((result) => {
+          if (result.isConfirmed) {
+            crudDataService.delete(`deliveries/${data.id}/orders`,`${orderid}`).then((res) => {              
+                this.$swal.fire(res.data.message,"", "success");
+                this.order();
+              })
+              .catch((error) => {
+                this.$swal.fire(error.data.message,"", "error");
+              });
+          }         
+        });
+    },
+    async adddelivery(id) {      
+      let res = await crudDataService.create(
+        `deliveries/${id}/orders`,
+        {
+          order_id: this.$route.params.id,
+        }
+      ).then((result) => {
+        this.showdeliveries = false;
+      this.order();
+          this.$swal.fire(result.data.message,"", "success");
+                
+      })
+      
+    },
     async change() {
       let res = await crudDataService.create(
         `orders/${this.$route.params.id}/status`,
@@ -272,6 +352,8 @@ export default {
   },
   mounted() {
     this.order();
+    this.alldeliveries();
+
   },
 };
 </script>
