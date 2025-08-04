@@ -12,7 +12,7 @@
                 class="mt-2 p-2 d-flex justify-content-between flex-column align-items-center"
               >
                 <img
-                  src="../../../assets/img/logo.png"
+                  src="../../../assets/icons/logo.png"
                   class="header-brand-img mb-4"
                   alt="logo"
                 />
@@ -33,12 +33,12 @@
                 <div class="row row-sm">
                   <div class="card-body mt-2 mb-2">
                     <img
-                      src="../../../assets/img/logo.png"
+                      src="../../../assets/icons/logo.png"
                       class="d-lg-none header-brand-img text-start float-start mb-4 error-logo-light"
                       alt="logo"
                     />
                     <img
-                      src="../../../assets/img/logo.png"
+                      src="../../../assets/icons/logo.png"
                       class="d-lg-none header-brand-img text-start float-start mb-4 error-logo"
                       alt="logo"
                     />
@@ -97,7 +97,7 @@ export default {
         email: "",
         password: "",
       },
-      messageerror:""
+      messageerror: "",
     };
   },
   methods: {
@@ -105,21 +105,21 @@ export default {
       return this.$store.commit("Switcherbutton");
     },
     async handleLogin() {
-       
-      await crudDataService.create("login", this.form)
-      .then((response)=>{
-        localStorage.setItem("authvendor", response.data.data.token);
-      this.$router.push({name: "store"});
-       setTimeout(() => {
+      await crudDataService
+        .create("login", this.form)
+        .then((response) => {
+          localStorage.setItem("authvendor", response.data.data.token);
+          this.$router.push({ name: "store" });
+          setTimeout(() => {
             window.location.reload();
-           }, 1000);
-      }).catch((err)=>{
-        console.log(err);
-          this.messageerror=err.data.message
+          }, 1000);
         })
-    }
+        .catch((err) => {
+          console.log(err);
+          this.messageerror = err.data.message;
+        });
+    },
   },
- 
 };
 </script>
 
