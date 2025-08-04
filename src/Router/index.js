@@ -2,40 +2,34 @@ import { createRouter, createWebHistory } from "vue-router";
 import MainDashboard from "../Shared/Layouts/MainDashboard.vue";
 import Themepage from "../Shared/Layouts/Themepage.vue";
 const routes = [
-   {
-    path: `${import.meta.env.BASE_URL}`,
-    children: [
-      {
-        path: "signin",
-        name: "SignIn",
-        component: () => import("../components/auth/signin/Signin.vue"),
-      },
-      {
-        path: "forgotpassword",
-        component: () =>
-          import("../components/custompages/forgotpassword/Forgotpassword.vue"),
-      },
-      {
-        path: "resetpassword",
-        component: () =>
-          import("../components/custompages/resetpassword/Restpassword.vue"),
-      },
-      {
-        path: "lockscreen",
-        component: () =>
-          import("../components/custompages/lockscreen/Lockscreen.vue"),
-      },
-      
-    ],
+  {
+    path: `${import.meta.env.BASE_URL}signin`,
+    name: "SignIn",
+    component: () => import("../components/auth/signin/Signin.vue"),
+  },
+  {
+    path: `${import.meta.env.BASE_URL}forgotpassword`,
+    component: () =>
+      import("../components/custompages/forgotpassword/Forgotpassword.vue"),
+  },
+  {
+    path: `${import.meta.env.BASE_URL}resetpassword`,
+    component: () =>
+      import("../components/custompages/resetpassword/Restpassword.vue"),
+  },
+  {
+    path: `${import.meta.env.BASE_URL}lockscreen`,
+    component: () =>
+      import("../components/custompages/lockscreen/Lockscreen.vue"),
   },
   {
     component: MainDashboard,
     children: [
       // {
       //   path: `${import.meta.env.BASE_URL}`,
-      //   redirect: `${import.meta.env.BASE_URL}`, 
+      //   redirect: `${import.meta.env.BASE_URL}`,
       //   component: () => import("../components/dashboard/Dashboard.vue"),
-        
+
       // },
       // {
       //   path: `${import.meta.env.BASE_URL}`,
@@ -57,7 +51,7 @@ const routes = [
         name: "Category",
         component: () => import("../components/Category/Category.vue"),
       },
-     
+
       {
         path: `${import.meta.env.BASE_URL}store`,
         name: "store",
@@ -113,7 +107,7 @@ const routes = [
         name: "Question",
         component: () => import("../components/Question/Question.vue"),
       },
-     
+
       {
         path: `${import.meta.env.BASE_URL}brands`,
         name: "Brands",
@@ -121,8 +115,8 @@ const routes = [
       },
       {
         path: `${import.meta.env.BASE_URL}brands/:id`,
-        name:'singlebrand',
-        component:()=>import('../components/Brands/SingleBrand.vue')
+        name: "singlebrand",
+        component: () => import("../components/Brands/SingleBrand.vue"),
       },
       {
         path: `${import.meta.env.BASE_URL}discount`,
@@ -197,49 +191,49 @@ const routes = [
       {
         path: `${import.meta.env.BASE_URL}admins`,
         name: "Admins",
-        component: () => import("../components/Admins/Admins.vue")
+        component: () => import("../components/Admins/Admins.vue"),
       },
       {
         path: `${import.meta.env.BASE_URL}singleadmins/:id`,
         name: "OneAdmin",
-        component: () => import("../components/Admins/SingleAdmin.vue")
+        component: () => import("../components/Admins/SingleAdmin.vue"),
       },
       {
         path: `${import.meta.env.BASE_URL}roles`,
         name: "Roles",
-        component: () => import("../components/Roles/Roles.vue")
+        component: () => import("../components/Roles/Roles.vue"),
       },
       {
         path: `${import.meta.env.BASE_URL}role/:id`,
         name: "SingleRole",
-        component: () => import("../components/Roles/SingleRole.vue")
+        component: () => import("../components/Roles/SingleRole.vue"),
       },
       {
         path: `${import.meta.env.BASE_URL}edit-role/:id`,
         name: "editRole",
-        component: () => import("../components/Roles/editRole.vue")
+        component: () => import("../components/Roles/editRole.vue"),
       },
       {
         path: `${import.meta.env.BASE_URL}payment`,
         name: "Payment",
-        component: () => import("../components/Payment/Payment.vue")
+        component: () => import("../components/Payment/Payment.vue"),
       },
       {
         path: `${import.meta.env.BASE_URL}earnings`,
         name: "earnings",
-        component: () => import("../components/Earnings/earnings.vue")
+        component: () => import("../components/Earnings/earnings.vue"),
       },
       {
         path: `${import.meta.env.BASE_URL}withdrawal-requests`,
         name: "withdrawal-requests",
-        component: () => import("../components/withdrawal-requests/withdrawal-requests.vue")
+        component: () =>
+          import("../components/withdrawal-requests/withdrawal-requests.vue"),
       },
       {
         path: `${import.meta.env.BASE_URL}banksacount`,
         name: "banksacount",
-        component: () => import("../components/Profile/banksacount.vue")
+        component: () => import("../components/Profile/banksacount.vue"),
       },
-      
     ],
   },
 
@@ -255,7 +249,7 @@ const routes = [
       },
     ],
   },
- 
+
   //.....Errorpage.....
   {
     path: "/:pathMatch(.*)*",
@@ -265,24 +259,23 @@ const routes = [
 ];
 
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHistory("/"),
   routes,
 });
 
-router.beforeEach((to) => {
-
-setTimeout(() => {
+router.beforeEach((to, from, next) => {
+  // Scroll to top
+  setTimeout(() => {
     window.scrollTo(0, 0);
   }, 100);
-});
-
-router.beforeEach((to, from, next) => {
-  const loggedInUserData = localStorage.getItem('authvendor');
-  if(loggedInUserData && to.name == 'SignIn'){
-    next('/store');
-  }else{
-    if (!localStorage.getItem('authvendor') && to.name !== 'SignIn'  ) {
-      next('Signin'); // Redirect to SignIn if token is not present and the current route is not SignIn
+  
+  // Authentication guard
+  const loggedInUserData = localStorage.getItem("authvendor");
+  if (loggedInUserData && to.name == "SignIn") {
+    next("/store");
+  } else {
+    if (!localStorage.getItem("authvendor") && to.name !== "SignIn") {
+      next("SignIn"); // Redirect to SignIn if token is not present and the current route is not SignIn
     } else {
       next(); // Allow the navigation to proceed
     }
