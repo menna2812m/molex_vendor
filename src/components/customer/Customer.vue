@@ -1,95 +1,97 @@
 <template>
-  <section >
-  <section class="position-relative" style="height: 20vh;display: grid;
-    place-items: center;"
-    v-if="loading"
-   >
-
-<section class="cate">
-</section>
- <progress class="pure-material-progress-circular"/> 
-
-   </section>  
-    <section v-else>
-      <div class="card custom-card border-0 mg-b-20" v-if="myList.length>0">
-      <div class="card-body p-0">
-        <div class="table-responsive border rounded border-bottom-0 px-4 mb-0">
-          <table class="table text-nowrap text-md-nowrap mg-b-0">
-            <tr>
-             
-              <th>
-                <h4 class="mb-0 fw-semibold">
-                  العملاء
-                  <span style="color: #fb99bf" class="fw-normal">
-                    ({{ myList.length }})
-                  </span>
-                </h4>
-              </th>
-              <th></th>
-            
-            </tr>
-            <tr
-              v-for="(item, index) in myList"
-              :key="index"
-              class="list_item py-3 w-100 align-items-center justify-content-between"
-            >
-              <td class="text-center">
-                <input type="checkbox" v-model="item.selected" @change="selectuser(item.id)" />
-              </td>
-              <td>
-                <div class="d-flex align-items-center">
-                  <img
-                    src="../../assets/img/avatar_male.jpg"
-                    alt="img"
-                    style="width: 60px; height: 60px; border-radius: 50%"
-                  />
-
-                  <div class="pe-2">
-                    <h5 class="mb-0 fw-semibold" @click="SingleCustomer(item.id)" style="cursor: pointer;">
-                      {{ item.fname }}
-                      {{ item.lname }}
-                    </h5>
-                  </div>
-                </div>
-              </td>
-
-              <td class="text-secondary">
-                <span class="text-secondary">
-                  <i class="typcn typcn-location text-black"></i>
-
-                  {{ loc }}
-                </span>
-              </td>
-            
-            </tr>
-          </table>
-        </div>
-      </div>
-      <b-pagination
-      v-model="page"
-      :total-rows="last"
-      :per-page="1"
-      @click="paginag(page)"
-      class="justify-content-end"
-     
-    ></b-pagination>
-    </div>
-    <section class="position-relative" style="height: 10vh;display: grid;
-    place-items: center;"
-    v-else
-   >
-<div style="
-background: #E66239;
-    padding: 30px;
-    font-size: 20px;" class="w-50 text-center text-white rounded-10">
-  لا يوجد عملاء حتي الان 
-</div>
-   </section> 
- 
+  <section>
+    <section
+      class="position-relative"
+      style="height: 20vh; display: grid; place-items: center"
+      v-if="loading"
+    >
+      <section class="cate"></section>
+      <progress class="pure-material-progress-circular" />
     </section>
- 
+    <section v-else>
+      <div class="card custom-card border-0 mg-b-20" v-if="myList.length > 0">
+        <div class="card-body p-0">
+          <div
+            class="table-responsive border rounded border-bottom-0 px-4 mb-0"
+          >
+            <table class="table text-nowrap text-md-nowrap mg-b-0">
+              <tr>
+                <th>
+                  <h4 class="mb-0 fw-semibold">
+                    العملاء
+                    <span style="color: #fb99bf" class="fw-normal">
+                      ({{ myList.length }})
+                    </span>
+                  </h4>
+                </th>
+                <th></th>
+              </tr>
+              <tr
+                v-for="(item, index) in myList"
+                :key="index"
+                class="list_item py-3 w-100 align-items-center justify-content-between"
+              >
+                <td class="text-center">
+                  <input
+                    type="checkbox"
+                    v-model="item.selected"
+                    @change="selectuser(item.id)"
+                  />
+                </td>
+                <td>
+                  <div class="d-flex align-items-center">
+                    <img
+                      src="../../assets/img/avatar_male.jpg"
+                      alt="img"
+                      style="width: 60px; height: 60px; border-radius: 50%"
+                    />
+
+                    <div class="pe-2">
+                      <h5
+                        class="mb-0 fw-semibold"
+                        @click="SingleCustomer(item.id)"
+                        style="cursor: pointer"
+                      >
+                        {{ item.fname }}
+                        {{ item.lname }}
+                      </h5>
+                    </div>
+                  </div>
+                </td>
+
+                <td class="text-secondary">
+                  <span class="text-secondary">
+                    <i class="typcn typcn-location text-black"></i>
+
+                    {{ loc }}
+                  </span>
+                </td>
+              </tr>
+            </table>
+          </div>
+        </div>
+        <b-pagination
+          v-model="page"
+          :total-rows="last"
+          :per-page="1"
+          @click="paginag(page)"
+          class="justify-content-end"
+        ></b-pagination>
+      </div>
+      <section
+        class="position-relative"
+        style="height: 10vh; display: grid; place-items: center"
+        v-else
+      >
+        <div
+          style="background: #e66239; padding: 30px; font-size: 20px"
+          class="w-50 text-center text-white rounded-10"
+        >
+          لا يوجد عملاء حتي الان
+        </div>
+      </section>
+    </section>
   </section>
- 
 </template>
 
 <script>
@@ -104,8 +106,8 @@ export default {
     return {
       page: 1,
       last: 2,
-      loading:false,
-      ShowModelAddgroup:false,
+      loading: false,
+      ShowModelAddgroup: false,
       isDropdownOpen: false,
       isDropendOpen: false,
       myList: [],
@@ -126,7 +128,7 @@ export default {
         birth_date: "",
         gender: "",
         phone: "",
-        country_id: '',
+        country_id: "",
         region_id: "",
         city_id: "",
         district_id: "",
@@ -137,15 +139,15 @@ export default {
         { value: "female", name: "انثي" },
       ],
       districta: [],
-      addData:{
-        group_id:"",
-        user_ids:[]
+      addData: {
+        group_id: "",
+        user_ids: [],
       },
     };
   },
   methods: {
-    SingleCustomer(data){
-      this.$router.push({name:"SingleCustomer" ,params: { id: data }})
+    SingleCustomer(data) {
+      this.$router.push({ name: "SingleCustomer", params: { id: data } });
     },
     toggleDropdown() {
       this.isDropdownOpen = !this.isDropdownOpen;
@@ -163,41 +165,41 @@ export default {
     async getAllCustomer() {
       this.loading = true; // Start loading
 
-try {
-  const res = await crudDataService.getAll("users");
-      this.myList = res.data.data.data;
-      this.last = res.data.data.last_page;
+      try {
+        const res = await crudDataService.getAll("users");
+        this.myList = res.data.data.data;
+        this.last = res.data.data.last_page;
 
-      this.myList.forEach((ele) => {
-        this.loc = ele?.address?.address||'';
-      });
- 
-}catch (error) {
-console.error("Failed to fetch data:", error);
-// Handle error
-} finally {
-this.loading = false; // End loading regardless of success or failure
-}
-   
+        this.myList.forEach((ele) => {
+          this.loc = ele?.address?.address || "";
+        });
+      } catch (error) {
+        console.error("Failed to fetch data:", error);
+        // Handle error
+      } finally {
+        this.loading = false; // End loading regardless of success or failure
+      }
     },
     async add() {
-      const res = await crudDataService.create("users", this.formData).then((response)=>{
-        this.ShowModel= false;
-        this.getAllCustomer();
-        this.formData.email= "",
-        this.formData.fname= "",
-        this.formData.lname= "",
-        this.formData.phone= "",
-        this.formData.birth_date= "",
-        this.formData.gender= "",
-        this.formData.country_id= "",
-        this.formData.region_id= "",
-        this.formData.city_id= "",
-        this.formData.district_id= ""
-      })
+      const res = await crudDataService
+        .create("users", this.formData)
+        .then((response) => {
+          this.ShowModel = false;
+          this.getAllCustomer();
+          (this.formData.email = ""),
+            (this.formData.fname = ""),
+            (this.formData.lname = ""),
+            (this.formData.phone = ""),
+            (this.formData.birth_date = ""),
+            (this.formData.gender = ""),
+            (this.formData.country_id = ""),
+            (this.formData.region_id = ""),
+            (this.formData.city_id = ""),
+            (this.formData.district_id = "");
+        });
     },
     async country() {
-      const result = await axios.get('https://api.localsa.net/api/countries')
+      const result = await axios.get("https://mall.alharazy.com/api/countries");
       console.log(result);
       this.countries = result.data.data;
       this.SelectOptions = this.countries.map((country) => ({
@@ -240,18 +242,21 @@ this.loading = false; // End loading regardless of success or failure
       let res = await crudDataService.getAll("groups");
       this.items = res.data.data.data;
     },
-    checkitem(id){
-      this.addData.group_id=id
+    checkitem(id) {
+      this.addData.group_id = id;
     },
-    selectuser(id){
-      this.addData.user_ids.push(id)
+    selectuser(id) {
+      this.addData.user_ids.push(id);
     },
-    async adduser(){
-      let res = await crudDataService.create("add-users-to-group",this.addData);
+    async adduser() {
+      let res = await crudDataService.create(
+        "add-users-to-group",
+        this.addData
+      );
       console.log(res);
-      this.ShowModelAddgroup=false
-      this.isDropendOpen=false;
-     this.getAllCustomer()
+      this.ShowModelAddgroup = false;
+      this.isDropendOpen = false;
+      this.getAllCustomer();
     },
     del(data, index, name) {
       this.$swal
@@ -270,14 +275,14 @@ this.loading = false; // End loading regardless of success or failure
           }
         });
     },
-    async removeuser(){
-      let res = await crudDataService.create("remove-users-from-group",{
-        user_ids:this.addData.user_ids
+    async removeuser() {
+      let res = await crudDataService.create("remove-users-from-group", {
+        user_ids: this.addData.user_ids,
       });
       console.log(res);
- 
-     this.getAllCustomer()
-    }
+
+      this.getAllCustomer();
+    },
   },
   mounted() {
     this.getAllCustomer();
@@ -320,7 +325,7 @@ this.loading = false; // End loading regardless of success or failure
   }
 }
 .progres {
-  color: #E66239;
+  color: #e66239;
   font-weight: 600;
   font-size: 16px;
 }

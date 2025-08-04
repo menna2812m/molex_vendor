@@ -1,17 +1,15 @@
 <template>
   <section>
     <div class="pos-relative text-end">
-              <button
-              @click="edit(myList)"
-                class="twobtn bg-white border"
-                style="border-color: #E66239 !important; color: #E66239"
-              >
-            تعديل متجر  
-              </button>
+      <button
+        @click="edit(myList)"
+        class="twobtn bg-white border"
+        style="border-color: #e66239 !important; color: #e66239"
+      >
+        تعديل متجر
+      </button>
+    </div>
 
-              
-            </div>
-   
     <section
       class="position-relative"
       style="height: 100vh; display: grid; place-items: center"
@@ -54,7 +52,7 @@
         v-else
       >
         <div
-          style="background: #E66239; padding: 30px; font-size: 20px"
+          style="background: #e66239; padding: 30px; font-size: 20px"
           class="w-50 text-center text-white rounded-10"
         >
           لا يوجد متاجر حتي الان
@@ -211,7 +209,7 @@ export default {
         brands_ids: [],
         categories_ids: [],
       },
-   
+
       loading: false,
       regions: [],
       cities: [],
@@ -228,37 +226,37 @@ export default {
       console.log(data);
       this.id = data.id;
       this.formDataupdate.name = data.name;
-          this.formDataupdate.store_phone = data.phone;
-          this.formDataupdate.country_id = 1;
-          this.formDataupdate.region_id = data.region_id;
-          this.formDataupdate.city_id = data.city_id;
-          this.formDataupdate.district_id = data.district_id;
-// data.categories.forEach(element => {
-//   this.formDataupdate.categories_ids.push(element.id)
-//           });
-    //  data.brands.forEach(element => {
-    //   this.formDataupdate.brands_ids.push(element.id)
-    //       })
-          this.imageUrl=data.image
-          this.videoUrl=data.video   
+      this.formDataupdate.store_phone = data.phone;
+      this.formDataupdate.country_id = 1;
+      this.formDataupdate.region_id = data.region_id;
+      this.formDataupdate.city_id = data.city_id;
+      this.formDataupdate.district_id = data.district_id;
+      // data.categories.forEach(element => {
+      //   this.formDataupdate.categories_ids.push(element.id)
+      //           });
+      //  data.brands.forEach(element => {
+      //   this.formDataupdate.brands_ids.push(element.id)
+      //       })
+      this.imageUrl = data.image;
+      this.videoUrl = data.video;
     },
     async update() {
-      let res = await crudDataService.create(
-        `store?_method=put`,
-        this.formDataupdate,{
+      let res = await crudDataService
+        .create(`store?_method=put`, this.formDataupdate, {
           headers: {
             "Content-Type": "multipart/form-data",
           },
-        }
-      ) .then((res) => {
-        this.stores();
-      this.ShowModeledit = false;
+        })
+        .then((res) => {
+          this.stores();
+          this.ShowModeledit = false;
           const toast = useToast();
           toast.success(res.data.message, {
             position: "top-center",
             timeout: 5000,
           });
-        }) .catch((error) => {
+        })
+        .catch((error) => {
           this.ShowModeledit = false;
 
           const toast = useToast();
@@ -267,10 +265,9 @@ export default {
             timeout: 5000,
           });
         });
-     
     },
     async country() {
-      const result = await axios.get("https://api.localsa.net/api/countries");
+      const result = await axios.get("https://mall.alharazy.com/api/countries");
       this.countries = result.data.data;
       this.SelectOptions = this.countries.map((country) => ({
         value: country.id,
@@ -285,11 +282,14 @@ export default {
           cities: reg.cities,
         }));
       });
-      this.changecities()
+      this.changecities();
     },
     changecities(events, regions) {
       this.regions.forEach((ele) => {
-        if (events === ele.value || this.formDataupdate.region_id === ele.value) {
+        if (
+          events === ele.value ||
+          this.formDataupdate.region_id === ele.value
+        ) {
           this.cities = ele.cities.map((city) => ({
             value: city.id,
             name: city.name,
@@ -297,7 +297,7 @@ export default {
           }));
         }
       });
-      this.district()
+      this.district();
     },
     district(events, dis) {
       this.cities.forEach((ele) => {
@@ -325,7 +325,7 @@ export default {
       };
       reader.readAsDataURL(this.formDataupdate.video);
     },
-  
+
     async stores() {
       this.loading = true; // Start loading
       try {
@@ -413,6 +413,6 @@ export default {
   }
 }
 input::file-selector-button {
-  background-image: linear-gradient(to right, #E66239, #E66239) !important;
+  background-image: linear-gradient(to right, #e66239, #e66239) !important;
 }
 </style>

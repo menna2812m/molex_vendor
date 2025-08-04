@@ -2,7 +2,7 @@ import { createApp, markRaw } from "vue";
 import router from "./Router/";
 import App from "./App.vue";
 import "bootstrap";
-import 'bootstrap/dist/js/bootstrap.bundle';
+import "bootstrap/dist/js/bootstrap.bundle";
 import BootstrapVue3 from "bootstrap-vue-3";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-vue-3/dist/bootstrap-vue-3.css";
@@ -40,9 +40,9 @@ import Vue3Autocounter from "vue3-autocounter";
 import VueCountdown from "@chenfengyuan/vue-countdown";
 import { createStore } from "vuex";
 // import VueContentPlaceholders from 'vue-content-placeholders';
-import VueBarcode from '@chenfengyuan/vue-barcode';
+import VueBarcode from "@chenfengyuan/vue-barcode";
 import { createPinia } from "pinia";
-import print from 'vue3-print-nb'
+import print from "vue3-print-nb";
 
 import "./axios";
 
@@ -56,7 +56,7 @@ app.component(VueCountdown.name, VueCountdown);
 app.component(VueBarcode.name, VueBarcode);
 // app.use(VueContentPlaceholders);
 app.use(pinia); // LDS
-app.use(print)
+app.use(print);
 app.use(PerfectScrollbar, {
   watchOptions: 0,
   options: {
@@ -64,7 +64,7 @@ app.use(PerfectScrollbar, {
   },
 });
 
-import VueHtmlToPaper from 'vue-html-to-paper';
+import VueHtmlToPaper from "vue-html-to-paper";
 app.use(VueHtmlToPaper);
 const store = createStore({
   state() {
@@ -72,9 +72,7 @@ const store = createStore({
       count: "dark",
     };
   },
-  mutations: {
-  
-  },
+  mutations: {},
 });
 
 app.use(store);

@@ -57,6 +57,7 @@
     "print-this": "^1.16.0",
     "sass": "^1.57.1",
     "select2": "^4.1.0-rc.0",
+    "simplebar": "^6.3.2",
     "simplebar-vue3": "^0.2.0",
     "stylus": "^0.59.0",
     "stylus-loader": "^3.0.2",
