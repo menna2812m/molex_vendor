@@ -1,7 +1,11 @@
 <template>
   <div class="page main-signin-wrapper">
     <div class="d-flex header-setting-icon demo-icon fa-spin">
-      <a class="nav-link icon" href="javascript:void(0)" v-on:click="Switcherbutton()">
+      <a
+        class="nav-link icon"
+        href="javascript:void(0)"
+        v-on:click="Switcherbutton()"
+      >
         <i class="fe fe-settings settings-icon"></i>
       </a>
     </div>
@@ -17,6 +21,13 @@
                   src="../../../assets/img/logo.png"
                   class="header-brand-img mb-4"
                   alt="logo"
+                  v-if="isDark"
+                />
+                <img
+                  src="../../../assets/img/logo-dark.png"
+                  class="header-brand-img mb-4"
+                  alt="logo"
+                  v-if="!isDark"
                 />
                 <div class="clearfix"></div>
                 <img
@@ -57,7 +68,9 @@
                           src="../../../assets/img/svgs/user.svg"
                         />
                         <div class="my-auto">
-                          <p class="font-weight-semibold my-auto ms-2 text-uppercase">
+                          <p
+                            class="font-weight-semibold my-auto ms-2 text-uppercase"
+                          >
                             Sonia Taylor
                           </p>
                         </div>
@@ -106,7 +119,21 @@ export default {
   data() {
     return {
       url: import.meta.env.BASE_URL,
+      isDark: false,
     };
+  },
+  methods: {
+    getTheme() {
+      const savedTheme = localStorage.getItem("theme");
+      if (savedTheme) {
+        this.isDark = savedTheme === "dark";
+      } else {
+        this.isDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+      }
+    },
+  },
+  mounted() {
+    this.getTheme();
   },
 };
 </script>

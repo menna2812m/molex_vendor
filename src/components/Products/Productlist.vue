@@ -3,7 +3,7 @@
     <div class="tab-menu-heading">
       <div class="tabs-menu d-flex justify-content-between">
         <div class="d-flex align-items-center">
-          <Prouductdrop @allproducts="updateProductsList"/>
+          <Prouductdrop @allproducts="updateProductsList" />
           <!-- <div
             v-if="listofproducr.length >= 1"
             class="px-3 py-1 ms-2 border rounded pos-relative"
@@ -146,7 +146,7 @@
                 </div>
               </div>
               <div class="col-md-2">
-                <div class="d-flex h-100 align-items-center">
+                <div class="d-flex h-100 align-items-center flex-wrap">
                   <button
                     class="btn btn-info rounded m-1 border-0"
                     @click="edit(item)"
@@ -167,9 +167,7 @@
                   </button>
                   <div class="">
                     <!-- <input type="text" class="form-control w-100"> -->
-                    <label
-                      class="custom-switch justify-content-center"
-                    >
+                    <label class="custom-switch justify-content-center">
                       <input
                         type="checkbox"
                         name="custom-switch-checkbox"
@@ -258,9 +256,7 @@
                       >
                         <i class="fe fe-plus"></i>
                       </button>
-                      <label
-                        class="custom-switch justify-content-center"
-                      >
+                      <label class="custom-switch justify-content-center">
                         <input
                           type="checkbox"
                           name="custom-switch-checkbox"
@@ -292,7 +288,7 @@
         v-else
       >
         <div
-          style="background: #E66239; padding: 30px; font-size: 20px"
+          style="background: #e66239; padding: 30px; font-size: 20px"
           class="w-50 text-center text-white rounded-10"
         >
           لا يوجد منتجات حتي الان
@@ -503,37 +499,50 @@
                     multiple
                   />
                   <div class="d-flex flex-wrap mt-2">
-  <!-- Preview for Images -->
-  <div
-    v-for="(file, index) in imageUrls"
-    :key="'image-' + index"
-    class="pos-relative p-1"
-  >
-    <img
-      v-if="file && file.type && file.type.startsWith('image')"
-      :src="file.path"
-      alt="Image preview"
-      style="width: 200px; height: 200px"
-      
-    />
-    <i class="mdi mdi-close-circle-outline  pos-absolute" style="top: 6px; right: 6px; cursor: pointer;" @click="removeMedia(file.id, index, 'image')"></i>
-  </div>
+                    <!-- Preview for Images -->
+                    <div
+                      v-for="(file, index) in imageUrls"
+                      :key="'image-' + index"
+                      class="pos-relative p-1"
+                    >
+                      <img
+                        v-if="
+                          file && file.type && file.type.startsWith('image')
+                        "
+                        :src="file.path"
+                        alt="Image preview"
+                        style="width: 200px; height: 200px"
+                      />
+                      <i
+                        class="mdi mdi-close-circle-outline pos-absolute"
+                        style="top: 6px; right: 6px; cursor: pointer"
+                        @click="removeMedia(file.id, index, 'image')"
+                      ></i>
+                    </div>
 
-  <!-- Preview for Videos -->
-  <div
-    v-for="(file, index) in videoUrls"
-    :key="'video-' + index"
-    class="pos-relative p-1"  >
-    <video width="200" height="200" controls
-      v-if="file && file.type && file.type.startsWith('video')"
-    >
-      <source :src="file.path" :type="file.type" />
-    </video>
-    <i class="mdi mdi-close-circle-outline  pos-absolute" style="top: 6px; right: 6px; cursor: pointer;" @click="removeMedia(file.id, index, 'video')"></i>
-  </div>
-</div>
-
-
+                    <!-- Preview for Videos -->
+                    <div
+                      v-for="(file, index) in videoUrls"
+                      :key="'video-' + index"
+                      class="pos-relative p-1"
+                    >
+                      <video
+                        width="200"
+                        height="200"
+                        controls
+                        v-if="
+                          file && file.type && file.type.startsWith('video')
+                        "
+                      >
+                        <source :src="file.path" :type="file.type" />
+                      </video>
+                      <i
+                        class="mdi mdi-close-circle-outline pos-absolute"
+                        style="top: 6px; right: 6px; cursor: pointer"
+                        @click="removeMedia(file.id, index, 'video')"
+                      ></i>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -915,7 +924,7 @@
 
 <script>
 import { useToast } from "vue-toastification";
-import moment from 'moment';
+import moment from "moment";
 import crudDataService from "../../Services/crudDataService.js";
 import Multiselect from "@vueform/multiselect";
 import Prouductdrop from "./Prouductdrop.vue";
@@ -1027,7 +1036,7 @@ export default {
   methods: {
     updateProductsList(products) {
       this.items = products; // Update the product list in the parent component
-  },
+    },
     handleSelectChange(selectedValue) {
       this.valfirstid = selectedValue.target.value;
     },
@@ -1040,7 +1049,7 @@ export default {
     async toggleactive(id) {
       let res = await crudDataService.create(`products/${id}/toggle`, "");
       const toast = useToast();
-      if (res.data.status) {        
+      if (res.data.status) {
         toast.success(res.data.message, {
           position: "top-center",
           timeout: 5000,
@@ -1052,18 +1061,20 @@ export default {
         background: option.options ? "#d6d8dddb" : "",
       };
     },
-  async  removeMedia(file,index,type) {
-    let id_image=[];
-    id_image.push(file)
-      let res = await crudDataService.create(`products/${this.id}/delete-image`, {
-        images_ids:id_image
-      });
-      if (type === 'image') {
-      this.imageUrls.splice(index, 1);
-    } else if (type === 'video') {
-      this.videoUrls.splice(index, 1);
-    }
-     
+    async removeMedia(file, index, type) {
+      let id_image = [];
+      id_image.push(file);
+      let res = await crudDataService.create(
+        `products/${this.id}/delete-image`,
+        {
+          images_ids: id_image,
+        }
+      );
+      if (type === "image") {
+        this.imageUrls.splice(index, 1);
+      } else if (type === "video") {
+        this.videoUrls.splice(index, 1);
+      }
     },
     addsecoption(e) {
       this.options.forEach((ele) => {
@@ -1084,7 +1095,6 @@ export default {
       });
     },
     addalloptions() {
-
       this.cartdetail = true;
       this.variants.push({
         id: null,
@@ -1103,12 +1113,12 @@ export default {
         min_notify_quantity: null,
         options: [],
         selectSettings: {
-          optionfirstid: null, 
+          optionfirstid: null,
           valfirstid: null,
           optionsecondid: null,
           valsecondid: null,
-          valueinoption: [], 
-          valueoptionsec: [], 
+          valueinoption: [],
+          valueoptionsec: [],
         },
       });
     },
@@ -1225,28 +1235,28 @@ export default {
       }
     },
     handleFileChange(event) {
-    const files = event.target.files;
-    Array.from(files).forEach(file => {
-      const reader = new FileReader();
-      this.formData.images=[]
-      this.formData.images.push(file);
-      reader.onload = (e) => {
-        const fileData = {
-          thumbnail: e.target.result,
-          path: e.target.result,
-          type: file.type,
+      const files = event.target.files;
+      Array.from(files).forEach((file) => {
+        const reader = new FileReader();
+        this.formData.images = [];
+        this.formData.images.push(file);
+        reader.onload = (e) => {
+          const fileData = {
+            thumbnail: e.target.result,
+            path: e.target.result,
+            type: file.type,
+          };
+          if (file.type.startsWith("image")) {
+            this.imageUrls.push(fileData);
+          } else if (file.type.startsWith("video")) {
+            this.videoUrls.push(fileData);
+          }
         };
-        if (file.type.startsWith("image")) {
-          this.imageUrls.push(fileData);
-        } else if (file.type.startsWith("video")) {
-          this.videoUrls.push(fileData);
+        if (file.type.startsWith("image") || file.type.startsWith("video")) {
+          reader.readAsDataURL(file);
         }
-      };
-      if (file.type.startsWith("image") || file.type.startsWith("video")) {
-        reader.readAsDataURL(file);
-      }
-    });
-  },
+      });
+    },
     async getbrands() {
       const res = await crudDataService.getAll("brands");
       this.Selectbrand = res.data.data.map((ele) => ({
@@ -1311,7 +1321,7 @@ export default {
       }
     },
     handleCustomEvent(data) {
-      this.items =data;
+      this.items = data;
     },
     async paginag(p) {
       let res = await crudDataService.getAll(`products?page=${this.page}`);
@@ -1338,57 +1348,54 @@ export default {
       this.formData.price = data.price;
       this.formData.cost_price = data.cost_price;
       this.formData.discounted_price = data.discounted_price;
-      this.formData.discount_end_date = data.discount_end_date?moment(data.discount_end_date).format('YYYY-MM-DD'):data.discount_end_date;
-      this.formData.categories_ids = Array.isArray(data.categories) 
-  ? data.categories.map(category => category ? category.id : "") 
-  : [];
-      this.imageUrls=[];
-      this.videoUrls=[];
+      this.formData.discount_end_date = data.discount_end_date
+        ? moment(data.discount_end_date).format("YYYY-MM-DD")
+        : data.discount_end_date;
+      this.formData.categories_ids = Array.isArray(data.categories)
+        ? data.categories.map((category) => (category ? category.id : ""))
+        : [];
+      this.imageUrls = [];
+      this.videoUrls = [];
       if (Array.isArray(data.images)) {
-  data.images.forEach(element => {
-    const extension = element.path.split(".").pop().toLowerCase();
-    if (["png", "jpg", "jpeg", "gif"].includes(extension)) {
-      this.imageUrls.push({ ...element, type: `image/${extension}` });
-    } else if (["mp4", "avi", "webm"].includes(extension)) {
-      this.videoUrls.push({ ...element, type: `video/${extension}` });
-    }
-  });
-}
-  
-
+        data.images.forEach((element) => {
+          const extension = element.path.split(".").pop().toLowerCase();
+          if (["png", "jpg", "jpeg", "gif"].includes(extension)) {
+            this.imageUrls.push({ ...element, type: `image/${extension}` });
+          } else if (["mp4", "avi", "webm"].includes(extension)) {
+            this.videoUrls.push({ ...element, type: `video/${extension}` });
+          }
+        });
+      }
     },
     async update() {
       console.log(this.formData);
-      let res = await crudDataService.create(
-        `products/${this.id}?_method=put`,
-        this.formData,
-        {
+      let res = await crudDataService
+        .create(`products/${this.id}?_method=put`, this.formData, {
           headers: {
             "Content-Type": "multipart/form-data",
           },
-        }
-      ).then((res)=>{
-      
-        this.ShowModelEdit = false;
-      this.getAllData();
-      this.imageUrls=[]
-        this.videoUrls =[];
-        const toast = useToast();
-      toast.success(res.data.message, {
-        position: "top-center",
-        timeout: 5000,
-      });
-      }).catch((err)=>{
-        this.imageUrls=[]
-        this.videoUrls =[];
-        this.ShowModelEdit = false;
-        const toast = useToast();
-      toast.error(err.data.message, {
-        position: "top-center",
-        timeout: 5000,
-      });
-      })
-      
+        })
+        .then((res) => {
+          this.ShowModelEdit = false;
+          this.getAllData();
+          this.imageUrls = [];
+          this.videoUrls = [];
+          const toast = useToast();
+          toast.success(res.data.message, {
+            position: "top-center",
+            timeout: 5000,
+          });
+        })
+        .catch((err) => {
+          this.imageUrls = [];
+          this.videoUrls = [];
+          this.ShowModelEdit = false;
+          const toast = useToast();
+          toast.error(err.data.message, {
+            position: "top-center",
+            timeout: 5000,
+          });
+        });
     },
     del(data, index, name) {
       this.$swal
@@ -1429,11 +1436,11 @@ export default {
     background: transparent;
     padding: 9px 14px;
     margin: 0;
-    color: #E66239;
+    color: #e66239;
   }
   &.nav.panel-tabs li a.active {
     color: #fff;
-    background: #E66239;
+    background: #e66239;
   }
 }
 .plus {
@@ -1445,17 +1452,17 @@ export default {
   padding: 5px;
   background: #eff4fb;
   border-radius: 2px;
-  color: #E66239;
+  color: #e66239;
 }
 .pin-color {
   padding: 5px;
-  background: #E66239;
+  background: #e66239;
   border-radius: 2px;
   color: #eff4fb;
 }
 .spanprice {
   background: #6295d51a;
-  color: #E66239;
+  color: #e66239;
   text-align: center;
   justify-content: center;
   img {

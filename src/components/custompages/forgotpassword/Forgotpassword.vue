@@ -2,7 +2,10 @@
   <div class="page main-signin-wrapper">
     <div class="d-flex header-setting-icon demo-icon fa-spin">
       <a class="nav-link icon" href="javascript:;">
-        <i class="fe fe-settings settings-icon" v-on:click="Switcherbutton()"></i>
+        <i
+          class="fe fe-settings settings-icon"
+          v-on:click="Switcherbutton()"
+        ></i>
       </a>
     </div>
     <!-- Row -->
@@ -18,6 +21,13 @@
                   src="../../../assets/img/logo.png"
                   class="header-brand-img"
                   alt="logo"
+                  v-if="isDark"
+                />
+                <img
+                  src="../../../assets/img/logo-dark.png"
+                  class="header-brand-img"
+                  alt="logo"
+                  v-if="!isDark"
                 />
                 <div class="clearfix"></div>
                 <img
@@ -96,7 +106,21 @@ export default {
   data() {
     return {
       url: import.meta.env.BASE_URL,
+      isDark: false,
     };
+  },
+  methods: {
+    getTheme() {
+      const savedTheme = localStorage.getItem("theme");
+      if (savedTheme) {
+        this.isDark = savedTheme === "dark";
+      } else {
+        this.isDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+      }
+    },
+  },
+  mounted() {
+    this.getTheme();
   },
 };
 </script>

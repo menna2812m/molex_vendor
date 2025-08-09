@@ -6,15 +6,22 @@
         <div class="card">
           <div class="row row-sm">
             <div
-              class="col-lg-6 col-xl-5 d-none d-lg-block text-center bg-primary"
+              class="col-lg-6 col-xl-5 d-none d-lg-block text-center bg-primary-05"
             >
               <div
                 class="mt-2 p-2 d-flex justify-content-between flex-column align-items-center"
               >
                 <img
-                  src="../../../assets/icons/logo.png"
-                  class="header-brand-img mb-4"
+                  src="../../../../src/assets/img/logo.png"
+                  class="header-brand-img desktop-logo"
                   alt="logo"
+                  v-if="isDark"
+                />
+                <img
+                  src="../../../../src/assets/img/logo-dark.png"
+                  class="header-brand-img desktop-logo p-2"
+                  alt="logo"
+                  v-if="!isDark"
                 />
                 <div class="clearfix"></div>
                 <img
@@ -33,17 +40,28 @@
                 <div class="row row-sm">
                   <div class="card-body mt-2 mb-2">
                     <img
-                      src="../../../assets/icons/logo.png"
+                      src="../../../assets/img/logo.png"
                       class="d-lg-none header-brand-img text-start float-start mb-4 error-logo-light"
                       alt="logo"
                     />
                     <img
-                      src="../../../assets/icons/logo.png"
+                      src="../../../assets/img/logo-dark.png"
                       class="d-lg-none header-brand-img text-start float-start mb-4 error-logo"
                       alt="logo"
+                      v-if="isDark"
+                    />
+                    <img
+                      src="../../../assets/img/logo.png"
+                      class="d-lg-none header-brand-img text-start float-start mb-4 error-logo"
+                      alt="logo"
+                      v-if="!isDark"
                     />
                     <div class="clearfix"></div>
-                    <form action="#" @submit.prevent="handleLogin()">
+                    <form
+                      action="#"
+                      @submit.prevent="handleLogin()"
+                      class="mt-4"
+                    >
                       <div class="form-group text-start">
                         <label>البريد الإلكتروني</label>
                         <input
@@ -98,9 +116,21 @@ export default {
         password: "",
       },
       messageerror: "",
+      isDark: false,
     };
   },
+  mounted() {
+    this.getTheme();
+  },
   methods: {
+    getTheme() {
+      const savedTheme = localStorage.getItem("Spruhadark");
+      if (savedTheme) {
+        this.isDark = savedTheme === true;
+      } else {
+        this.isDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+      }
+    },
     Switcherbutton() {
       return this.$store.commit("Switcherbutton");
     },

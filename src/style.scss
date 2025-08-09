@@ -6,7 +6,7 @@
 @import "./assets/plugins/web-fonts/icons.css";
 @import "./assets/css/style.css";
 @import "./assets/css/icon-list.css";
-
+@import "./assets/scss/switcher/dark-style";
 .sub-nav-sub.open {
   display: block;
 }
@@ -20,7 +20,7 @@
 
 .Toast-Success {
   .Vue-Toastification__toast--default {
-    background-color: #E66239;
+    background-color: #e66239;
     color: #fff;
   }
 }
@@ -370,7 +370,7 @@
   top: 0;
   bottom: 0;
   left: 0;
-  right:0;
+  right: 0;
   background: #6a1cbb69;
   border-radius: 7px;
   width: 100%;
@@ -736,7 +736,7 @@ textarea.form-control.parsley-error {
 }
 
 .back-to-top-btn {
-  background-color: #E66239 !important;
+  background-color: #e66239 !important;
 }
 
 .back-to-top-btn:hover {

@@ -97,8 +97,7 @@ License        :   Licensed under ThemeForest License
 @import url("https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900");
 @import url("https://fonts.googleapis.com/css?family=Montserrat:300,400,500,600,700,800");
 @import url("https://fonts.googleapis.com/css?family=Raleway:400,500,600,700,800");
-@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&display=swap');
-
+@import url("https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&display=swap");
 
 @import "variables";
 
@@ -134,7 +133,6 @@ License        :   Licensed under ThemeForest License
 @import "switcher/switcher-menu-styles";
 @import "switcher/switcher-styles";
 
-
 /* ########## LAYOUTS  ########## */
 @import "layouts/main-content";
 @import "layouts/header";
@@ -145,12 +143,10 @@ License        :   Licensed under ThemeForest License
 @import "layouts/horizontal";
 @import "layouts/side-menu";
 
-
 /* ############### CUSTOM VENDOR STYLES ############### */
 @import "lib/chart";
 @import "lib/datetimepicker";
 @import "lib/spinner";
-
 
 /* ############### TEMPLATE STYLES ############### */
 @import "template/calendar";
@@ -164,7 +160,6 @@ License        :   Licensed under ThemeForest License
 @import "template/ecommerce-pages";
 @import "template/notifications";
 
-
 /* ############### UTILITIES/HELPER CLASSES ############### */
 @import "util/background";
 @import "util/display";
@@ -177,7 +172,6 @@ License        :   Licensed under ThemeForest License
 @import "util/position";
 @import "util/typography";
 @import "util/width";
-
 
 /* ############### CUSTOM ELEMENT STYLES ############### */
 @import "custom/component-cols";
@@ -198,3 +192,140 @@ License        :   Licensed under ThemeForest License
 @import "custom/custom-control";
 @import "custom/custom-styles";
 
+/* Additional Dark Theme Enhancements */
+* {
+  transition: background-color 0.3s ease, color 0.3s ease,
+    border-color 0.3s ease;
+}
+
+// /* Dark theme loader */
+// .dark-theme .loader {
+//   background-color: var(--dark-body);
+//   background-image: url("../img/loader.gif");
+// }
+
+// /* Dark theme for custom components */
+// .dark-theme .avatar-select .twobtn {
+//   background-color: var(--dark-theme) !important;
+//   color: var(--dark-color) !important;
+//   border-color: var(--dark-border) !important;
+// }
+
+// .dark-theme .avatar-select .twobtn:hover {
+//   background-color: var(--dark-border) !important;
+// }
+
+// /* Dark theme for navigation */
+// .dark-theme .main-nav .nav-link {
+//   color: var(--dark-color) !important;
+// }
+
+// .dark-theme .main-nav .nav-link:hover {
+//   color: var(--primary-bg-color) !important;
+// }
+
+// /* Dark theme for sidebars */
+// .dark-theme .main-sidebar {
+//   background-color: $dark-theme !important;
+// }
+
+// .dark-theme .main-sidebar .nav-link {
+//   color: rgba(255, 255, 255, 0.7) !important;
+// }
+
+// .dark-theme .main-sidebar .nav-link:hover {
+//   color: var(--primary-bg-color) !important;
+//   background-color: var(--dark-border) !important;
+// }
+
+// .dark-theme .main-sidebar .nav-link.active {
+//   color: var(--primary-bg-color) !important;
+//   background-color: var(--primary01) !important;
+// }
+
+// /* Dark theme for main content */
+// .dark-theme .main-content {
+//   background-color: var(--dark-body) !important;
+// }
+
+// /* Dark theme for footer */
+// .dark-theme .main-footer {
+//   background-color: var(--dark-theme) !important;
+//   border-top-color: var(--dark-border) !important;
+// }
+
+// /* Dark theme for badges and labels */
+// .dark-theme .badge-primary {
+//   background-color: var(--primary-bg-color) !important;
+// }
+
+// /* Dark theme for alerts */
+// .dark-theme .alert {
+//   border-color: var(--dark-border) !important;
+//   background-color: var(--dark-theme) !important;
+//   color: var(--dark-color) !important;
+// }
+
+// /* Dark theme for progress bars */
+// .dark-theme .progress {
+//   background-color: var(--dark-border) !important;
+// }
+
+// .dark-theme .progress-bar {
+//   background-color: var(--primary-bg-color) !important;
+// }
+
+// /* Dark theme for buttons */
+// .dark-theme .btn-secondary {
+//   background-color: var(--dark-border) !important;
+//   border-color: var(--dark-border) !important;
+//   color: var(--dark-color) !important;
+// }
+
+// .dark-theme .btn-secondary:hover {
+//   background-color: var(--dark-color) !important;
+//   color: var(--dark-theme) !important;
+// }
+
+// .dark-theme .btn-outline-primary {
+//   border-color: var(--primary-bg-color) !important;
+//   color: var(--primary-bg-color) !important;
+// }
+
+// .dark-theme .btn-outline-primary:hover {
+//   background-color: var(--primary-bg-color) !important;
+//   color: white !important;
+// }
+
+// /* Dark theme for shadows */
+// .dark-theme .shadow,
+// .dark-theme .shadow-sm,
+// .dark-theme .shadow-lg {
+//   box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.5) !important;
+// }
+
+// /* Dark theme for hr elements */
+// .dark-theme hr {
+//   border-top-color: var(--dark-border) !important;
+// }
+
+// /* Responsive dark theme utilities */
+// @media (max-width: 768px) {
+//   .dark-theme .main-header {
+//     background-color: var(--dark-theme) !important;
+//   }
+
+//   .dark-theme .main-sidebar {
+//     background-color: var(--dark-theme) !important;
+//   }
+// }
+
+// /* Specific dark theme for the theme toggle */
+// .dark-theme .theme-toggle-btn {
+//   background-color: var(--dark-theme) !important;
+//   border-color: var(--dark-border) !important;
+// }
+
+// .dark-theme .theme-toggle-btn:hover {
+//   background-color: var(--dark-border) !important;
+// }

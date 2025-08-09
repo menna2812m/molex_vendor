@@ -13,19 +13,18 @@
         <div class="main-sidebar-header main-container-1">
           <div class="sidemenu-logo">
             <router-link :to="`${url}store`">
-              <!-- <img
-                :src="logo"
+              <img
+                src="../../../../src/assets/img/logo.png"
                 class="header-brand-img desktop-logo"
                 alt="logo"
-                v-if="logo"
-              /> -->
-              <div class="bg-primary">
-                <img
-                  src="../../../../src/assets/icons/logo.png"
-                  class="header-brand-img desktop-logo p-2"
-                  alt="logo"
-                />
-              </div>
+                v-if="isDark"
+              />
+              <img
+                src="../../../../src/assets/img/logo-dark.png"
+                class="header-brand-img desktop-logo p-2"
+                alt="logo"
+                v-if="!isDark"
+              />
             </router-link>
           </div>
 
@@ -41,7 +40,7 @@
                 v-if="logo"
               /> -->
               <img
-                src="../../../../src/assets/icons/logo.png"
+                src="../../../../src/assets/img/logo.png"
                 class="header-brand-img desktop-logo"
                 alt="logo"
               />
@@ -295,7 +294,7 @@
 <script>
 import crudDataService from "../../../Services/crudDataService";
 import NotificationUpdater from "../../../components/Contact/Contact.vue";
-import { ref, onMounted, onUnmounted } from "vue";
+import { ref, onMounted, onUnmounted, inject } from "vue";
 // import Switcher from "../Switcher/Switcher.vue";
 //MenuStart
 const menu_items = [
@@ -494,6 +493,8 @@ export default {
       logo: "",
       notificationCount: "",
       notifications: [],
+      isDark: false,
+      themeValue: localStorage.getItem("Spruhadark") || "light",
     };
   },
   setup() {
@@ -552,7 +553,15 @@ export default {
     //         }
     //       });
     //     },
+    getTheme() {
+      const savedTheme = localStorage.getItem("Spruhadark");
 
+      if (savedTheme) {
+        this.isDark = savedTheme === "true";
+      } else {
+        this.isDark = false;
+      }
+    },
     setNavActive(item) {
       this.MENUITEMS.filter((menuItem) => {
         if (menuItem !== item) {
@@ -710,9 +719,28 @@ export default {
       document.body.classList.remove("main-sidebar-open");
     },
   },
+  // mounted() {
+  //   this.getTheme();
+  //   // this.getContact()
+  //   // this.getlogo();
+  // },
   mounted() {
-    // this.getContact()
-    // this.getlogo();
+    // Initial check
+    this.isDark = this.themeValue === "dark";
+
+    // Listen to changes from other tabs
+    window.addEventListener("storage", (e) => {
+      if (e.key === "theme") {
+        this.themeValue = e.newValue; // trigger watcher
+      }
+    });
+  },
+  watch: {
+    themeValue(newVal) {
+      console.log(newVal, "ll");
+
+      this.isDark = newVal === "dark";
+    },
   },
 };
 </script>

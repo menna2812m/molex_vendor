@@ -2,7 +2,10 @@
   <div class="page main-signin-wrapper">
     <div class="d-flex header-setting-icon demo-icon fa-spin">
       <a class="nav-link icon" href="javascript:;">
-        <i class="fe fe-settings settings-icon" v-on:click="Switcherbutton()"></i>
+        <i
+          class="fe fe-settings settings-icon"
+          v-on:click="Switcherbutton()"
+        ></i>
       </a>
     </div>
 
@@ -19,6 +22,13 @@
                   src="../../../assets/img/logo.png"
                   class="header-brand-img mb-4"
                   alt="logo"
+                  v-if="isDark"
+                />
+                <img
+                  src="../../../assets/img/logo-dark.png"
+                  class="header-brand-img mb-4"
+                  alt="logo"
+                  v-if="!isDark"
                 />
                 <div class="clearfix"></div>
                 <img
@@ -28,7 +38,8 @@
                 />
                 <h5 class="mt-4 text-white">Reset Your Password</h5>
                 <span class="tx-white-6 tx-13 mb-5 mt-xl-0"
-                  >Signup to create, discover and connect with the global community</span
+                  >Signup to create, discover and connect with the global
+                  community</span
                 >
               </div>
             </div>
@@ -94,6 +105,11 @@
 
 <script>
 export default {
+  data() {
+    return {
+      isDark: false,
+    };
+  },
   methods: {
     Switcherbutton() {
       return this.$store.commit("Switcherbutton");
@@ -101,6 +117,18 @@ export default {
     Removebutton() {
       return this.$store.commit("Removebutton");
     },
+    getTheme() {
+      const savedTheme = localStorage.getItem("theme");
+      if (savedTheme) {
+        this.isDark = savedTheme === "dark";
+      } else {
+        this.isDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+      }
+    },
+  },
+
+  mounted() {
+    this.getTheme();
   },
 };
 </script>

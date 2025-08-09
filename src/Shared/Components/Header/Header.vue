@@ -9,16 +9,16 @@
           v-on:click="HeaderToggleButton()"
           ><span></span
         ></a>
-        <div class="hor-logo">
+        <div class="hor-logo d-none">
           <router-link class="main-logo" :to="`${url}admin`">
             <img
               src="../../../../src/assets/img/logo.png"
-              
               class="header-brand-img desktop-logo"
               alt="logo"
             />
             <img
-              src="../../../../src/assets/img/logo.png"
+              v-if="isDark"
+              src="../../../../src/assets/img/logo-dark.png"
               class="header-brand-img desktop-logo-dark"
               alt="logo"
             />
@@ -27,46 +27,59 @@
       </div>
       <div class="w-50 me-auto">
         <div class="position-relative search mt-2">
-            <div class="w-100 d-flex mx-auto align-center paddinginput">
-              <input
-            type="text"
-            class="searchTerm"
-            placeholder=" ابحث برقم الطلب"
-            @keyup.enter="performSearch"
-            v-model="searchQuery"
-          />
-          <button type="submit" class="searchButton" @click="performSearch">
-            <i class="fa fa-search fs-6 pb-3"></i>
-          </button>  
+          <div class="w-100 d-flex mx-auto align-center paddinginput">
+            <input
+              type="text"
+              class="searchTerm"
+              placeholder=" ابحث برقم الطلب"
+              @keyup.enter="performSearch"
+              v-model="searchQuery"
+            />
+            <button type="submit" class="searchButton" @click="performSearch">
+              <i class="fa fa-search fs-6 pb-3"></i>
+            </button>
           </div>
           <div class="searchdiv" v-if="show">
-             <div class="d-flex py-2 border-b" v-for="oneitem in resultsearch" :key="oneitem.id" >
-              <h4 class="pr-2" @click="detail(oneitem.id)" style="cursor: pointer">
-                {{  oneitem.order_id  }}
+            <div
+              class="d-flex py-2 border-b"
+              v-for="oneitem in resultsearch"
+              :key="oneitem.id"
+            >
+              <h4
+                class="pr-2"
+                @click="detail(oneitem.id)"
+                style="cursor: pointer"
+              >
+                {{ oneitem.order_id }}
               </h4>
-             </div>
             </div>
           </div>
-   
+        </div>
       </div>
-      <div class="avatar-select">
-        <i
-          data-v-fe05682f=""
-          class="mdi mdi-account-plus icon_color icon_color_2"
-        ></i>
-        <button @click="toggleDropdown" class="twobtn bg-white">
-          مدير المتجر <i class="fas fa-caret-down ms-1"></i>
-        </button>
+      <div class="d-flex align-items-center">
+        <ThemeToggle class="me-3" />
+        <div class="avatar-select d-flex gap-1">
+          <i
+            data-v-fe05682f=""
+            class="mdi mdi-account-plus icon_color icon_color_2"
+          ></i>
+          <button
+            @click="toggleDropdown"
+            class="twobtn bg-transparent text-primary"
+          >
+            مدير المتجر <i class="fas fa-caret-down ms-1"></i>
+          </button>
 
-        <div class="text-start dropend mt-1" v-if="isDropdownOpen">
-          <a class="dropdown-item " @click="profile">
-            <i class="fe fe-user"></i>
-            الملف الشخصي 
-          </a>
-          <a class="dropdown-item text-danger" @click="logout">
-            <i class="fe fe-log-in"></i>
-            تسجيل الخروج
-          </a>
+          <div class="text-start dropend mt-1" v-if="isDropdownOpen">
+            <a class="dropdown-item" @click="profile">
+              <i class="fe fe-user"></i>
+              الملف الشخصي
+            </a>
+            <a class="dropdown-item text-danger" @click="logout">
+              <i class="fe fe-log-in"></i>
+              تسجيل الخروج
+            </a>
+          </div>
         </div>
       </div>
     </div>
@@ -75,56 +88,62 @@
 
 <script>
 import crudDataService from "../../../Services/crudDataService.js";
+import ThemeToggle from "../Switcher/ThemeToggle.vue";
 
 export default {
   data() {
     return {
       url: import.meta.env.BASE_URL,
       isDropdownOpen: false,
-      resultsearch:[],
-      show:false,
-      searchQuery: '',
+      resultsearch: [],
+      show: false,
+      searchQuery: "",
+      isDark: false,
     };
   },
   name: "Header",
 
   methods: {
-    detail(id) {
-        this.$router.push({ name: "SingleOrder", params: { id } });
-        this.show=false;
-        setTimeout(() => {
-            window.location.reload();
-           }, 1000);
-    },
-    async performSearch() {
-      // Logic to perform the search
-      console.log('Searching for:', this.searchQuery);
-      // Add your API call or search logic here
-      let res = await crudDataService.getAll(`orders?filter[order_id]=${this.searchQuery}`);
-      console.log(res.data.data.data);
-      if (res.data.data.data.length>0) {
-      this.resultsearch=res.data.data.data
-        this.show=true;
-      }else{
-        this.show=false
+    getTheme() {
+      const savedTheme = localStorage.getItem("theme");
+      if (savedTheme) {
+        this.isDark = savedTheme === "dark";
+      } else {
+        this.isDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
       }
     },
-    async logout(){
-      let res=  await crudDataService.create(
-        "logout",
-        ``
-      );
-      localStorage.clear()
-      this.$router.push({
-        name:'SignIn'
-      });  
-      this.toggleDropdown()
+    detail(id) {
+      this.$router.push({ name: "SingleOrder", params: { id } });
+      this.show = false;
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
     },
-    async profile(){
+    async performSearch() {
+      let res = await crudDataService.getAll(
+        `orders?filter[order_id]=${this.searchQuery}`
+      );
+      console.log(res.data.data.data);
+      if (res.data.data.data.length > 0) {
+        this.resultsearch = res.data.data.data;
+        this.show = true;
+      } else {
+        this.show = false;
+      }
+    },
+    async logout() {
+      let res = await crudDataService.create("logout", ``);
+      localStorage.clear();
       this.$router.push({
-        name:'Profile'
-      });  
-      this.toggleDropdown()
+        name: "SignIn",
+      });
+      this.toggleDropdown();
+    },
+    async profile() {
+      this.$router.push({
+        name: "Profile",
+      });
+      this.toggleDropdown();
     },
     toggleDropdown() {
       this.isDropdownOpen = !this.isDropdownOpen;
@@ -147,35 +166,29 @@ export default {
       }
     },
   },
+  mounted() {
+    this.getTheme();
+  },
+  components: {
+    ThemeToggle,
+  },
 };
 </script>
 <style lang="scss" scoped>
-.searchdiv{
+.searchdiv {
   position: absolute;
-    border: 1px solid #bb86fc;
-    width: 100%;
-    border-radius: 6px;
-    padding: 10px;
-    background: #fff;
-    z-index: 111111111;
-    height: 250px;
-    overflow-y: scroll;
-    top: 100%;
-border-top: 0;
-}
-.dropend {
+  border: 1px solid #bb86fc;
+  width: 100%;
+  border-radius: 6px;
+  padding: 10px;
   background: #fff;
-  position: absolute;
-  width: 150px;
-  border-radius: 3px;
-  left: 32px;
-  top: 48px;
-
-  box-shadow: 0px 3px 10px 7px #e6edf0;
-  a {
-    cursor: pointer;
-  }
+  z-index: 111111111;
+  height: 250px;
+  overflow-y: scroll;
+  top: 100%;
+  border-top: 0;
 }
+
 .search {
   width: 100%;
   position: relative;
@@ -184,7 +197,7 @@ border-top: 0;
 
 .searchTerm {
   width: 100%;
-  border: 1px solid #E66239;
+  border: 1px solid #e66239;
   border-left: none;
   border-radius: 0 5px 5px 0;
   outline: none;
@@ -192,14 +205,14 @@ border-top: 0;
 }
 
 .searchTerm:focus {
-  color: #E66239;
+  color: #e66239;
 }
 
 .searchButton {
   width: 40px;
   height: 36px;
-  border: 1px solid #E66239;
-  background: #E66239;
+  border: 1px solid #e66239;
+  background: #e66239;
   text-align: center;
   color: #fff;
   border-radius: 5px 0 0 5px;
@@ -219,5 +232,79 @@ border-top: 0;
 }
 .avatar-select select {
   border: none;
+}
+
+// Dark theme toggle button
+.theme-toggle-btn {
+  background: transparent;
+  border: 1px solid #ddd;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: #f5f5f5;
+    border-color: #bbb;
+  }
+
+  .theme-icon {
+    font-size: 18px;
+    color: #666;
+    transition: all 0.3s ease;
+  }
+}
+
+// Dark theme styles for the toggle button
+.dark-theme .theme-toggle-btn {
+  border-color: var(--dark-border);
+  background: var(--dark-theme);
+
+  &:hover {
+    background: var(--dark-border);
+  }
+
+  .theme-icon {
+    color: var(--dark-color);
+  }
+}
+
+// Dark theme styles for search
+.dark-theme .searchdiv {
+  background: var(--dark-theme);
+  border-color: var(--dark-border);
+  color: var(--dark-color);
+
+  h4 {
+    color: var(--dark-color);
+  }
+}
+
+.dark-theme .searchTerm {
+  background-color: var(--dark-theme);
+  border-color: var(--primary-bg-color);
+  color: var(--dark-color);
+
+  &:focus {
+    color: var(--primary-bg-color);
+  }
+
+  &::placeholder {
+    color: var(--dark-color);
+    opacity: 0.7;
+  }
+}
+
+.dark-theme .searchButton {
+  background: var(--primary-bg-color);
+  border-color: var(--primary-bg-color);
+
+  &:hover {
+    background: var(--primary-bg-hover);
+  }
 }
 </style>

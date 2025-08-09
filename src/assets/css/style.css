@@ -1,15 +1,15 @@
 @charset "UTF-8";
 @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;500;600;700&family=Montserrat:wght@400;500;600;700&family=Vazirmatn:wght@100;200;300;400;500;600;700&display=swap');
 :root {
+    --primary-bg-color: #fd601f;
+    --primary-bg-hover: #e55a1c;
+    --primary-bg-border: #fd601f;
     --primary-rgb: 98, 89, 202;
-    --primary-bg-color: #E66239;
-    --primary-bg-hover: #E66239;
     --primary-transparentcolor: rgba(98, 89, 202, 0.16);
-    --primary-bg-border: #E66239;
-    --dark-theme: #E66239;
-    --dark-body: #24243e;
-    --dark-border: rgba(255, 255, 255, 0.15);
-    --dark-color: #d0d0e2;
+    --dark-theme: #1a1a2e;
+  --dark-body: #16213e;
+  --dark-color: #ffffff;
+  --dark-border: #2d3748;
     --dark-primary: #E66239;
     --indigo: $indigo;
     --purple: $purple;
@@ -11904,9 +11904,9 @@ body.dark-theme {
     background: var(--dark-theme) !important;
 }
 
-.dark-theme .bg-white {
+/* .dark-theme .bg-white {
     background-color: var(--dark-theme) !important;
-}
+} */
 
 .dark-theme .box-shadow {
     box-shadow: 0 8px 16px 0 var(--dark-body);
@@ -13155,8 +13155,8 @@ body.dark-theme {
 
 @media (min-width: 992px) {
     .dark-theme .main-sidebar-header .sidemenu-logo {
-        border-right-color: var(--dark-border) !important;
-        border-left-color: var(--dark-border) !important;
+        border-right-color: var(--primary-bg-color) !important;
+        border-left-color: var(--primary-bg-color) !important;
     }
 
     .dark-theme.horizontalmenu .main-header .main-header-left .main-logo .desktop-logo-dark {
@@ -19108,7 +19108,7 @@ body {
 @media (min-width: 992px) {
      .main-sidebar-header .sidemenu-logo {
         border-right: 0;
-        border-left: 1px solid var(--dark-border);
+        border-left: 1px solid var(--primary-bg-color);
     }
 }
 
@@ -29783,7 +29783,7 @@ body {
     left: 0;
     bottom: 0;
     box-shadow: none;
-    background: var(--dark-theme);
+    background: var(--primary-bg-color);
 }
 
 .main-sidebar-body .nav-item.active .nav-link:before {
@@ -30486,7 +30486,7 @@ body {
         position: fixed;
         z-index: 9999;
         width: 240px;
-        background: var(--dark-theme);
+        background: var(--primary-bg-color);
         transition: all 0.3s;
         top: 0;
     }
@@ -30499,7 +30499,7 @@ body {
         position: fixed;
         z-index: 999;
         width: 81px !important;
-        background: var(--dark-theme);
+        background: var(--primary-bg-color);
     }
 
     .main-sidebar-hide.main-sidebar-open .sidemenu-logo {
@@ -30582,7 +30582,7 @@ body {
     }
 
     .main-sidebar-header .sidemenu-logo {
-        border-right: 1px solid var(--dark-border);
+        border-right: 1px solid var(--primary-bg-color);
     }
 }
 
@@ -73612,7 +73612,7 @@ textarea {
             }
             .twobtn {
                 border-radius: 4px;
-                width: 150px;
+                width: 95px;
                 padding: 8px;
                 border: none;
                 margin-left: 8px;
@@ -73782,3 +73782,21 @@ textarea {
       z-index: 444444;
       opacity: .22;
   }
+.dropend {
+  position: absolute;
+  width: 150px;
+  border-radius: 3px;
+  left: 32px;
+  top: 48px;
+}
+
+.dropend a {
+  cursor: pointer;
+}
+
+/* Light theme styles */
+.light-theme .dropend,
+body:not(.dark-theme) .dropend {
+  background-color: #fff;
+  border-color: #e8e8f7;
+}
