@@ -45,14 +45,14 @@
                       alt="logo"
                     />
                     <img
-                      src="../../../assets/img/logo-dark.png"
-                      class="d-lg-none header-brand-img text-start float-start mb-4 error-logo"
+                      src="../../../assets/img/logo.png"
+                      class="d-lg-none header-brand-img header-brand-img-sm text-start float-start mb-4 error-logo"
                       alt="logo"
                       v-if="isDark"
                     />
                     <img
-                      src="../../../assets/img/logo.png"
-                      class="d-lg-none header-brand-img text-start float-start mb-4 error-logo"
+                      src="../../../assets/img/logo-dark.png"
+                      class="d-lg-none header-brand-img header-brand-img-sm text-start float-start mb-4 error-logo"
                       alt="logo"
                       v-if="!isDark"
                     />
@@ -107,7 +107,10 @@
 </template>
 <script>
 import crudDataService from "../../../Services/crudDataService.js";
+import { themeMixin } from "../../../Shared/mixins/themeMixin.js";
 export default {
+  mixins: [themeMixin],
+
   data() {
     return {
       url: import.meta.env.BASE_URL,
@@ -116,21 +119,10 @@ export default {
         password: "",
       },
       messageerror: "",
-      isDark: false,
     };
   },
-  mounted() {
-    this.getTheme();
-  },
+  mounted() {},
   methods: {
-    getTheme() {
-      const savedTheme = localStorage.getItem("Spruhadark");
-      if (savedTheme) {
-        this.isDark = savedTheme === true;
-      } else {
-        this.isDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-      }
-    },
     Switcherbutton() {
       return this.$store.commit("Switcherbutton");
     },
@@ -153,4 +145,8 @@ export default {
 };
 </script>
 
-<style></style>
+<style>
+.header-brand-img-sm {
+  width: 30%;
+}
+</style>

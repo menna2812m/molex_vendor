@@ -1,8 +1,6 @@
 <template>
   <div dir="rtl">
-    <AddCategory
-      @customEvent="handleCustomEvent"
-    />
+    <AddCategory @customEvent="handleCustomEvent" />
     <section
       class="position-relative"
       style="height: 100vh; display: grid; place-items: center"
@@ -41,17 +39,11 @@
             />
           </span>
 
-          <span v-if="props.column.field == 'actions'" >
-            <button
-              class="btn btn-info me-2"
-              @click="view(props.row.id)"
-            >
+          <span v-if="props.column.field == 'actions'">
+            <button class="btn btn-info me-2" @click="view(props.row.id)">
               <i class="si si-eye"></i>
             </button>
-            <button
-              class="btn btn-primary me-2"
-              @click="edit(props.row)"
-            >
+            <button class="btn btn-primary me-2" @click="edit(props.row)">
               <i class="fe fe-edit-2"></i>
             </button>
 
@@ -61,19 +53,20 @@
             >
               <i class="fe fe-trash"></i>
             </button>
-           <label class="custom-switch justify-content-center">
-           
-               <input
-                 type="checkbox"
-                 name="custom-switch-checkbox"
-                 class="custom-switch-input"
-                 :checked="props.row.is_active"
-               
-                 @change="toggleactive(props.row.id)"
-               />
-               <span class="custom-switch-description"> </span>
-               <span class="custom-switch-indicator" style="background: #9fa8b8;"></span>
-             </label>
+            <label class="custom-switch justify-content-center">
+              <input
+                type="checkbox"
+                name="custom-switch-checkbox"
+                class="custom-switch-input"
+                :checked="props.row.is_active"
+                @change="toggleactive(props.row.id)"
+              />
+              <span class="custom-switch-description"> </span>
+              <span
+                class="custom-switch-indicator"
+                style="background: #9fa8b8"
+              ></span>
+            </label>
           </span>
           <span v-else>
             {{ props.formattedRow[props.column.field] }}
@@ -116,7 +109,7 @@
         v-else
       >
         <div
-          style="background: #E66239; padding: 30px; font-size: 20px"
+          style="background: #e66239; padding: 30px; font-size: 20px"
           class="w-50 text-center text-white rounded-10"
         >
           لا يوجد اقسام حتي الان
@@ -172,8 +165,7 @@
               </div>
               <div class="mt-3">
                 <label>الصوره</label>
-                  <div class="pos-relative overflow-hidden">
-
+                <div class="pos-relative overflow-hidden">
                   <input
                     type="file"
                     @change="onFileSelected"
@@ -184,13 +176,13 @@
     left: 15px;
     height: 30px;
   ">{{ textimage }}</p> -->
-
                 </div>
-                <img :src="imageUrl" alt="صورة" 
-                style="width: 180px; height: 180px; object-fit: fill"
-                class="m-1"
+                <img
+                  :src="imageUrl"
+                  alt="صورة"
+                  style="width: 180px; height: 180px; object-fit: fill"
+                  class="m-1"
                 />
-
               </div>
 
               <button class="btn btn-primary m-auto d-block">Edit</button>
@@ -213,8 +205,8 @@ export default {
   },
   data() {
     return {
-      textimage:'',
-      changeedit:true,
+      textimage: "",
+      changeedit: true,
 
       ShowModelEdit: false,
       imageUrl: null,
@@ -254,22 +246,20 @@ export default {
     };
   },
   methods: {
-    async toggleactive(id){
- let res=  await crudDataService.create(`categories/${id}/toggle`,"");
-   const toast = useToast(); 
-   if(res.data.status){
-   toast.success(res.data.message, {
-     position: "top-center",
-     timeout: 5000,
-   });
- }
- },
+    async toggleactive(id) {
+      let res = await crudDataService.create(`categories/${id}/toggle`, "");
+      const toast = useToast();
+      if (res.data.status) {
+        toast.success(res.data.message, {
+          position: "top-center",
+          timeout: 5000,
+        });
+      }
+    },
     view(id) {
-      console.log(id);
       this.$router.push({ name: "ViewCategory", params: { id } });
     },
     handleCustomEvent(data) {
-      console.log("Event received with data:", data);
       this.rows = data;
     },
     // async getcategories() {
@@ -306,22 +296,20 @@ export default {
 
     onFileSelected(event) {
       console.log(event);
-  if (event.target) {
-    this.changeedit=false;
+      if (event.target) {
+        this.changeedit = false;
 
-    this.formData.image = event.target.files[0];
-      const reader = new FileReader();
-      reader.onload = () => {
-        this.imageUrl = reader.result;
-      };
-      reader.readAsDataURL(this.formData.image);
-  
-  }else{
-    this.changeedit=true;
+        this.formData.image = event.target.files[0];
+        const reader = new FileReader();
+        reader.onload = () => {
+          this.imageUrl = reader.result;
+        };
+        reader.readAsDataURL(this.formData.image);
+      } else {
+        this.changeedit = true;
 
-    this.formData.image= event
-  }
-      
+        this.formData.image = event;
+      }
     },
     async edit(data) {
       console.log(data);
@@ -332,9 +320,9 @@ export default {
       this.formData.description.ar = data.description.ar;
       this.formData.description.en = data.description.en;
       this.formData.image = data.image;
-      this.textimage=data.image,
-        this.formData.image= this.onFileSelected(data.image) ;
-        this.imageUrl =data.image;
+      (this.textimage = data.image),
+        (this.formData.image = this.onFileSelected(data.image));
+      this.imageUrl = data.image;
     },
     async update() {
       let res = await crudDataService.create(
@@ -397,7 +385,7 @@ export default {
   display: none;
 }
 input::file-selector-button {
-  background-image: linear-gradient(to right, #E66239, #E66239) !important;
+  background-image: linear-gradient(to right, #e66239, #e66239) !important;
 }
 .imgetext + span {
   display: none;
@@ -415,9 +403,9 @@ table.vgt-table td {
 .vgt-table th.vgt-row-header {
   background-color: #dcdfe69c !important;
 }
-.custom-switch-input:checked~.custom-switch-indicator {
-    background: #fb99bf !important;
-    left: 1px !important;
+.custom-switch-input:checked ~ .custom-switch-indicator {
+  background: #fb99bf !important;
+  left: 1px !important;
 }
 .custom-switch-input:checked ~ .custom-switch-indicator::before {
   left: 1px !important;

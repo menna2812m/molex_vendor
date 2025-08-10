@@ -21,7 +21,7 @@
               <button
                 @click="toggleDropdown"
                 class="twobtn bg-white border"
-                style="border-color: #E66239 !important; color: #E66239"
+                style="border-color: #e66239 !important; color: #e66239"
               >
                 خيارات الصفحة <i class="fas fa-caret-down ms-1"></i>
               </button>
@@ -147,7 +147,7 @@ export default {
   data() {
     return {
       textimage: "",
-      changeedit:true,
+      changeedit: true,
 
       isDropdownOpen: false,
       ShowModel: false,
@@ -170,7 +170,6 @@ export default {
       this.isDropdownOpen = !this.isDropdownOpen;
     },
     onFileSelected(event) {
-      console.log(event);
       if (event.target) {
         this.changeedit = false;
 
@@ -213,7 +212,6 @@ export default {
           },
         }
       );
-      console.log(res);
       this.getPage();
       this.ShowModel = false;
     },
@@ -238,7 +236,7 @@ export default {
 </style>
 <style lang="scss">
 input::file-selector-button {
-  background-image: linear-gradient(to right, #E66239) !important;
+  background-image: linear-gradient(to right, #e66239) !important;
 }
 
 .modal .modal-header {

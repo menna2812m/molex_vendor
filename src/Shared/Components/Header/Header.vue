@@ -88,9 +88,12 @@
 
 <script>
 import crudDataService from "../../../Services/crudDataService.js";
+import { themeMixin } from "../../mixins/themeMixin.js";
 import ThemeToggle from "../Switcher/ThemeToggle.vue";
 
 export default {
+  mixins: [themeMixin],
+
   data() {
     return {
       url: import.meta.env.BASE_URL,
@@ -98,20 +101,11 @@ export default {
       resultsearch: [],
       show: false,
       searchQuery: "",
-      isDark: false,
     };
   },
   name: "Header",
 
   methods: {
-    getTheme() {
-      const savedTheme = localStorage.getItem("theme");
-      if (savedTheme) {
-        this.isDark = savedTheme === "dark";
-      } else {
-        this.isDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-      }
-    },
     detail(id) {
       this.$router.push({ name: "SingleOrder", params: { id } });
       this.show = false;
@@ -166,9 +160,7 @@ export default {
       }
     },
   },
-  mounted() {
-    this.getTheme();
-  },
+  mounted() {},
   components: {
     ThemeToggle,
   },

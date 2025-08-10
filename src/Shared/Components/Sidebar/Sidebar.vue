@@ -295,6 +295,7 @@
 import crudDataService from "../../../Services/crudDataService";
 import NotificationUpdater from "../../../components/Contact/Contact.vue";
 import { ref, onMounted, onUnmounted, inject } from "vue";
+import { themeMixin } from "../../mixins/themeMixin";
 // import Switcher from "../Switcher/Switcher.vue";
 //MenuStart
 const menu_items = [
@@ -483,6 +484,8 @@ const menu_items = [
 //MenuEnd
 export default {
   name: "Sidebar",
+  mixins: [themeMixin],
+
   components: {
     NotificationUpdater,
   },
@@ -493,8 +496,6 @@ export default {
       logo: "",
       notificationCount: "",
       notifications: [],
-      isDark: false,
-      themeValue: localStorage.getItem("Spruhadark") || "light",
     };
   },
   setup() {
@@ -553,15 +554,7 @@ export default {
     //         }
     //       });
     //     },
-    getTheme() {
-      const savedTheme = localStorage.getItem("Spruhadark");
 
-      if (savedTheme) {
-        this.isDark = savedTheme === "true";
-      } else {
-        this.isDark = false;
-      }
-    },
     setNavActive(item) {
       this.MENUITEMS.filter((menuItem) => {
         if (menuItem !== item) {
@@ -724,24 +717,7 @@ export default {
   //   // this.getContact()
   //   // this.getlogo();
   // },
-  mounted() {
-    // Initial check
-    this.isDark = this.themeValue === "dark";
-
-    // Listen to changes from other tabs
-    window.addEventListener("storage", (e) => {
-      if (e.key === "theme") {
-        this.themeValue = e.newValue; // trigger watcher
-      }
-    });
-  },
-  watch: {
-    themeValue(newVal) {
-      console.log(newVal, "ll");
-
-      this.isDark = newVal === "dark";
-    },
-  },
+  mounted() {},
 };
 </script>
 

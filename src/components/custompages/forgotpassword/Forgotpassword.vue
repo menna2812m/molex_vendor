@@ -94,7 +94,11 @@
 </template>
 
 <script>
+import { themeMixin } from "../../../Shared/mixins/themeMixin";
+
 export default {
+  mixins: [themeMixin],
+
   methods: {
     Switcherbutton() {
       return this.$store.commit("Switcherbutton");
@@ -106,22 +110,10 @@ export default {
   data() {
     return {
       url: import.meta.env.BASE_URL,
-      isDark: false,
     };
   },
-  methods: {
-    getTheme() {
-      const savedTheme = localStorage.getItem("theme");
-      if (savedTheme) {
-        this.isDark = savedTheme === "dark";
-      } else {
-        this.isDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-      }
-    },
-  },
-  mounted() {
-    this.getTheme();
-  },
+  methods: {},
+  mounted() {},
 };
 </script>
 

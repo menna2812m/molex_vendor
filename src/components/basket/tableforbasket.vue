@@ -56,7 +56,7 @@
               </td>
 
               <td class="text-center py-3">
-                <remember :id="item.id"/>
+                <remember :id="item.id" />
               </td>
             </tr>
           </table>
@@ -92,7 +92,6 @@ export default {
     },
     async getcarts() {
       let res = await crudDataService.getAll("abandoned_carts");
-      console.log(res.data.data);
       this.myList = res.data.data;
     },
   },

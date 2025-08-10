@@ -5,7 +5,18 @@
         <div class="card custom-card mg-b-20 card-shop">
           <div class="card-body p-0">
             <div class="d-flex justify-content-between align-items-start p-3">
-              <img src="../../assets/img/logo.png" alt="" class="ps-3" />
+              <img
+                src="../../assets/img/logo.png"
+                alt=""
+                class="ps-3"
+                v-if="isDark"
+              />
+              <img
+                src="../../assets/img/logo-dark.png"
+                alt=""
+                class="ps-3"
+                v-if="!isDark"
+              />
 
               <div class="w-100">
                 <div class="">
@@ -178,30 +189,20 @@
 <script>
 import SMS from "./SMS.vue";
 import More from "./More.vue";
+import { themeMixin } from "../../Shared/mixins/themeMixin";
 
 export default {
+  mixins: [themeMixin],
+
   components: {
     SMS,
     More,
   },
   data() {
-    return {
-      isDark: false,
-    };
+    return {};
   },
-  methods: {
-    getTheme() {
-      const savedTheme = localStorage.getItem("theme");
-      if (savedTheme) {
-        this.isDark = savedTheme === "dark";
-      } else {
-        this.isDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-      }
-    },
-  },
-  mounted() {
-    this.getTheme();
-  },
+  methods: {},
+  mounted() {},
 };
 </script>
 <style scoped>

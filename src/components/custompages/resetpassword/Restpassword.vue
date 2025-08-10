@@ -104,11 +104,13 @@
 </template>
 
 <script>
+import { themeMixin } from "../../../Shared/mixins/themeMixin";
+
 export default {
+  mixins: [themeMixin],
+
   data() {
-    return {
-      isDark: false,
-    };
+    return {};
   },
   methods: {
     Switcherbutton() {
@@ -117,19 +119,9 @@ export default {
     Removebutton() {
       return this.$store.commit("Removebutton");
     },
-    getTheme() {
-      const savedTheme = localStorage.getItem("theme");
-      if (savedTheme) {
-        this.isDark = savedTheme === "dark";
-      } else {
-        this.isDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-      }
-    },
   },
 
-  mounted() {
-    this.getTheme();
-  },
+  mounted() {},
 };
 </script>
 

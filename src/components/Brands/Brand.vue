@@ -1,9 +1,6 @@
 <template>
   <section class="mt-5 pt-5">
-    <button
-      class="fs-15 btn-add mb-4"
-      @click="ShowModel = true"
-    >
+    <button class="fs-15 btn-add mb-4" @click="ShowModel = true">
       <i class="fe fe-plus"></i>
       ماركة جديدة
     </button>
@@ -40,25 +37,20 @@
           </p>
         </div>
         <div class="col-md-2">
-          <button
-            class="btn me-2"
-            @click="del(item.id, index, item.name)"
-          >
+          <button class="btn me-2" @click="del(item.id, index, item.name)">
             <i class="fe fe-trash text-danger"></i>
           </button>
-          <label class="custom-switch justify-content-center" >
-           
-               <input
-                 type="checkbox"
-                 name="custom-switch-checkbox"
-                 class="custom-switch-input"
-                 :checked="item.is_active"
-               
-                 @change="toggleactive(item.id)"
-               />
-               <span class="custom-switch-description"> </span>
-               <span class="custom-switch-indicator" ></span>
-             </label>
+          <label class="custom-switch justify-content-center">
+            <input
+              type="checkbox"
+              name="custom-switch-checkbox"
+              class="custom-switch-input"
+              :checked="item.is_active"
+              @change="toggleactive(item.id)"
+            />
+            <span class="custom-switch-description"> </span>
+            <span class="custom-switch-indicator"></span>
+          </label>
         </div>
       </div>
       <section
@@ -67,7 +59,7 @@
         v-else
       >
         <div
-          style="background: #E66239; padding: 30px; font-size: 20px"
+          style="background: #e66239; padding: 30px; font-size: 20px"
           class="w-50 text-center text-white rounded-10"
         >
           لا يوجد ماركات حتي الان
@@ -168,17 +160,16 @@ export default {
     };
   },
   methods: {
-    async toggleactive(id){
-      console.log(id);
- let res=  await crudDataService.create(`brands/${id}/toggle`,"");
-   const toast = useToast(); 
-   if(res.data.status){
-   toast.success(res.data.message, {
-     position: "top-center",
-     timeout: 5000,
-   });
- }
- },
+    async toggleactive(id) {
+      let res = await crudDataService.create(`brands/${id}/toggle`, "");
+      const toast = useToast();
+      if (res.data.status) {
+        toast.success(res.data.message, {
+          position: "top-center",
+          timeout: 5000,
+        });
+      }
+    },
     async add() {
       let res = await crudDataService
         .create(`brands`, this.formData, {
@@ -218,7 +209,7 @@ export default {
       }
     },
     singlebrand(id) {
-        this.$router.push({ name: "singlebrand", params: { id } });
+      this.$router.push({ name: "singlebrand", params: { id } });
     },
     del(data, index, name) {
       this.$swal
@@ -246,6 +237,6 @@ export default {
 </script>
 <style>
 input::file-selector-button {
-  background-image: linear-gradient(to right, #E66239, #E66239) !important;
+  background-image: linear-gradient(to right, #e66239, #e66239) !important;
 }
 </style>

@@ -223,7 +223,6 @@ export default {
   methods: {
     async edit(data) {
       this.ShowModeledit = true;
-      console.log(data);
       this.id = data.id;
       this.formDataupdate.name = data.name;
       this.formDataupdate.store_phone = data.phone;
@@ -331,7 +330,6 @@ export default {
       try {
         let res = await crudDataService.getAll("store");
         this.myList = res.data.data;
-        console.log(this.myList);
       } catch (error) {
         console.error("Failed to fetch data:", error);
         // Handle error

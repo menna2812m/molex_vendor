@@ -58,7 +58,7 @@
                   class="form-control"
                 />
               </div>
-          
+
               <div class="mt-3">
                 <label>الصوره</label>
                 <div class="form-group">
@@ -75,7 +75,6 @@
               <button class="btn btn-primary m-auto d-block">اضافة</button>
             </form>
           </div>
-        
         </div>
       </b-modal>
     </teleport>
@@ -90,7 +89,7 @@ export default {
   },
   data() {
     return {
-      Selectcategory:[],
+      Selectcategory: [],
       ShowModel: false,
       formData: {
         name: {
@@ -102,7 +101,7 @@ export default {
           ar: "",
           en: "",
         },
-        parent_id:null
+        parent_id: null,
       },
       imageUrl: null,
     };
@@ -110,11 +109,10 @@ export default {
   methods: {
     async getcategories() {
       let res = await crudDataService.getAll("categories");
-      this.$emit('customEvent',res.data.data.data);
+      this.$emit("customEvent", res.data.data.data);
     },
     async getselectoption() {
       let res = await crudDataService.getAll("categories?limit=1000");
-      console.log(res.data.data.data);
       this.Selectcategory = res.data.data.data.map((cat) => ({
         value: cat.id,
         name: cat.name.ar,
@@ -129,29 +127,31 @@ export default {
       reader.readAsDataURL(this.formData.image);
     },
     async add() {
-        this.ShowModel = false;
-      let res = await crudDataService.create(`categories`, this.formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      }).then((res)=>{
-        this.getcategories()
-        this.formData.name.ar= "",
-        this.formData.name.en= "",
-        this.formData.image= "",
-        this.formData.description.ar='',
-        this.formData.description.en='',
-        this.imageUrl=''
-      })
-     
+      this.ShowModel = false;
+      let res = await crudDataService
+        .create(`categories`, this.formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        })
+        .then((res) => {
+          this.getcategories();
+          (this.formData.name.ar = ""),
+            (this.formData.name.en = ""),
+            (this.formData.image = ""),
+            (this.formData.description.ar = ""),
+            (this.formData.description.en = ""),
+            (this.imageUrl = "");
+        });
     },
   },
-  mounted(){
-    this.getselectoption()
-  }
+  mounted() {
+    this.getselectoption();
+  },
 };
 </script>
-<style >
+<style>
 #add-page {
-    overflow-y: auto;
-}</style>
+  overflow-y: auto;
+}
+</style>
