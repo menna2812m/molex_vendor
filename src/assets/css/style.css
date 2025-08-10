@@ -73800,3 +73800,6 @@ body:not(.dark-theme) .dropend {
   background-color: #fff;
   border-color: #e8e8f7;
 }
+.bg-primary-05 {
+  background-color: var(--primary-bg-color) !important;
+}
