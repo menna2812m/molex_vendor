@@ -3,7 +3,7 @@
     <div class="tab-menu-heading">
       <div class="tabs-menu d-flex justify-content-between">
         <div class="d-flex align-items-center">
-          <Prouductdrop/>
+          <Prouductdrop />
           <div
             v-if="listofproducr.length >= 1"
             class="px-3 py-1 ms-2 border rounded pos-relative"
@@ -166,26 +166,25 @@
                     <i class="fe fe-plus"></i>
                   </button>
                   <div class="">
-           <!-- <input type="text" class="form-control w-100"> -->
-           <label class="custom-switch justify-content-center">
-               <input
-                 type="checkbox"
-                 name="custom-switch-checkbox"
-                 class="custom-switch-input"
-                 :checked="item.is_active"
-               
-                 @change="toggleactive(item.id)"
-               />
-               <span class="custom-switch-description"> </span>
-               <span class="custom-switch-indicator"></span>
-             </label>
-           <!-- <button class="btn-add fs-15 twobtn ms-0">
+                    <!-- <input type="text" class="form-control w-100"> -->
+                    <label class="custom-switch justify-content-center">
+                      <input
+                        type="checkbox"
+                        name="custom-switch-checkbox"
+                        class="custom-switch-input"
+                        :checked="item.is_active"
+                        @change="toggleactive(item.id)"
+                      />
+                      <span class="custom-switch-description"> </span>
+                      <span class="custom-switch-indicator"></span>
+                    </label>
+                    <!-- <button class="btn-add fs-15 twobtn ms-0">
             <i class="ion-reply"></i>
              رد
               
              الموافقة
            </button> -->
-         </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -257,19 +256,17 @@
                       >
                         <i class="fe fe-plus"></i>
                       </button>
-           <label class="custom-switch justify-content-center" >
-               <input
-                 type="checkbox"
-                 name="custom-switch-checkbox"
-                 class="custom-switch-input"
-                 :checked="item.is_active"
-               
-                 @change="toggleactive(item.id)"
-               />
-               <span class="custom-switch-description"> </span>
-               <span class="custom-switch-indicator"></span>
-             </label>
-          
+                      <label class="custom-switch justify-content-center">
+                        <input
+                          type="checkbox"
+                          name="custom-switch-checkbox"
+                          class="custom-switch-input"
+                          :checked="item.is_active"
+                          @change="toggleactive(item.id)"
+                        />
+                        <span class="custom-switch-description"> </span>
+                        <span class="custom-switch-indicator"></span>
+                      </label>
                     </div>
                   </div>
                 </div>
@@ -291,7 +288,7 @@
         v-else
       >
         <div
-          style="background: #E66239; padding: 30px; font-size: 20px"
+          style="background: #e66239; padding: 30px; font-size: 20px"
           class="w-50 text-center text-white rounded-10"
         >
           لا يوجد منتجات حتي الان
@@ -391,7 +388,7 @@
                   :options="Selectcategories"
                   placeholder="اختر القسم "
                   v-model="formData.categories_ids"
-                  mode="multiple"
+                  mode="tags"
                   :close-on-select="false"
                   group-values="options"
                   group-label="name"
@@ -942,16 +939,16 @@ export default {
   },
 
   methods: {
-    async toggleactive(id){
- let res=  await crudDataService.create(`products/${id}/toggle`,"");
-   const toast = useToast(); 
-   if(res.data.status){
-   toast.success(res.data.message, {
-     position: "top-center",
-     timeout: 5000,
-   });
- }
- },
+    async toggleactive(id) {
+      let res = await crudDataService.create(`products/${id}/toggle`, "");
+      const toast = useToast();
+      if (res.data.status) {
+        toast.success(res.data.message, {
+          position: "top-center",
+          timeout: 5000,
+        });
+      }
+    },
     getOptionStyle(option) {
       return {
         background: option.options ? "#d6d8dddb" : "",
@@ -1318,11 +1315,11 @@ export default {
     background: transparent;
     padding: 9px 14px;
     margin: 0;
-    color: #E66239;
+    color: #e66239;
   }
   &.nav.panel-tabs li a.active {
     color: #fff;
-    background: #E66239;
+    background: #e66239;
   }
 }
 .plus {
@@ -1334,17 +1331,17 @@ export default {
   padding: 5px;
   background: #eff4fb;
   border-radius: 2px;
-  color: #E66239;
+  color: #e66239;
 }
 .pin-color {
   padding: 5px;
-  background: #E66239;
+  background: #e66239;
   border-radius: 2px;
   color: #eff4fb;
 }
 .spanprice {
   background: #6295d51a;
-  color: #E66239;
+  color: #e66239;
   text-align: center;
   justify-content: center;
   img {

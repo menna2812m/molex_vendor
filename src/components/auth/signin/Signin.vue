@@ -69,7 +69,7 @@
                           type="email"
                           v-model="form.email"
                           class="form-control"
-                          placeholder="ex@email.com"
+                          placeholder="ادخل البريد الالكتروني"
                         />
                       </div>
                       <div class="form-group text-start">

@@ -68,7 +68,7 @@
                     :options="Selectcategories"
                     placeholder="اختر القسم "
                     v-model="formData.categories_ids"
-                    mode="multiple"
+                    mode="tags"
                     :close-on-select="true"
                     group-values="options"
                     group-label="name"
@@ -278,7 +278,7 @@ export default {
   methods: {
     async getproducts() {
       let res = await crudDataService.getAll("products");
-      this.$emit('allproducts',res.data.data.data);
+      this.$emit("allproducts", res.data.data.data);
     },
     getOptionStyle(option) {
       return {
@@ -361,44 +361,46 @@ export default {
     },
 
     async add() {
-        const toast = useToast();
+      const toast = useToast();
 
-      let res = await crudDataService.create(`products`, this.formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      }).then((res)=>{
-        toast.error(res.data.message, {
-              position: "top-center",
-              timeout: 5000,
-            });
-            this.getproducts(); // Fetch all products after adding a new one
-        this.ShowModelEdit = false;
-      this.formData.name.ar = "";
-      this.formData.name.en = "";
-      this.formData.description.ar = "";
-      this.formData.description.en = "";
-      this.formData.barcode = "";
-      this.formData.base_price = "";
-      this.formData.seo_url = "";
-      this.formData.seo_title = "";
-      this.formData.seo_description = "";
-      this.formData.quantity = "";
-      this.formData.price = "";
-      this.formData.cost_price = "";
-      this.formData.discounted_price = "";
-      this.formData.discount_end_date = "";
-      this.formData.categories_ids = [];
-      this.formData.brand_id = [];
-      this.formData.images = "";
-       (this.imageUrl = "");
-    
-      }).catch((error)=>{
-        toast.error(error.data.message, {
-              position: "top-center",
-              timeout: 5000,
-            });
-      })
+      let res = await crudDataService
+        .create(`products`, this.formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        })
+        .then((res) => {
+          toast.error(res.data.message, {
+            position: "top-center",
+            timeout: 5000,
+          });
+          this.getproducts(); // Fetch all products after adding a new one
+          this.ShowModelEdit = false;
+          this.formData.name.ar = "";
+          this.formData.name.en = "";
+          this.formData.description.ar = "";
+          this.formData.description.en = "";
+          this.formData.barcode = "";
+          this.formData.base_price = "";
+          this.formData.seo_url = "";
+          this.formData.seo_title = "";
+          this.formData.seo_description = "";
+          this.formData.quantity = "";
+          this.formData.price = "";
+          this.formData.cost_price = "";
+          this.formData.discounted_price = "";
+          this.formData.discount_end_date = "";
+          this.formData.categories_ids = [];
+          this.formData.brand_id = [];
+          this.formData.images = "";
+          this.imageUrl = "";
+        })
+        .catch((error) => {
+          toast.error(error.data.message, {
+            position: "top-center",
+            timeout: 5000,
+          });
+        });
     },
   },
   mounted() {

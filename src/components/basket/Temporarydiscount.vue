@@ -1,7 +1,6 @@
 <template>
   <section>
-    <button @click="ShowModel = true" class="twobtn btn-add"
-    >
+    <button @click="ShowModel = true" class="twobtn btn-add">
       تفعيل خصم مؤقت
     </button>
     <teleport to="body">
@@ -10,10 +9,10 @@
           <img src="../../assets/img/Interse.png" alt="img2" />
         </div>
         <div class="mt-5 pos-relative" style="z-index: 5555">
-          <h6 style="color: #febcd5" class="text-center">تفعيل خصم مؤقت  </h6>
+          <h6 style="color: #febcd5" class="text-center">تفعيل خصم مؤقت</h6>
           <form @submit.prevent="add()">
             <div class="row">
-                   <div class="col-12">
+              <div class="col-12">
                 <h6 class="fw-semibold">شروط التذكر</h6>
                 <p class="text-muted fs-10">
                   سيتم ارسال رسالة بعد ترك العميل للمتجر لفترة محدوده وتجاوز سلة
@@ -27,7 +26,7 @@
                   :options="myList"
                   placeholder=" اختر المستخدمين  "
                   v-model="formData.user_ids"
-                  mode="multiple"
+                  mode="tags"
                   :close-on-select="false"
                 />
               </div>
@@ -142,7 +141,9 @@
             </div>
             <div class="text-center">
               <button class="fs-15 btn-save mx-1">حفظ</button>
-              <button class="fs-15 btn-cancel mx-1" @click="ShowModel=false">الغاء</button>
+              <button class="fs-15 btn-cancel mx-1" @click="ShowModel = false">
+                الغاء
+              </button>
             </div>
           </form>
         </div>
@@ -168,7 +169,7 @@ export default {
   },
   data() {
     return {
-      myList:[],
+      myList: [],
       ShowModel: false,
       discount_type: [
         { value: "fixed", name: "ثابتة" },
@@ -188,7 +189,7 @@ export default {
         discount_valid_for_hours: "",
         // cart_left_days: "",
         // total_cart: "",
-        user_ids:[]
+        user_ids: [],
       },
     };
   },
@@ -200,24 +201,26 @@ export default {
         name: item.first_name,
       }));
     },
-    async add(){
-      let res = await crudDataService.create("cart_reminders",this.formData).then((response)=>{
-        this.formData.is_free_shipping= true,
-        this.formData.is_cart_discounted= true,
-        this.formData.discount_type= '',
-        this.formData.discount_value= '',
-        this.formData.discount_end_date= '',
-        this.formData.send_channel= '',
-        this.formData.message= '',
-        this.formData.subject= '',
-        this.formData.discount_valid_for_hours= '',
-        this.formData.user_ids= ''
-      })
-    }
+    async add() {
+      let res = await crudDataService
+        .create("cart_reminders", this.formData)
+        .then((response) => {
+          (this.formData.is_free_shipping = true),
+            (this.formData.is_cart_discounted = true),
+            (this.formData.discount_type = ""),
+            (this.formData.discount_value = ""),
+            (this.formData.discount_end_date = ""),
+            (this.formData.send_channel = ""),
+            (this.formData.message = ""),
+            (this.formData.subject = ""),
+            (this.formData.discount_valid_for_hours = ""),
+            (this.formData.user_ids = "");
+        });
+    },
   },
-  mounted(){
-      this.getcarts()
-    }
+  mounted() {
+    this.getcarts();
+  },
 };
 </script>
 <style lang="scss" scoped>
@@ -240,22 +243,22 @@ export default {
   .modal-header {
     display: none;
   }
-  & .multiselect-placeholder ,
-    & ::placeholder {
-  font-size: 12px;
-}
+  & .multiselect-placeholder,
+  & ::placeholder {
+    font-size: 12px;
+  }
 }
 .dp__menu_index {
-    z-index: 999999999 !important;
+  z-index: 999999999 !important;
 }
-.dp__input_icon{
-    margin-right: auto !important;
+.dp__input_icon {
+  margin-right: auto !important;
 }
-.dp__action_buttons{
-    text-align: left;
-    .dp__action.dp__cancel{
-        display: none;
-    }
+.dp__action_buttons {
+  text-align: left;
+  .dp__action.dp__cancel {
+    display: none;
+  }
 }
 .imgtoadd {
   background: #fff;
@@ -283,6 +286,6 @@ export default {
   background-color: #fe7eae;
 }
 .modal .ck-content {
-    height: 160px !important;
+  height: 160px !important;
 }
 </style>
