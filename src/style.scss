@@ -48,7 +48,9 @@
     color: #fff;
   }
 }
-
+.Vue-Toastification__toast--success {
+  background-color: #28a745 !important;
+}
 .main-menu .ps__rail-x,
 .sidebar-right1 .ps__rail-x {
   display: none !important;

@@ -370,7 +370,7 @@ export default {
           },
         })
         .then((res) => {
-          toast.error(res.data.message, {
+          toast.success(res.data.message, {
             position: "top-center",
             timeout: 5000,
           });
