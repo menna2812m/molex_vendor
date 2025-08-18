@@ -3,6 +3,12 @@ import MainDashboard from "../Shared/Layouts/MainDashboard.vue";
 import Themepage from "../Shared/Layouts/Themepage.vue";
 const routes = [
   {
+    path: `${import.meta.env.BASE_URL}`,
+    name: "Dashboard",
+
+    redirect: `${import.meta.env.BASE_URL}dashboard`,
+  },
+  {
     path: `${import.meta.env.BASE_URL}signin`,
     name: "SignIn",
     component: () => import("../components/auth/signin/Signin.vue"),
@@ -37,7 +43,7 @@ const routes = [
       //   component: () => import("../components/dashboard/Dashboard.vue"),
       // },
       {
-        path: `${import.meta.env.BASE_URL}`,
+        path: `${import.meta.env.BASE_URL}dashboard`,
         name: "Dashboard",
         component: () => import("../components/dashboard/Dashboard.vue"),
       },
@@ -268,7 +274,7 @@ router.beforeEach((to, from, next) => {
   setTimeout(() => {
     window.scrollTo(0, 0);
   }, 100);
-  
+
   // Authentication guard
   const loggedInUserData = localStorage.getItem("authvendor");
   if (loggedInUserData && to.name == "SignIn") {

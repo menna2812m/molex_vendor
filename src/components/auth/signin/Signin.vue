@@ -131,7 +131,7 @@ export default {
         .create("login", this.form)
         .then((response) => {
           localStorage.setItem("authvendor", response.data.data.token);
-          this.$router.push({ name: "store" });
+          this.$router.push({ name: "Dashboard" });
           setTimeout(() => {
             window.location.reload();
           }, 1000);

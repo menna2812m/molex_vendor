@@ -908,3 +908,67 @@ textarea.form-control.parsley-error {
 .vti__dropdown-list.below {
   top: 38px !important;
 }
+.modal-dialog {
+  max-width: 700px;
+  margin: 1.75rem auto;
+}
+
+.modal-content {
+  border: 0;
+  border-radius: 0.5rem;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+  overflow: hidden; /* Prevent content from overflowing */
+}
+
+.modal-header {
+  direction: rtl;
+  border-bottom: 1px solid #e8e8f7;
+  padding: 1rem 1.5rem;
+
+  .modal-title {
+    font-weight: 600;
+    font-size: 1.1rem;
+  }
+
+  .btn-close {
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    box-shadow: none;
+    margin-left: auto;
+    margin-right: 0;
+  }
+}
+
+.modal-body {
+  padding: 1.5rem;
+  max-height: 83vh;
+  overflow-y: auto;
+}
+.invalid-feedback {
+  display: block;
+  color: #dc3545;
+  font-size: 0.875em;
+  margin-top: 0.25rem;
+}
+
+.form-control.is-invalid {
+  border-color: #dc3545;
+  box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+}
+
+// ✅ Multiselect error styles
+.multiselect.is-invalid {
+  border-color: #dc3545 !important;
+
+  .multiselect-wrapper {
+    border-color: #dc3545 !important;
+  }
+
+  .multiselect-input {
+    border-color: #dc3545 !important;
+  }
+}
+.ckeditor-error .ck.ck-editor {
+  border: 1px solid #dc3545 !important;
+}

@@ -299,9 +299,15 @@ import { themeMixin } from "../../mixins/themeMixin";
 // import Switcher from "../Switcher/Switcher.vue";
 //MenuStart
 const menu_items = [
-  // {
-  //   headTitle: "dashboard",
-  // },
+  {
+    path: `${import.meta.env.BASE_URL}dashboard`,
+    title: "الرئيسيه",
+    type: "link",
+    icon: "typcn typcn-home",
+    active: true,
+    defaultActive: false,
+    name: "Dashboard",
+  },
   {
     path: `${import.meta.env.BASE_URL}store`,
     title: "المتجر",
