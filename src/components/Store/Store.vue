@@ -66,69 +66,94 @@
         v-model="ShowModeledit"
         hide-footer
         title="تعديل البائع"
+        class="store-edit-modal"
+        centered
+        size="lg"
+        header-class="border-bottom pb-2"
       >
         <div class="p-0">
           <form @submit.prevent="update">
             <div class="row">
               <div class="col-md-6 mb-2">
                 <div class="mt-1">
-                  <label> الاسم </label>
+                  <label class="form-label"> الاسم </label>
                   <input
                     type="text"
                     class="form-control"
+                    :class="{ 'is-invalid': hasFieldError('name') }"
                     v-model="formDataupdate.name"
+                    @input="clearFieldError('name')"
                   />
+                  <div class="invalid-feedback" v-if="hasFieldError('name')">
+                    {{ getFieldError("name") }}
+                  </div>
                 </div>
               </div>
               <div class="col-md-6 mb-2">
                 <div class="mt-1">
-                  <label> الجوال </label>
+                  <label class="form-label"> الجوال </label>
                   <input
                     type="text"
                     class="form-control"
+                    :class="{ 'is-invalid': hasFieldError('store_phone') }"
                     v-model="formDataupdate.store_phone"
+                    @input="clearFieldError('store_phone')"
                   />
+                  <div
+                    class="invalid-feedback"
+                    v-if="hasFieldError('store_phone')"
+                  >
+                    {{ getFieldError("store_phone") }}
+                  </div>
                 </div>
               </div>
-              <div class="col-12 mb-2">
-                <label>الصوره</label>
+              <div class="col-12 mb-3">
+                <label class="form-label">الصوره</label>
                 <div class="pos-relative overflow-hidden">
                   <input
                     type="file"
                     @change="editFileSelected"
                     accept=".pdf, image/jpeg, image/png"
                     class="form-control"
+                    :class="{ 'is-invalid': hasFieldError('image') }"
                   />
+                  <div class="invalid-feedback" v-if="hasFieldError('image')">
+                    {{ getFieldError("image") }}
+                  </div>
                 </div>
                 <img
                   :src="imageUrl"
                   alt="صورة"
                   style="width: 180px; height: 180px; object-fit: fill"
-                  class="m-1"
+                  class="mt-2 rounded"
                   v-if="imageUrl"
                 />
               </div>
-              <div class="col-12 mb-2">
-                <label>فيديو</label>
+              <div class="col-12 mb-3">
+                <label class="form-label">فيديو</label>
                 <div class="pos-relative overflow-hidden">
                   <input
                     type="file"
                     @change="editFilevideo"
                     accept=".mp4,.mov, .webm"
                     class="form-control"
+                    :class="{ 'is-invalid': hasFieldError('video') }"
                   />
+                  <div class="invalid-feedback" v-if="hasFieldError('video')">
+                    {{ getFieldError("video") }}
+                  </div>
                 </div>
 
                 <video
                   :src="videoUrl"
                   controls
                   style="width: 100%; height: 180px"
-                  class="m-1"
+                  class="mt-2 rounded"
                   v-if="videoUrl"
                 ></video>
               </div>
-              <div class="col-12 mb-2">
-                <label> البلد </label>
+              <div class="col-12 mb-3">
+                <label class="form-label"> البلد </label>
                 <Multiselect
                   label="name"
                   :searchable="true"
@@ -136,10 +161,17 @@
                   placeholder="اختر البلد"
                   v-model="formDataupdate.country_id"
                   @change="changecountry"
+                  :class="{ 'is-invalid': hasFieldError('country_id') }"
                 />
+                <div
+                  class="invalid-feedback d-block"
+                  v-if="hasFieldError('country_id')"
+                >
+                  {{ getFieldError("country_id") }}
+                </div>
               </div>
-              <div class="col-6 mb-2">
-                <label> الاقليم </label>
+              <div class="col-md-6 mb-3">
+                <label class="form-label"> الاقليم </label>
                 <Multiselect
                   label="name"
                   :searchable="true"
@@ -147,10 +179,17 @@
                   placeholder="اختر الاقليم "
                   v-model="formDataupdate.region_id"
                   @change="changecities($event, regions)"
+                  :class="{ 'is-invalid': hasFieldError('region_id') }"
                 />
+                <div
+                  class="invalid-feedback d-block"
+                  v-if="hasFieldError('region_id')"
+                >
+                  {{ getFieldError("region_id") }}
+                </div>
               </div>
-              <div class="col-6 mb-2">
-                <label> المدينة </label>
+              <div class="col-md-6 mb-3">
+                <label class="form-label"> المدينة </label>
                 <Multiselect
                   label="name"
                   :searchable="true"
@@ -158,22 +197,42 @@
                   placeholder="اختر المدينة "
                   v-model="formDataupdate.city_id"
                   @change="district($event, cities)"
+                  :class="{ 'is-invalid': hasFieldError('city_id') }"
                 />
+                <div
+                  class="invalid-feedback d-block"
+                  v-if="hasFieldError('city_id')"
+                >
+                  {{ getFieldError("city_id") }}
+                </div>
               </div>
-              <div class="col-6 mb-2">
-                <label> المنطقة </label>
+              <div class="col-md-6 mb-3">
+                <label class="form-label"> المنطقة </label>
                 <Multiselect
                   label="name"
                   :searchable="true"
                   :options="districta"
                   placeholder="اختر المنطقة "
                   v-model="formDataupdate.district_id"
+                  :class="{ 'is-invalid': hasFieldError('district_id') }"
                 />
+                <div
+                  class="invalid-feedback d-block"
+                  v-if="hasFieldError('district_id')"
+                >
+                  {{ getFieldError("district_id") }}
+                </div>
               </div>
             </div>
-            <button class="btn btn-primary m-auto d-block mt-3" type="submit">
-              تعديل
-            </button>
+            <div class="text-center mt-4">
+              <button
+                class="btn btn-primary px-4"
+                type="submit"
+                :disabled="isSubmitting"
+              >
+                {{ isSubmitting ? "جاري التحديث..." : "تعديل" }}
+              </button>
+            </div>
           </form>
         </div>
       </b-modal>
@@ -187,10 +246,13 @@ import { useToast } from "vue-toastification";
 import Multiselect from "@vueform/multiselect";
 import crudDataService from "../../Services/crudDataService.js";
 import axios from "axios";
+import { FormErrorMixin } from "../../Shared/mixins/FormErrorMixin.js";
+
 export default {
   components: {
     Multiselect,
   },
+  mixins: [FormErrorMixin],
   data() {
     return {
       errormessage: "",
@@ -209,7 +271,7 @@ export default {
         brands_ids: [],
         categories_ids: [],
       },
-
+      isSubmitting: false,
       loading: false,
       regions: [],
       cities: [],
@@ -218,10 +280,20 @@ export default {
       SelectOptions: [],
       imageUrl: "",
       videoUrl: "",
+      // Fields to watch for clearing errors
+      watchedFields: [
+        "formDataupdate.name",
+        "formDataupdate.store_phone",
+        "formDataupdate.country_id",
+        "formDataupdate.region_id",
+        "formDataupdate.city_id",
+        "formDataupdate.district_id",
+      ],
     };
   },
   methods: {
     async edit(data) {
+      this.clearAllErrors(); // Clear previous errors when opening modal
       this.ShowModeledit = true;
       this.id = data.id;
       this.formDataupdate.name = data.name;
@@ -239,31 +311,45 @@ export default {
       this.imageUrl = data.image;
       this.videoUrl = data.video;
     },
-    async update() {
-      let res = await crudDataService
-        .create(`store?_method=put`, this.formDataupdate, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        })
-        .then((res) => {
-          this.stores();
-          this.ShowModeledit = false;
-          const toast = useToast();
-          toast.success(res.data.message, {
-            position: "top-center",
-            timeout: 5000,
-          });
-        })
-        .catch((error) => {
-          this.ShowModeledit = false;
 
-          const toast = useToast();
-          toast.error(error.data.message, {
-            position: "top-center",
-            timeout: 5000,
-          });
+    validateFormData() {
+      // Basic form validation
+      return this.validateForm({
+        name: { required: true, label: "اسم المتجر" },
+        store_phone: { required: true, label: "جوال المتجر" },
+        country_id: { required: true, label: "البلد" },
+        region_id: { required: true, label: "الاقليم" },
+        city_id: { required: true, label: "المدينة" },
+        district_id: { required: true, label: "المنطقة" },
+      });
+    },
+
+    async update() {
+      const toast = useToast();
+      this.isSubmitting = true;
+
+      try {
+        const res = await crudDataService.create(
+          `store?_method=put`,
+          this.formDataupdate,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+
+        this.stores();
+        this.ShowModeledit = false;
+        toast.success(res.data.message, {
+          position: "top-center",
+          timeout: 5000,
         });
+      } catch (error) {
+        this.handleApiErrors(error, toast);
+      } finally {
+        this.isSubmitting = false;
+      }
     },
     async country() {
       const result = await axios.get("https://mall.alharazy.com/api/countries");
@@ -282,6 +368,7 @@ export default {
         }));
       });
       this.changecities();
+      this.clearFieldError("country_id");
     },
     changecities(events, regions) {
       this.regions.forEach((ele) => {
@@ -297,6 +384,7 @@ export default {
         }
       });
       this.district();
+      this.clearFieldError("region_id");
     },
     district(events, dis) {
       this.cities.forEach((ele) => {
@@ -307,6 +395,7 @@ export default {
           }));
         }
       });
+      this.clearFieldError("city_id");
     },
     editFileSelected(event) {
       this.formDataupdate.image = event.target.files[0];
@@ -315,6 +404,7 @@ export default {
         this.imageUrl = reader.result;
       };
       reader.readAsDataURL(this.formDataupdate.image);
+      this.clearFieldError("image");
     },
     editFilevideo(event) {
       this.formDataupdate.video = event.target.files[0];
@@ -323,6 +413,7 @@ export default {
         this.videoUrl = reader.result;
       };
       reader.readAsDataURL(this.formDataupdate.video);
+      this.clearFieldError("video");
     },
 
     async stores() {
@@ -341,6 +432,14 @@ export default {
   mounted() {
     this.stores();
     this.country();
+  },
+  watch: {
+    // Reset errors when modal closes
+    ShowModeledit(val) {
+      if (!val) {
+        this.clearAllErrors();
+      }
+    },
   },
 };
 </script>
@@ -370,47 +469,83 @@ export default {
 }
 </style>
 <style lang="scss">
-.modal {
-  overflow: auto;
-
-  & .multiselect-placeholder,
-  & ::placeholder {
-    font-size: 12px;
-  }
-}
-.imgtoadd {
-  background: #fff;
-  width: 100px;
-  height: 100px;
-  position: absolute;
-  right: 40%;
-  border-radius: 50%;
-  top: -50px;
-  text-align: center;
-  img {
-    width: 90%;
-    height: 90%;
-    object-fit: cover;
-  }
-}
-@media (min-width: 576px) {
+// Modal styles
+.store-edit-modal {
   .modal-dialog {
-    margin: 8.75rem auto;
+    max-width: 700px;
+    margin: 1.75rem auto;
+  }
+
+  .modal-content {
+    border: 0;
+    border-radius: 0.5rem;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+  }
+
+  .modal-header {
+    direction: rtl;
+    border-bottom: 1px solid #e8e8f7;
+    padding: 1rem 1.5rem;
+
+    .modal-title {
+      font-weight: 600;
+      font-size: 1.1rem;
+    }
+
+    .btn-close {
+      margin: 0;
+      padding: 0;
+      background: transparent;
+      box-shadow: none;
+      margin-left: auto;
+      margin-right: 0;
+    }
+  }
+
+  .modal-body {
+    padding: 1.5rem;
+    max-height: 83vh;
+    overflow-y: auto;
+  }
+
+  .form-label {
+    font-weight: 500;
+    margin-bottom: 0.5rem;
   }
 }
+
+// Prevent body scroll when modal is open
+body.modal-open {
+  overflow: hidden;
+}
+
+// File input styling
+input[type="file"].form-control {
+  padding: 0.375rem 0.75rem;
+
+  &::file-selector-button {
+    background-image: linear-gradient(to right, #e66239, #e66239) !important;
+    color: white;
+    border: 0;
+    padding: 0.375rem 0.75rem;
+    margin-left: 0.75rem;
+    border-radius: 0.25rem;
+  }
+}
+
+// Fix for datepicker
 .dp__menu_index {
   z-index: 999999999 !important;
 }
+
 .dp__input_icon {
   margin-right: auto !important;
 }
+
 .dp__action_buttons {
   text-align: left;
   .dp__action.dp__cancel {
     display: none;
   }
-}
-input::file-selector-button {
-  background-image: linear-gradient(to right, #e66239, #e66239) !important;
 }
 </style>

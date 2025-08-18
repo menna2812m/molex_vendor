@@ -1245,7 +1245,6 @@ When it's NOT activated, the fc-button classes won't even be in the DOM.
   overflow: hidden;
   direction: ltr;
   /* hack for chrome computing the scroller's right/left wrong for rtl. undone below... */
-  /* TODO: demonstrate in codepen */
 }
 
 .fc .fc-scroller-harness-liquid {
@@ -1631,6 +1630,21 @@ A HORIZONTAL event
 .fc-direction-rtl .fc-h-event.fc-event-selected .fc-event-resizer-start {
   right: -4px;
   right: calc(var(--fc-event-resizer-dot-total-width, 8px) / -2);
+}
+
+/* Add RTL specific adjustments */
+[dir="rtl"] .fc-direction-ltr .fc-h-event:not(.fc-event-selected) .fc-event-resizer-start,
+[dir="rtl"] .fc-direction-rtl .fc-h-event:not(.fc-event-selected) .fc-event-resizer-end {
+  left: -4px;
+  right: auto;
+  cursor: e-resize;
+}
+
+[dir="rtl"] .fc-direction-ltr .fc-h-event:not(.fc-event-selected) .fc-event-resizer-end,
+[dir="rtl"] .fc-direction-rtl .fc-h-event:not(.fc-event-selected) .fc-event-resizer-start {
+  right: -4px;
+  left: auto;
+  cursor: w-resize;
 }
 
 :root {

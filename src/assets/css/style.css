@@ -5198,6 +5198,16 @@ textarea {
 
 /* ###### Input-group ###### */
 /* ###### Modal ###### */
+
+/* Add RTL support for modals */
+[dir="rtl"] .modal-header .close {
+    margin: -1rem auto -1rem -1rem;
+}
+
+/* Ensure modals appear above other elements */
+.modal {
+    z-index: 9999;
+}
 .modal.animated .modal-dialog {
     transition: transform 250ms;
     transform: translate(0, 0);
@@ -73803,3 +73813,4 @@ body:not(.dark-theme) .dropend {
 .bg-primary-05 {
   background-color: var(--primary-bg-color) !important;
 }
+
