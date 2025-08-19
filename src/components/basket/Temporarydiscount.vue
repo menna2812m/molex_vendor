@@ -4,12 +4,20 @@
       تفعيل خصم مؤقت
     </button>
     <teleport to="body">
-      <b-modal id="add" v-model="ShowModel" hide-footer>
+      <b-modal
+        id="add"
+        v-model="ShowModel"
+        hide-footer
+        title="تفعيل خصم مؤقت"
+        centered
+      >
         <div class="imgtoadd">
           <img src="../../assets/img/Interse.png" alt="img2" />
         </div>
         <div class="mt-5 pos-relative" style="z-index: 5555">
-          <h6 style="color: #febcd5" class="text-center">تفعيل خصم مؤقت</h6>
+          <h6 style="color: #febcd5" class="text-center mb-4">
+            تفعيل خصم مؤقت
+          </h6>
           <form @submit.prevent="add()">
             <div class="row">
               <div class="col-12">

@@ -1,63 +1,109 @@
 <template>
   <section>
-    <div class="pos-relative text-end">
-      <button
-        @click="edit(myList)"
-        class="twobtn bg-white border"
-        style="border-color: #e66239 !important; color: #e66239"
-      >
-        تعديل متجر
+    <div
+      class="store-header d-flex justify-content-between align-items-center mb-4"
+    >
+      <h4 class="page-title">معلومات المتجر</h4>
+      <button @click="edit(myList)" class="btn btn-outline-primary">
+        <i class="fe fe-edit me-1"></i> تعديل المتجر
       </button>
     </div>
 
-    <section
-      class="position-relative"
-      style="height: 100vh; display: grid; place-items: center"
-      v-if="loading"
-    >
+    <section class="loading-container" v-if="loading">
       <section class="cate"></section>
       <progress class="pure-material-progress-circular" />
     </section>
-    <section v-else>
-      <div class="card custom-card border-0 mg-b-20" v-if="myList">
-        <div class="card-body p-0">
-          <div
-            class="table-responsive border-0 rounded border-bottom-0 px-4 mb-0"
-          >
-            <table class="table text-nowrap text-md-nowrap mg-b-0">
-              <tr>
-                <td class="text-muted">اسم المتجر</td>
-              </tr>
-              <tr
-                class="list_item py-3 w-100 align-items-center justify-content-between"
-              >
-                <td class="py-4">
-                  <img
-                    :src="myList.image"
-                    alt=""
-                    v-if="myList.image"
-                    style="width: 200px; height: 200px"
-                  />
-                </td>
-                <td class="py-4">{{ myList.name }}</td>
-                <td class="py-4">{{ myList.phone }}</td>
-              </tr>
-            </table>
+
+    <section v-else-if="myList" class="store-content">
+      <div class="card custom-card border-0 mb-4 overflow-hidden">
+        <div class="card-header d-flex align-items-center p-2">
+          <h5 class="card-title mb-0">بيانات المتجر</h5>
+          <span class="ms-auto badge bg-success">نشط</span>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-lg-4 col-md-5 text-center mb-4 mb-md-0">
+              <div class="store-image-container">
+                <img
+                  :src="myList.image"
+                  alt="صورة المتجر"
+                  v-if="myList.image"
+                  class="img-fluid rounded store-image"
+                  @error="
+                    $event.target.src =
+                      'https://via.placeholder.com/200x200?text=صورة+المتجر'
+                  "
+                />
+                <div v-else class="no-image-placeholder">
+                  <i class="fe fe-image"></i>
+                  <p>لا توجد صورة</p>
+                </div>
+              </div>
+
+              <div class="mt-3" v-if="myList.video">
+                <button
+                  class="btn btn-sm btn-outline-secondary"
+                  @click="showVideo = !showVideo"
+                >
+                  <i class="fe fe-video"></i> عرض الفيديو
+                </button>
+                <div v-if="showVideo" class="mt-3 video-container">
+                  <video
+                    :src="myList.video"
+                    controls
+                    class="rounded store-video"
+                  ></video>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-8 col-md-7">
+              <div class="store-info">
+                <div class="info-row">
+                  <div class="info-label">اسم المتجر:</div>
+                  <div class="info-value">{{ myList.name || "غير متوفر" }}</div>
+                </div>
+                <div class="info-row">
+                  <div class="info-label">رقم الجوال:</div>
+                  <div class="info-value">
+                    <a :href="`tel:${myList.phone}`">{{
+                      myList.phone || "غير متوفر"
+                    }}</a>
+                  </div>
+                </div>
+                <div class="info-row">
+                  <div class="info-label">العنوان:</div>
+                  <div class="info-value">
+                    {{ getFullAddress() }}
+                  </div>
+                </div>
+                <div class="info-row" v-if="myList.email">
+                  <div class="info-label">البريد الإلكتروني:</div>
+                  <div class="info-value">
+                    <a :href="`mailto:${myList.email}`">{{ myList.email }}</a>
+                  </div>
+                </div>
+                <div class="info-row" v-if="myList.created_at">
+                  <div class="info-label">تاريخ الإنشاء:</div>
+                  <div class="info-value">
+                    {{ formatDate(myList.created_at) }}
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-      <section
-        class="position-relative"
-        style="height: 100vh; display: grid; place-items: center"
-        v-else
-      >
-        <div
-          style="background: #e66239; padding: 30px; font-size: 20px"
-          class="w-50 text-center text-white rounded-10"
-        >
-          لا يوجد متاجر حتي الان
-        </div>
-      </section>
+    </section>
+
+    <section v-else class="empty-state-container">
+      <div class="empty-state">
+        <i class="fe fe-shopping-bag empty-icon"></i>
+        <h5>لا يوجد متاجر حتى الآن</h5>
+        <p>قم بإضافة متجر جديد للبدء في استخدام المنصة</p>
+        <button @click="ShowModeledit = true" class="btn btn-primary mt-3">
+          <i class="fe fe-plus-circle me-1"></i> إضافة متجر جديد
+        </button>
+      </div>
     </section>
 
     <teleport to="body">
@@ -66,13 +112,16 @@
         v-model="ShowModeledit"
         hide-footer
         title="تعديل البائع"
-        class="store-edit-modal"
         centered
         size="lg"
         header-class="border-bottom pb-2"
       >
+        <template #modal-header="{ close }">
+          <h5 class="modal-title">تعديل البائع</h5>
+          <button type="button" class="btn-close" @click="close"></button>
+        </template>
         <div class="p-0">
-          <form @submit.prevent="update">
+          <form @submit.prevent="update" class="needs-validation">
             <div class="row">
               <div class="col-md-6 mb-2">
                 <div class="mt-1">
@@ -109,7 +158,7 @@
               </div>
               <div class="col-12 mb-3">
                 <label class="form-label">الصوره</label>
-                <div class="pos-relative overflow-hidden">
+                <div class="pos-relative overflow-hidden file-upload-container">
                   <input
                     type="file"
                     @change="editFileSelected"
@@ -121,13 +170,9 @@
                     {{ getFieldError("image") }}
                   </div>
                 </div>
-                <img
-                  :src="imageUrl"
-                  alt="صورة"
-                  style="width: 180px; height: 180px; object-fit: fill"
-                  class="mt-2 rounded"
-                  v-if="imageUrl"
-                />
+                <div class="preview-image mt-3" v-if="imageUrl">
+                  <img :src="imageUrl" alt="صورة" class="rounded" />
+                </div>
               </div>
               <div class="col-12 mb-3">
                 <label class="form-label">فيديو</label>
@@ -230,6 +275,12 @@
                 type="submit"
                 :disabled="isSubmitting"
               >
+                <span
+                  v-if="isSubmitting"
+                  class="spinner-border spinner-border-sm me-1"
+                  role="status"
+                  aria-hidden="true"
+                ></span>
                 {{ isSubmitting ? "جاري التحديث..." : "تعديل" }}
               </button>
             </div>
@@ -280,6 +331,7 @@ export default {
       SelectOptions: [],
       imageUrl: "",
       videoUrl: "",
+      showVideo: false,
       // Fields to watch for clearing errors
       watchedFields: [
         "formDataupdate.name",
@@ -428,6 +480,18 @@ export default {
         this.loading = false; // End loading regardless of success or failure
       }
     },
+    formatDate(date) {
+      return moment(date).format("DD/MM/YYYY");
+    },
+    getFullAddress() {
+      const parts = [];
+      if (this.myList.district_name) parts.push(this.myList.district_name);
+      if (this.myList.city_name) parts.push(this.myList.city_name);
+      if (this.myList.region_name) parts.push(this.myList.region_name);
+      if (this.myList.country_name) parts.push(this.myList.country_name);
+
+      return parts.length > 0 ? parts.join("، ") : "غير متوفر";
+    },
   },
   mounted() {
     this.stores();
@@ -467,85 +531,190 @@ export default {
   display: block;
   color: #14112d;
 }
+
+// Enhanced styles
+.preview-image {
+  display: flex;
+  justify-content: center;
+  img {
+    width: 180px;
+    height: 180px;
+    object-fit: cover;
+    border: 1px solid #e8e8f7;
+    padding: 3px;
+  }
+}
+
+.file-upload-container {
+  position: relative;
+}
+
+.store-header {
+  margin-bottom: 1.5rem;
+  .page-title {
+    color: #1f2937;
+    font-weight: 600;
+  }
+}
+
+.loading-container {
+  height: 60vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.store-content {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+.store-image-container {
+  padding: 5px;
+  border-radius: 8px;
+  background-color: #f9fafb;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.store-image {
+  max-width: 100%;
+  height: auto;
+  max-height: 250px;
+  object-fit: contain;
+}
+
+.no-image-placeholder {
+  height: 200px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: #f9fafb;
+  border-radius: 8px;
+  color: #9ca3af;
+
+  i {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+  }
+}
+
+.video-container {
+  max-width: 100%;
+}
+
+.store-video {
+  max-width: 100%;
+  max-height: 250px;
+}
+
+.store-info {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  .info-row {
+    display: flex;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #f3f4f6;
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+
+  .info-label {
+    flex: 0 0 120px;
+    font-weight: 600;
+    color: #4b5563;
+  }
+
+  .info-value {
+    flex: 1;
+    color: #1f2937;
+
+    a {
+      color: #e66239;
+      text-decoration: none;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+}
+.dark-theme {
+  .info-label {
+    color: white;
+  }
+
+  .info-value {
+    color: #fff;
+  }
+}
+
+.empty-state-container {
+  min-height: 60vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f9fafb;
+  border-radius: 12px;
+  padding: 2rem;
+}
+
+.empty-state {
+  text-align: center;
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 2rem;
+
+  .empty-icon {
+    font-size: 4rem;
+    color: #d1d5db;
+    margin-bottom: 1.5rem;
+  }
+
+  h5 {
+    color: #4b5563;
+    margin-bottom: 1rem;
+  }
+
+  p {
+    color: #6b7280;
+    margin-bottom: 1.5rem;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
 </style>
 <style lang="scss">
-// Modal styles
-.store-edit-modal {
-  .modal-dialog {
-    max-width: 700px;
-    margin: 1.75rem auto;
-  }
+// Using global styles from style.scss instead of component-specific styles
+video {
+  width: 100%;
+  border-radius: 4px;
+  background-color: #f8f8f8;
+}
 
-  .modal-content {
-    border: 0;
-    border-radius: 0.5rem;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-  }
+// Multiselect enhancements
+.multiselect {
+  border-color: #e8e8f7 !important;
+  min-height: 38px !important;
 
-  .modal-header {
-    direction: rtl;
-    border-bottom: 1px solid #e8e8f7;
-    padding: 1rem 1.5rem;
-
-    .modal-title {
-      font-weight: 600;
-      font-size: 1.1rem;
-    }
-
-    .btn-close {
-      margin: 0;
-      padding: 0;
-      background: transparent;
-      box-shadow: none;
-      margin-left: auto;
-      margin-right: 0;
-    }
-  }
-
-  .modal-body {
-    padding: 1.5rem;
-    max-height: 83vh;
-    overflow-y: auto;
-  }
-
-  .form-label {
-    font-weight: 500;
-    margin-bottom: 0.5rem;
+  &.is-active {
+    border-color: var(--primary-bg-color) !important;
   }
 }
 
-// Prevent body scroll when modal is open
-body.modal-open {
-  overflow: hidden;
-}
-
-// File input styling
-input[type="file"].form-control {
-  padding: 0.375rem 0.75rem;
-
-  &::file-selector-button {
-    background-image: linear-gradient(to right, #e66239, #e66239) !important;
-    color: white;
-    border: 0;
-    padding: 0.375rem 0.75rem;
-    margin-left: 0.75rem;
-    border-radius: 0.25rem;
-  }
-}
-
-// Fix for datepicker
-.dp__menu_index {
-  z-index: 999999999 !important;
-}
-
-.dp__input_icon {
-  margin-right: auto !important;
-}
-
-.dp__action_buttons {
-  text-align: left;
-  .dp__action.dp__cancel {
-    display: none;
-  }
+.multiselect-option.is-selected {
+  background-color: var(--primary-bg-color) !important;
 }
 </style>
