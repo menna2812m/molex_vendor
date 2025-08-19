@@ -289,7 +289,7 @@ export default {
         .fire({
           title: `؟"${name}" هل تريد حذف العميل `,
           showCancelButton: true,
-          confirmButtonText: "Yes",
+          confirmButtonText: "نعم",
         })
         .then((result) => {
           /* Read more about isConfirmed, isDenied below */

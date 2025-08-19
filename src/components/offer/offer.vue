@@ -13,108 +13,113 @@
       <progress class="pure-material-progress-circular" />
     </section>
     <section v-else>
-      <div class="card custom-card border-0 mg-b-20" v-if="myList.length > 0">
+      <!-- Table with data -->
+      <div class="card custom-card" v-if="myList.length > 0">
         <div class="card-body p-0">
-          <div
-            class="table-responsive border-0 rounded border-bottom-0 px-4 mb-0"
-          >
-            <table class="table text-nowrap text-md-nowrap mg-b-0">
-              <tr>
-                <td class="text-muted">اسم العرض</td>
-                <td class="text-muted">تاريخ بداية العرض</td>
-                <td class="text-muted">تاريخ انتهاء العرض</td>
-                <td class="text-muted text-center">الحالة</td>
-              </tr>
-              <tr
-                v-for="(item, index) in myList"
-                :key="index"
-                class="list_item py-3 w-100 align-items-center justify-content-between"
-              >
-                <td class="py-4" @click="singleoffer(item.id)">
-                  {{ item.title }}
-                </td>
-                <td>
-                  {{ item.start_date }}
-                </td>
-                <td>
-                  {{ item.expire_date }}
-                </td>
-
-                <td>
-                  <label class="custom-switch justify-content-center w-100">
-                    <input
-                      type="checkbox"
-                      name="custom-switch-checkbox"
-                      class="custom-switch-input"
-                      :checked="item.is_active"
-                      @change="toggleactive(item.id)"
-                    />
-                    <span class="custom-switch-description"> </span>
-                    <span class="custom-switch-indicator"></span>
-                  </label>
-                </td>
-                <td>
-                  <button
-                    class="btn me-2"
-                    @click="del(item.id, index, item.title)"
-                  >
-                    <i class="fe fe-trash text-danger"></i>
-                  </button>
-                </td>
-              </tr>
+          <div class="table-responsive border-0 rounded">
+            <table class="table offers-table">
+              <thead>
+                <tr>
+                  <th class="text-muted">اسم العرض</th>
+                  <th class="text-muted">تاريخ بداية العرض</th>
+                  <th class="text-muted">تاريخ انتهاء العرض</th>
+                  <th class="text-muted text-center">الحالة</th>
+                  <th class="text-muted text-center">إجراءات</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  v-for="(item, index) in myList"
+                  :key="index"
+                  class="list_item"
+                >
+                  <td class="offer-name" @click="singleoffer(item.id)">
+                    {{ item.title }}
+                  </td>
+                  <td>{{ item.start_date }}</td>
+                  <td>{{ item.expire_date }}</td>
+                  <td>
+                    <label class="custom-switch justify-content-center w-100">
+                      <input
+                        type="checkbox"
+                        class="custom-switch-input"
+                        :checked="item.is_active"
+                        @change="toggleactive(item.id)"
+                      />
+                      <span class="custom-switch-indicator"></span>
+                    </label>
+                  </td>
+                  <td class="text-center">
+                    <button
+                      class="btn btn-icon btn-sm"
+                      @click="del(item.id, index, item.title)"
+                    >
+                      <i class="fe fe-trash text-danger"></i>
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
             </table>
           </div>
         </div>
       </div>
-      <section
-        class="position-relative"
-        style="height: 100vh; display: grid; place-items: center"
-        v-else
-      >
-        <div
-          style="background: #e66239; padding: 30px; font-size: 20px"
-          class="w-50 text-center text-white rounded-10"
-        >
-          لا يوجد عروض حتي الان
-        </div>
-      </section>
+
+      <!-- Empty state -->
+      <div class="empty-state" v-else>
+        <div class="empty-state-message">لا يوجد عروض حتي الان</div>
+      </div>
     </section>
+
+    <!-- Add new offer modal -->
     <teleport to="body">
-      <b-modal id="add add-body" v-model="ShowModel" hide-footer>
-        <div class="imgtoadd">
-          <img src="../../assets/img/dis.png" alt="img2" />
-        </div>
-        <div>
-          <div class="p-0 mt-5 pos-relative" style="z-index: 555">
-            <h6 style="color: #febcd5" class="text-center my-3">
-              إنشاء عرض جديد
-            </h6>
-            <form @submit.prevent="add">
-              <div class="row">
+      <b-modal
+        id="add-offer"
+        v-model="ShowModel"
+        hide-footer
+        size="lg"
+        centered
+      >
+        <div class="modal-content-wrapper">
+          <div class="modal-header-icon">
+            <img src="../../assets/img/dis.png" alt="offer icon" />
+          </div>
+
+          <div class="modal-body-content">
+            <h5 class="modal-title text-center mb-4">إنشاء عرض جديد</h5>
+
+            <form @submit.prevent="add" class="offer-form">
+              <div class="row g-3">
+                <!-- Basic Info Section -->
+                <div class="col-12 mb-3">
+                  <h6 class="form-section-title">معلومات العرض الأساسية</h6>
+                </div>
+
                 <div class="col-md-6">
-                  <div class="mt-1">
-                    <label> اسم العرض عربي</label
-                    ><input
+                  <div class="form-group">
+                    <label class="form-label">اسم العرض عربي</label>
+                    <input
                       type="text"
                       class="form-control"
                       v-model="formData.title.ar"
                     />
                   </div>
                 </div>
+
                 <div class="col-md-6">
-                  <div class="mt-1">
-                    <label>اسم العرض انجليزي</label
-                    ><input
+                  <div class="form-group">
+                    <label class="form-label">اسم العرض انجليزي</label>
+                    <input
                       type="text"
                       class="form-control"
                       v-model="formData.title.en"
                     />
                   </div>
                 </div>
+
                 <div class="col-md-6">
-                  <div class="mt-1">
-                    <label>بداية العرض</label
-                    ><input
+                  <div class="form-group">
+                    <label class="form-label">بداية العرض</label>
+                    <input
                       type="date"
                       class="form-control"
                       v-model="formData.start_date"
@@ -124,10 +129,11 @@
                     />
                   </div>
                 </div>
+
                 <div class="col-md-6">
-                  <div class="mt-1">
-                    <label>نهاية العرض</label
-                    ><input
+                  <div class="form-group">
+                    <label class="form-label">نهاية العرض</label>
+                    <input
                       type="date"
                       class="form-control"
                       v-model="formData.expire_date"
@@ -137,26 +143,39 @@
                     />
                   </div>
                 </div>
-                <div class="mt-3">
-                  <label>الصوره</label>
-                  <div class="pos-relative overflow-hidden">
-                    <input
-                      type="file"
-                      @change="onFileSelected"
-                      accept=".pdf, image/jpeg, image/png"
-                      class="form-control"
-                    />
+
+                <!-- Image Upload -->
+                <div class="col-12">
+                  <div class="form-group">
+                    <label class="form-label">صورة العرض</label>
+                    <div class="image-upload-container">
+                      <div class="image-upload-field">
+                        <input
+                          type="file"
+                          @change="onFileSelected"
+                          accept=".pdf, image/jpeg, image/png"
+                          class="form-control"
+                        />
+                      </div>
+                      <div class="image-preview">
+                        <img
+                          :src="imageUrl"
+                          alt="صورة العرض"
+                          class="offer-image-preview"
+                        />
+                      </div>
+                    </div>
                   </div>
-                  <img
-                    :src="imageUrl"
-                    alt="صورة"
-                    style="width: 180px; height: 180px; object-fit: fill"
-                    class="m-1"
-                  />
                 </div>
+
+                <!-- Offer Type Section -->
+                <div class="col-12 mt-4 mb-3">
+                  <h6 class="form-section-title">تفاصيل العرض</h6>
+                </div>
+
                 <div class="col-md-6">
-                  <div class="mt-1">
-                    <label>نوع العرض </label>
+                  <div class="form-group">
+                    <label class="form-label">نوع العرض</label>
                     <Multiselect
                       label="name"
                       :searchable="true"
@@ -164,36 +183,44 @@
                       placeholder="اختر النوع"
                       v-model="formData.type"
                       @change="handleTypeChange($event)"
+                      class="custom-multiselect"
                     />
                   </div>
                 </div>
+
                 <div class="col-md-6" v-if="showField">
-                  <div class="mt-1">
-                    <label>اختر البند </label>
+                  <div class="form-group">
+                    <label class="form-label">اختر البند</label>
                     <Multiselect
                       label="name"
                       :searchable="true"
                       :options="catpro"
                       placeholder="اختر البند"
                       @change="changpro($event)"
+                      class="custom-multiselect"
                     />
                   </div>
                 </div>
+
+                <!-- Discount Type Fields -->
                 <div class="col-md-6" v-if="showdiscount">
-                  <div class="mt-1">
-                    <label>نوع الخصم : </label>
+                  <div class="form-group">
+                    <label class="form-label">نوع الخصم</label>
                     <Multiselect
                       label="name"
                       :searchable="true"
                       :options="discount_type"
                       @change="changdiscount($event)"
                       v-model="formData.discount_type"
+                      class="custom-multiselect"
                     />
                   </div>
                 </div>
+
+                <!-- Product/Category Selection -->
                 <div class="col-md-6" v-if="showField">
-                  <div class="mt-1">
-                    <label>اختر الخصم علي </label>
+                  <div class="form-group">
+                    <label class="form-label">اختر الخصم علي</label>
                     <Multiselect
                       label="name"
                       :searchable="true"
@@ -204,89 +231,116 @@
                       group-label="name"
                       placeholder="الخصم علي"
                       @change="allmulti($event)"
+                      class="custom-multiselect"
                     />
                   </div>
                 </div>
-                <div class="col-md-6" v-if="showx">
-                  <div class="mt-1">
-                    <label>اختر البند x : </label>
-                    <Multiselect
-                      label="name"
-                      :searchable="true"
-                      :options="catpro"
-                      placeholder="اختر البند"
-                      @change="changcatx($event)"
-                    />
+
+                <!-- Buy X Get Y Fields -->
+                <template v-if="showx">
+                  <div class="col-12 mt-3">
+                    <h6 class="form-subsection-title">تفاصيل العنصر X</h6>
                   </div>
-                </div>
-                <div class="col-md-6" v-if="showx">
-                  <div class="mt-1">
-                    <label>الكمية من x </label
-                    ><input
-                      type="number"
-                      class="form-control"
-                      v-model="formData.x_quantity"
-                    />
+
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label class="form-label">اختر البند x</label>
+                      <Multiselect
+                        label="name"
+                        :searchable="true"
+                        :options="catpro"
+                        placeholder="اختر البند"
+                        @change="changcatx($event)"
+                        class="custom-multiselect"
+                      />
+                    </div>
                   </div>
-                </div>
-                <div class="col-md-6" v-if="showx">
-                  <div class="mt-1">
-                    <label>اختر الخصم علي x : </label>
-                    <Multiselect
-                      label="name"
-                      :searchable="true"
-                      :options="allitempro"
-                      mode="tags"
-                      :close-on-select="false"
-                      group-values="options"
-                      group-label="name"
-                      placeholder="الخصم علي"
-                      @change="allmultix($event)"
-                    />
+
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label class="form-label">الكمية من x</label>
+                      <input
+                        type="number"
+                        class="form-control"
+                        v-model="formData.x_quantity"
+                      />
+                    </div>
                   </div>
-                </div>
-                <div class="col-md-6" v-if="showdiscount">
-                  <div class="mt-1">
-                    <label>اختر البند y: </label>
-                    <Multiselect
-                      label="name"
-                      :searchable="true"
-                      :options="catpro"
-                      placeholder="اختر البند"
-                      @change="changcaty($event)"
-                    />
+
+                  <div class="col-md-12">
+                    <div class="form-group">
+                      <label class="form-label">اختر الخصم علي x</label>
+                      <Multiselect
+                        label="name"
+                        :searchable="true"
+                        :options="allitempro"
+                        mode="tags"
+                        :close-on-select="false"
+                        group-values="options"
+                        group-label="name"
+                        placeholder="الخصم علي"
+                        @change="allmultix($event)"
+                        class="custom-multiselect"
+                      />
+                    </div>
                   </div>
-                </div>
-                <div class="col-md-6" v-if="showdiscount">
-                  <div class="mt-1">
-                    <label>الكمية من y </label
-                    ><input
-                      type="number"
-                      class="form-control"
-                      v-model="formData.y_quantity"
-                    />
+                </template>
+
+                <!-- Buy Y Details -->
+                <template v-if="showdiscount">
+                  <div class="col-12 mt-3">
+                    <h6 class="form-subsection-title">تفاصيل العنصر Y</h6>
                   </div>
-                </div>
-                <div class="col-md-6" v-if="showdiscount">
-                  <div class="mt-1">
-                    <label>اختر الخصم علي y: </label>
-                    <Multiselect
-                      label="name"
-                      :searchable="true"
-                      :options="allitempro"
-                      mode="tags"
-                      :close-on-select="false"
-                      group-values="options"
-                      group-label="name"
-                      placeholder="الخصم علي"
-                      @change="allmultiy($event)"
-                    />
+
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label class="form-label">اختر البند y</label>
+                      <Multiselect
+                        label="name"
+                        :searchable="true"
+                        :options="catpro"
+                        placeholder="اختر البند"
+                        @change="changcaty($event)"
+                        class="custom-multiselect"
+                      />
+                    </div>
                   </div>
-                </div>
+
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label class="form-label">الكمية من y</label>
+                      <input
+                        type="number"
+                        class="form-control"
+                        v-model="formData.y_quantity"
+                      />
+                    </div>
+                  </div>
+
+                  <div class="col-md-12">
+                    <div class="form-group">
+                      <label class="form-label">اختر الخصم علي y</label>
+                      <Multiselect
+                        label="name"
+                        :searchable="true"
+                        :options="allitempro"
+                        mode="tags"
+                        :close-on-select="false"
+                        group-values="options"
+                        group-label="name"
+                        placeholder="الخصم علي"
+                        @change="allmultiy($event)"
+                        class="custom-multiselect"
+                      />
+                    </div>
+                  </div>
+                </template>
+
+                <!-- Value & Discount Details -->
                 <div class="col-md-6" v-if="showvalue">
-                  <div class="mt-1">
-                    <label>قيمة العرض </label
-                    ><input
+                  <div class="form-group">
+                    <label class="form-label">قيمة العرض</label>
+                    <input
                       type="number"
                       class="form-control"
                       v-model="formData.value"
@@ -295,8 +349,8 @@
                 </div>
 
                 <div class="col-md-6" v-if="showField">
-                  <div class="mt-1">
-                    <label> نوع الخصم : </label>
+                  <div class="form-group">
+                    <label class="form-label">نوع الخصم</label>
                     <Multiselect
                       label="name"
                       :searchable="true"
@@ -304,79 +358,91 @@
                       placeholder="الخصم علي"
                       @change="changporq($event)"
                       v-model="formData.min_type"
+                      class="custom-multiselect"
                     />
                   </div>
                 </div>
+
                 <div class="col-md-6" v-if="showField">
-                  <div class="mt-1">
-                    <label>اقل قيمة العرض </label>
-                    <div class="d-flex">
+                  <div class="form-group">
+                    <label class="form-label">اقل قيمة العرض</label>
+                    <div class="input-with-badge">
                       <input
                         type="number"
                         class="form-control"
                         v-model="formData.min_value"
                       />
-                      <span
-                        style="
-                          background: #e66239;
-                          padding: 5px 15px;
-                          border-radius: 5px;
-                        "
-                      >
-                        {{ pp }}
-                      </span>
+                      <span class="input-badge" v-if="pp">{{ pp }}</span>
                     </div>
                   </div>
                 </div>
+
                 <div class="col-md-6" v-if="percshow">
-                  <div class="mt-1">
-                    <label>اقصي قيمة العرض </label>
-                    <div class="d-flex">
-                      <input
-                        type="number"
-                        class="form-control"
-                        v-model="formData.max_discounted_value"
-                      />
-                    </div>
+                  <div class="form-group">
+                    <label class="form-label">اقصي قيمة العرض</label>
+                    <input
+                      type="number"
+                      class="form-control"
+                      v-model="formData.max_discounted_value"
+                    />
                   </div>
                 </div>
-                <div class="col-md-12">
-                  <div class="mt-1">
-                    <label>رسالة عربي</label
-                    ><textarea
+
+                <!-- Message Fields -->
+                <div class="col-12 mt-4 mb-3">
+                  <h6 class="form-section-title">رسالة العرض</h6>
+                </div>
+
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label class="form-label">رسالة عربي</label>
+                    <textarea
                       rows="3"
-                      type="text"
                       class="form-control"
                       v-model="formData.message.ar"
                     ></textarea>
                   </div>
                 </div>
-                <div class="col-md-12">
-                  <div class="mt-1">
-                    <label>رسالة انجليزي</label
-                    ><textarea
+
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label class="form-label">رسالة انجليزي</label>
+                    <textarea
                       rows="3"
-                      type="text"
                       class="form-control"
                       v-model="formData.message.en"
                     ></textarea>
                   </div>
                 </div>
 
-                <label class="custom-switch" v-if="showvalue">
-                  <input
-                    type="checkbox"
-                    name="custom-switch-checkbox"
-                    class="custom-switch-input"
-                    @change="changecoupon($event)"
-                  />
-                  <span class="custom-switch-description">متاح كوبون </span>
-                  <span class="custom-switch-indicator"></span>
-                </label>
+                <!-- Coupon Option -->
+                <div class="col-12" v-if="showvalue">
+                  <div class="form-group coupon-checkbox">
+                    <label class="custom-switch">
+                      <input
+                        type="checkbox"
+                        class="custom-switch-input"
+                        @change="changecoupon($event)"
+                      />
+                      <span class="custom-switch-indicator"></span>
+                      <span class="custom-switch-description">متاح كوبون</span>
+                    </label>
+                  </div>
+                </div>
               </div>
-              <button class="btn btn-primary m-auto mt-3 d-block" type="submit">
-                اضافة
-              </button>
+
+              <div class="form-actions">
+                <button class="btn btn-primary" type="submit">
+                  اضافة العرض
+                </button>
+                <button
+                  class="btn btn-light"
+                  type="button"
+                  @click="ShowModel = false"
+                >
+                  إلغاء
+                </button>
+              </div>
             </form>
           </div>
         </div>
@@ -405,7 +471,7 @@ export default {
       showx: false,
       discount_type: [
         { value: "free", name: "مجانا" },
-        { value: "percent", name: "نسية مئوية" },
+        { value: "percent", name: "سية مئوية" },
       ],
       porq: [
         { value: "price", name: "سعر" },
@@ -418,7 +484,7 @@ export default {
       ],
       type: [
         { value: "fixed", name: "ثابتة" },
-        { value: "percent", name: "نسية مئوية" },
+        { value: "percent", name: "سية مئوية" },
         { value: "buy_x_get_y", name: "اشتري قطعه واحصل ع اخري" },
       ],
       ShowModel: false,
@@ -665,7 +731,7 @@ export default {
         .fire({
           title: `؟"${name}" هل تريد حذف العرض `,
           showCancelButton: true,
-          confirmButtonText: "Yes",
+          confirmButtonText: "نعم",
         })
         .then((result) => {
           /* Read more about isConfirmed, isDenied below */
@@ -735,27 +801,226 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.card {
-  box-shadow: 0px 3px 3px 0px #e6edf0;
-}
-.list_item:not(:last-child) {
-  border-bottom: 1px solid #e8e7ff;
-}
-.table-responsive .table > :not(caption) > * > * {
-  border-bottom: 0px solid #e8e8f7 !important;
+.offer-container {
+  padding-bottom: 2rem;
 }
 
-.tab-menu-heading {
-  border: 1px solid #e8e8f7;
-}
-.tabs-style-3 .nav.panel-tabs li a {
-  padding: 10px 18px 10px 18px;
-  background: transparent;
-  border-radius: 0;
-  margin: 0;
-  text-align: center;
-  display: block;
+.section-title {
   color: #14112d;
+  font-weight: 600;
+}
+
+.loading-container {
+  height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.card {
+  border-radius: 8px;
+  border: none;
+  box-shadow: 0px 3px 10px rgba(230, 237, 240, 0.5);
+  overflow: hidden;
+}
+
+.offers-table {
+  margin-bottom: 0;
+
+  thead tr {
+    th {
+      font-weight: 600;
+      padding: 12px 16px;
+      border-bottom: 1px solid #eee;
+    }
+  }
+
+  tbody tr {
+    transition: background 0.2s ease;
+  }
+
+  td {
+    padding: 12px 16px;
+    vertical-align: middle;
+  }
+
+  .offer-name {
+    font-weight: 500;
+    cursor: pointer;
+    color: #e66239;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+.list_item:not(:last-child) {
+  border-bottom: 1px solid #eee;
+}
+
+.btn-icon {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  background: #fff;
+  border: 1px solid #eee;
+
+  &:hover {
+    background: #f8f8f8;
+  }
+}
+
+.empty-state {
+  height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &-message {
+    background: #e66239;
+    padding: 20px 30px;
+    border-radius: 8px;
+    color: white;
+    font-size: 18px;
+    font-weight: 500;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(230, 98, 57, 0.2);
+  }
+}
+
+/* Modal Styling */
+.modal-content-wrapper {
+  padding: 1rem;
+  position: relative;
+}
+
+.modal-header-icon {
+  position: absolute;
+  top: -50px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100px;
+  height: 100px;
+  background: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+
+  img {
+    width: 80%;
+    height: 80%;
+    object-fit: contain;
+  }
+}
+
+.modal-body-content {
+  padding-top: 50px;
+}
+
+.modal-title {
+  color: #febcd5;
+  font-weight: 600;
+}
+
+.form-section-title {
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: #666;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 8px;
+}
+
+.form-subsection-title {
+  font-weight: 500;
+  font-size: 0.9rem;
+  color: #888;
+  margin-bottom: 10px;
+}
+
+.form-label {
+  font-weight: 500;
+  margin-bottom: 6px;
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+.image-upload-container {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.image-upload-field {
+  flex: 1;
+}
+
+.image-preview {
+  width: 120px;
+}
+
+.offer-image-preview {
+  width: 100%;
+  height: 120px;
+  object-fit: contain;
+  border: 1px solid #eee;
+  border-radius: 4px;
+  padding: 5px;
+}
+
+.input-with-badge {
+  position: relative;
+
+  .input-badge {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: 10px;
+    background: #e66239;
+    color: white;
+    padding: 2px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+  }
+}
+
+.coupon-checkbox {
+  margin-top: 10px;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 24px;
+
+  .btn {
+    min-width: 120px;
+  }
+}
+
+.custom-multiselect {
+  :deep(.multiselect-tag) {
+    background: #e66239;
+  }
+
+  :deep(.multiselect-option.is-selected) {
+    background: #e66239;
+  }
+
+  :deep(.multiselect-option.is-pointed) {
+    background: #f8f8f8;
+    color: #333;
+  }
 }
 </style>
 <style lang="scss">
@@ -766,37 +1031,22 @@ export default {
   }
   & .multiselect-placeholder,
   & ::placeholder {
-    font-size: 12px;
+    font-size: 13px;
+    color: #aaa;
   }
 }
-.imgtoadd {
-  background: #fff;
-  width: 100px;
-  height: 100px;
-  position: absolute;
-  right: 40%;
-  border-radius: 50%;
-  top: -50px;
-  text-align: center;
-  img {
-    width: 90%;
-    height: 90%;
-    object-fit: cover;
-  }
-}
-@media (min-width: 576px) {
-  .modal-dialog {
-    margin: 8.75rem auto;
-  }
-}
+
 .dp__menu_index {
   z-index: 999999999 !important;
 }
+
 .dp__input_icon {
   margin-right: auto !important;
 }
+
 .dp__action_buttons {
   text-align: left;
+
   .dp__action.dp__cancel {
     display: none;
   }

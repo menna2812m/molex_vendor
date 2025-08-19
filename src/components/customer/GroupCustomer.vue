@@ -6,8 +6,7 @@
       v-for="(item, i) in items"
       :key="i"
     >
-      <button class="btn me-2" @click="del(item.id, i, item.name)"      
-      >
+      <button class="btn me-2" @click="del(item.id, i, item.name)">
         <i class="fe fe-trash text-danger"></i>
       </button>
       <div class="card-body text-center" @click="singlegroup(item.id)">
@@ -30,7 +29,8 @@
       @click="ShowModel = true"
     >
       <div
-        class="card-body text-center d-flex flex-column align-items-center justify-content-center">
+        class="card-body text-center d-flex flex-column align-items-center justify-content-center"
+      >
         <i class="fe fe-plus icon_color_2 icon_color"></i>
         <h5 class="card-title mt-3">مجموعة جديدة</h5>
       </div>
@@ -43,7 +43,7 @@
         hide-footer
         class="overflow-auto"
       >
-        <div class="mt-2 pos-relative" style="z-index: 5555;">
+        <div class="mt-2 pos-relative" style="z-index: 5555">
           <form @submit.prevent="add">
             <div class="row">
               <div class="col-12 mb-2">
@@ -63,12 +63,12 @@
                 :key="ii"
               >
                 <label>
-                  {{con.title}}
+                  {{ con.title }}
                 </label>
-              
+
                 <Multiselect
-                v-if="Array.isArray(con.values)"
-                class="mb-1"
+                  v-if="Array.isArray(con.values)"
+                  class="mb-1"
                   label="name"
                   :searchable="true"
                   :options="con.values"
@@ -76,7 +76,7 @@
                   v-model="con.values"
                 />
                 <input
-                v-else
+                  v-else
                   :type="con.values"
                   name=""
                   id=""
@@ -136,7 +136,7 @@ export default {
     };
   },
   methods: {
-    anyone(e){
+    anyone(e) {
       console.log(e);
     },
     onFileSelected(event) {
@@ -157,9 +157,8 @@ export default {
       this.items = res.data.data.data;
     },
     singlegroup(id) {
-
       this.$router.push({ name: "SingleGroup", params: { id } });
-       },
+    },
     async add() {
       this.ShowModel = false;
       console.log(this.formData);
@@ -175,7 +174,7 @@ export default {
         .fire({
           title: `؟"${name}" هل تريد حذف المجموعة`,
           showCancelButton: true,
-          confirmButtonText: "Yes",
+          confirmButtonText: "نعم",
         })
         .then((result) => {
           /* Read more about isConfirmed, isDenied below */
@@ -229,6 +228,6 @@ export default {
   }
 }
 input::file-selector-button {
-  background-image: linear-gradient(to right, #E66239, #E66239) !important;
+  background-image: linear-gradient(to right, #e66239, #e66239) !important;
 }
 </style>

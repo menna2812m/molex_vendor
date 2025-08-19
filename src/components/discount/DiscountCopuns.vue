@@ -1,84 +1,76 @@
 <template>
-  <section class="mt-5 pt-5" >
+  <section class="mt-5 pt-5">
     <div class="d-flex justify-content-between align-items-center">
-      <Tabscopuns @customEvent="handleCustomEvent"
-      />
+      <Tabscopuns @customEvent="handleCustomEvent" />
       <!-- <Fillter /> -->
     </div>
-    <section class="position-relative" style="height: 100vh;display: grid;
-    place-items: center;"
-    v-if="loading"
-   >
 
-<section class="cate">
-</section>
- <progress class="pure-material-progress-circular"/> 
+    <!-- Loading state -->
+    <div class="loading-container" v-if="loading">
+      <section class="cate"></section>
+      <progress class="pure-material-progress-circular" />
+    </div>
 
-   </section>  
-   <section v-else>
-    <div class="card custom-card border-0 mg-b-20" v-if="myList.length>0">
-      <div class="card-body p-0">
-        <div
-          class="table-responsive border-0 rounded border-bottom-0 px-4 mb-0"
-        >
-          <table class="table text-nowrap text-md-nowrap mg-b-0">
-            <tr>
-              <td class="text-muted">عنوان الكوبون</td>
-              <td class="text-muted">تاريخ بداية الكوبون</td>
-              <td class="text-muted">تاريخ انتهاء الكوبون</td>
-            </tr>
-            <tr
-              v-for="(item, index) in myList"
-              :key="index"
-              class="list_item py-3 w-100 align-items-center justify-content-between"
-
-            >
-              <td class="py-4" @click="singlecopun(item.id)">{{ item.code }}</td>
-              <td>
-                {{ item.start_date }}
-              </td>
-              <td>
-                {{ item.end_date }}
-              </td>
-             
-              <td>
-                <label class="custom-switch justify-content-center w-100"                
+    <!-- Content when loaded -->
+    <section v-else>
+      <!-- Table with data -->
+      <div class="card custom-card" v-if="myList.length > 0">
+        <div class="card-body p-0">
+          <div class="table-responsive border-0 rounded">
+            <table class="table coupons-table">
+              <thead>
+                <tr>
+                  <th class="text-muted">عنوان الكوبون</th>
+                  <th class="text-muted">تاريخ بداية الكوبون</th>
+                  <th class="text-muted">تاريخ انتهاء الكوبون</th>
+                  <th class="text-muted text-center">الحالة</th>
+                  <th class="text-muted text-center">إجراءات</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  v-for="(item, index) in myList"
+                  :key="index"
+                  class="list_item"
                 >
-                  <input
-                    type="checkbox"
-                    name="custom-switch-checkbox"
-                    class="custom-switch-input"
-                    :checked="item.is_active"
-                    @change="toggleactive(item.id)"
-                  />
-                  <span class="custom-switch-description"> </span>
-                  <span class="custom-switch-indicator"></span>
-                </label>
-                </td>
-                <td>
-                <button class="btn me-2" @click="del(item.id, index, item.code)" >
-        <i class="fe fe-trash text-danger"></i>
-      </button>
-              </td>
-            </tr>
-          </table>
+                  <td class="coupon-code" @click="singlecopun(item.id)">
+                    {{ item.code }}
+                  </td>
+                  <td>{{ item.start_date }}</td>
+                  <td>{{ item.end_date }}</td>
+                  <td class="text-center">
+                    <label class="custom-switch justify-content-center">
+                      <input
+                        type="checkbox"
+                        class="custom-switch-input"
+                        :checked="item.is_active"
+                        @change="toggleactive(item.id)"
+                      />
+                      <span class="custom-switch-indicator"></span>
+                    </label>
+                  </td>
+                  <td class="text-center">
+                    <button
+                      class="btn btn-icon btn-sm"
+                      @click="del(item.id, index, item.code)"
+                      title="حذف الكوبون"
+                    >
+                      <i class="fe fe-trash text-danger"></i>
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
-    </div>
-    <section class="position-relative" style="height: 100vh;display: grid;
-    place-items: center;"
-    v-else
-   >
-<div style="
-background: #E66239;
-    padding: 30px;
-    font-size: 20px;" class="w-50 text-center text-white rounded-10">
-  لا يوجد كوبونات حتي الان 
-</div>
-   </section> 
-   </section>
-  
-  </section> 
+
+      <!-- Empty state -->
+      <div class="empty-state" v-else>
+        <div class="empty-state-message">لا يوجد كوبونات حتي الان</div>
+      </div>
+    </section>
+  </section>
 </template>
 
 <script>
@@ -97,45 +89,44 @@ export default {
     return {
       ShowModel: false,
       myList: [],
-      loading:false,
+      loading: false,
     };
   },
   methods: {
-   async toggleactive(id){
-    let res=  await crudDataService.create(`coupons/${id}/toggle`,"");
-      const toast = useToast(); 
-      if(res.data.success){
-      toast.success(res.data.message, {
-        position: "top-center",
-        timeout: 5000,
-      });
-    }
+    async toggleactive(id) {
+      let res = await crudDataService.create(`coupons/${id}/toggle`, "");
+      const toast = useToast();
+      if (res.data.success) {
+        toast.success(res.data.message, {
+          position: "top-center",
+          timeout: 5000,
+        });
+      }
     },
     handleCustomEvent(data) {
-      this.myList =data;
+      this.myList = data;
     },
     async copuns() {
       this.loading = true; // Start loading
-try {
-  let res = await crudDataService.getAll("coupons");
-      this.myList = res.data.data.data;
-}catch (error) {
-console.error("Failed to fetch data:", error);
-// Handle error
-} finally {
-this.loading = false; // End loading regardless of success or failure
-}
+      try {
+        let res = await crudDataService.getAll("coupons");
+        this.myList = res.data.data.data;
+      } catch (error) {
+        console.error("Failed to fetch data:", error);
+        // Handle error
+      } finally {
+        this.loading = false; // End loading regardless of success or failure
+      }
     },
-    singlecopun(id){
-
-      this.$router.push({name:'SingleCopun',params:{ id }})
-     },
+    singlecopun(id) {
+      this.$router.push({ name: "SingleCopun", params: { id } });
+    },
     del(data, index, name) {
       this.$swal
         .fire({
           title: `؟"${name}" هل تريد حذف الكوبون `,
           showCancelButton: true,
-          confirmButtonText: "Yes",
+          confirmButtonText: "نعم",
         })
         .then((result) => {
           /* Read more about isConfirmed, isDenied below */
@@ -155,13 +146,105 @@ this.loading = false; // End loading regardless of success or failure
 </script>
 
 <style scoped lang="scss">
+.coupon-container {
+  padding-bottom: 2rem;
+}
+
+.section-title {
+  color: #14112d;
+  font-weight: 600;
+}
+
+.loading-container {
+  height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
 .card {
-  box-shadow: 0px 3px 3px 0px #e6edf0;
+  border-radius: 8px;
+  border: none;
+  box-shadow: 0px 3px 10px rgba(230, 237, 240, 0.5);
+  overflow: hidden;
 }
+
+.coupons-table {
+  margin-bottom: 0;
+
+  thead tr {
+    th {
+      font-weight: 600;
+      padding: 12px 16px;
+      border-bottom: 1px solid #eee;
+    }
+  }
+
+  tbody tr {
+    transition: background 0.2s ease;
+  }
+
+  td {
+    padding: 12px 16px;
+    vertical-align: middle;
+  }
+
+  .coupon-code {
+    font-weight: 500;
+    cursor: pointer;
+    color: #e66239;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
 .list_item:not(:last-child) {
-  border-bottom: 1px solid #e8e7ff;
+  border-bottom: 1px solid #eee;
 }
-.table-responsive .table > :not(caption) > * > * {
-  border-bottom: 0px solid #e8e8f7 !important;
+
+.btn-icon {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  background: #fff;
+  border: 1px solid #eee;
+
+  &:hover {
+    background: #f8f8f8;
+  }
+}
+
+.empty-state {
+  height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &-message {
+    background: #e66239;
+    padding: 20px 30px;
+    border-radius: 8px;
+    color: white;
+    font-size: 18px;
+    font-weight: 500;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(230, 98, 57, 0.2);
+  }
+}
+
+.custom-switch {
+  display: inline-flex;
+  align-items: center;
+
+  .custom-switch-indicator {
+    border-radius: 50px;
+  }
 }
 </style>
