@@ -100,12 +100,13 @@
         <i class="fe fe-shopping-bag empty-icon"></i>
         <h5>لا يوجد متاجر حتى الآن</h5>
         <p>قم بإضافة متجر جديد للبدء في استخدام المنصة</p>
-        <button @click="ShowModeledit = true" class="btn btn-primary mt-3">
+        <button @click="openAddModal" class="btn btn-primary mt-3">
           <i class="fe fe-plus-circle me-1"></i> إضافة متجر جديد
         </button>
       </div>
     </section>
 
+    <!-- Enhanced Modal with Error Handling -->
     <teleport to="body">
       <b-modal
         id="add-page"
@@ -115,165 +116,322 @@
         centered
         size="lg"
         header-class="border-bottom pb-2"
+        @hidden="onModalHidden"
       >
         <template #modal-header="{ close }">
-          <h5 class="modal-title">تعديل البائع</h5>
+          <h5 class="modal-title">
+            {{ isEditMode ? "تعديل البائع" : "إضافة متجر جديد" }}
+          </h5>
           <button type="button" class="btn-close" @click="close"></button>
         </template>
+
         <div class="p-0">
           <form @submit.prevent="update" class="needs-validation">
             <div class="row">
-              <div class="col-md-6 mb-2">
-                <div class="mt-1">
-                  <label class="form-label"> الاسم </label>
-                  <input
-                    type="text"
-                    class="form-control"
-                    :class="{ 'is-invalid': hasFieldError('name') }"
-                    v-model="formDataupdate.name"
-                    @input="clearFieldError('name')"
-                  />
-                  <div class="invalid-feedback" v-if="hasFieldError('name')">
-                    {{ getFieldError("name") }}
-                  </div>
+              <!-- Store Name -->
+              <div class="col-md-6 mb-3">
+                <label class="form-label required">
+                  الاسم <span class="text-danger">*</span>
+                </label>
+                <input
+                  type="text"
+                  class="form-control"
+                  :class="{
+                    'is-invalid': hasFieldError('name') && !formDataupdate.name,
+                    'is-valid': !hasFieldError('name') && formDataupdate.name,
+                  }"
+                  v-model="formDataupdate.name"
+                  @input="clearFieldError('name')"
+                  @blur="clearFieldError('name')"
+                  placeholder="أدخل اسم المتجر"
+                  required
+                />
+                <div
+                  class="invalid-feedback"
+                  v-if="hasFieldError('name') && !formDataupdate.name"
+                >
+                  {{ getFieldError("name") }}
                 </div>
               </div>
-              <div class="col-md-6 mb-2">
-                <div class="mt-1">
-                  <label class="form-label"> الجوال </label>
-                  <input
-                    type="text"
-                    class="form-control"
-                    :class="{ 'is-invalid': hasFieldError('store_phone') }"
-                    v-model="formDataupdate.store_phone"
-                    @input="clearFieldError('store_phone')"
-                  />
-                  <div
-                    class="invalid-feedback"
-                    v-if="hasFieldError('store_phone')"
-                  >
-                    {{ getFieldError("store_phone") }}
-                  </div>
+
+              <!-- Store Phone -->
+              <div class="col-md-6 mb-3">
+                <label class="form-label required">
+                  الجوال <span class="text-danger">*</span>
+                </label>
+                <input
+                  type="tel"
+                  class="form-control"
+                  :class="{
+                    'is-invalid':
+                      hasFieldError('store_phone') &&
+                      !formDataupdate.store_phone,
+                    'is-valid':
+                      !hasFieldError('store_phone') &&
+                      formDataupdate.store_phone,
+                  }"
+                  v-model="formDataupdate.store_phone"
+                  @input="clearFieldError('store_phone')"
+                  @blur="clearFieldError('store_phone')"
+                  placeholder="أدخل رقم الجوال"
+                  required
+                />
+                <div
+                  class="invalid-feedback"
+                  v-if="
+                    hasFieldError('store_phone') && !formDataupdate.store_phone
+                  "
+                >
+                  {{ getFieldError("store_phone") }}
                 </div>
               </div>
+
+              <!-- Store Image -->
               <div class="col-12 mb-3">
                 <label class="form-label">الصوره</label>
                 <div class="pos-relative overflow-hidden file-upload-container">
                   <input
                     type="file"
                     @change="editFileSelected"
-                    accept=".pdf, image/jpeg, image/png"
+                    accept="image/jpeg, image/jpg, image/png"
                     class="form-control"
-                    :class="{ 'is-invalid': hasFieldError('image') }"
+                    :class="{
+                      'is-invalid':
+                        hasFieldError('image') && !formDataupdate.image,
+                    }"
                   />
-                  <div class="invalid-feedback" v-if="hasFieldError('image')">
+                  <div
+                    class="invalid-feedback"
+                    v-if="hasFieldError('image') && !formDataupdate.image"
+                  >
                     {{ getFieldError("image") }}
                   </div>
                 </div>
+                <small class="form-text text-muted">
+                  أنواع الملفات المدعومة: JPG, PNG. الحد الأقصى لحجم الملف: 5
+                  ميجابايت
+                </small>
                 <div class="preview-image mt-3" v-if="imageUrl">
-                  <img :src="imageUrl" alt="صورة" class="rounded" />
+                  <div class="position-relative d-inline-block">
+                    <img :src="imageUrl" alt="صورة" class="rounded" />
+                    <button
+                      type="button"
+                      class="btn btn-danger btn-sm position-absolute top-0 end-0"
+                      style="
+                        transform: translate(50%, -50%);
+                        width: 25px;
+                        height: 25px;
+                        padding: 0;
+                        border-radius: 50%;
+                      "
+                      @click="removeImage"
+                      title="حذف الصورة"
+                    >
+                      <i class="fe fe-x" style="font-size: 12px"></i>
+                    </button>
+                  </div>
                 </div>
               </div>
+
+              <!-- Store Video -->
               <div class="col-12 mb-3">
                 <label class="form-label">فيديو</label>
                 <div class="pos-relative overflow-hidden">
                   <input
                     type="file"
                     @change="editFilevideo"
-                    accept=".mp4,.mov, .webm"
+                    accept="video/mp4, video/mov, video/webm"
                     class="form-control"
-                    :class="{ 'is-invalid': hasFieldError('video') }"
+                    :class="{
+                      'is-invalid':
+                        hasFieldError('video') && !formDataupdate.video,
+                    }"
                   />
-                  <div class="invalid-feedback" v-if="hasFieldError('video')">
+                  <div
+                    class="invalid-feedback"
+                    v-if="hasFieldError('video') && !formDataupdate.video"
+                  >
                     {{ getFieldError("video") }}
                   </div>
                 </div>
+                <small class="form-text text-muted">
+                  أنواع الملفات المدعومة: MP4, MOV, WEBM. الحد الأقصى لحجم
+                  الملف: 10 ميجابايت
+                </small>
 
-                <video
-                  :src="videoUrl"
-                  controls
-                  style="width: 100%; height: 180px"
-                  class="mt-2 rounded"
-                  v-if="videoUrl"
-                ></video>
+                <div v-if="videoUrl" class="mt-3 position-relative">
+                  <video
+                    :src="videoUrl"
+                    controls
+                    style="width: 100%; height: 180px"
+                    class="rounded"
+                  ></video>
+                  <button
+                    type="button"
+                    class="btn btn-danger btn-sm position-absolute"
+                    style="
+                      top: 10px;
+                      right: 10px;
+                      width: 30px;
+                      height: 30px;
+                      padding: 0;
+                      border-radius: 50%;
+                    "
+                    @click="removeVideo"
+                    title="حذف الفيديو"
+                  >
+                    <i class="fe fe-x" style="font-size: 14px"></i>
+                  </button>
+                </div>
               </div>
+
+              <!-- Country Selection -->
               <div class="col-12 mb-3">
-                <label class="form-label"> البلد </label>
-                <Multiselect
-                  label="name"
-                  :searchable="true"
-                  :options="SelectOptions"
-                  placeholder="اختر البلد"
-                  v-model="formDataupdate.country_id"
-                  @change="changecountry"
-                  :class="{ 'is-invalid': hasFieldError('country_id') }"
-                />
+                <label class="form-label required">
+                  البلد <span class="text-danger">*</span>
+                </label>
                 <div
-                  class="invalid-feedback d-block"
-                  v-if="hasFieldError('country_id')"
+                  :class="{
+                    'border border-danger rounded':
+                      hasFieldError('country_id') && !formDataupdate.country_id,
+                  }"
+                >
+                  <Multiselect
+                    label="name"
+                    :searchable="true"
+                    :options="SelectOptions"
+                    placeholder="اختر البلد"
+                    v-model="formDataupdate.country_id"
+                    @change="changecountry"
+                    @select="clearFieldError('country_id')"
+                  />
+                </div>
+                <div
+                  class="text-danger small mt-1"
+                  v-if="
+                    hasFieldError('country_id') && !formDataupdate.country_id
+                  "
                 >
                   {{ getFieldError("country_id") }}
                 </div>
               </div>
+
+              <!-- Region Selection -->
               <div class="col-md-6 mb-3">
-                <label class="form-label"> الاقليم </label>
-                <Multiselect
-                  label="name"
-                  :searchable="true"
-                  :options="regions"
-                  placeholder="اختر الاقليم "
-                  v-model="formDataupdate.region_id"
-                  @change="changecities($event, regions)"
-                  :class="{ 'is-invalid': hasFieldError('region_id') }"
-                />
+                <label class="form-label required">
+                  الاقليم <span class="text-danger">*</span>
+                </label>
                 <div
-                  class="invalid-feedback d-block"
-                  v-if="hasFieldError('region_id')"
+                  :class="{
+                    'border border-danger rounded':
+                      hasFieldError('region_id') && !formDataupdate.region_id,
+                  }"
+                >
+                  <Multiselect
+                    label="name"
+                    :searchable="true"
+                    :options="regions"
+                    placeholder="اختر الاقليم"
+                    v-model="formDataupdate.region_id"
+                    @change="changecities($event, regions)"
+                    @select="clearFieldError('region_id')"
+                    :disabled="!formDataupdate.country_id"
+                  />
+                </div>
+                <div
+                  class="text-danger small mt-1"
+                  v-if="hasFieldError('region_id') && !formDataupdate.region_id"
                 >
                   {{ getFieldError("region_id") }}
                 </div>
               </div>
+
+              <!-- City Selection -->
               <div class="col-md-6 mb-3">
-                <label class="form-label"> المدينة </label>
-                <Multiselect
-                  label="name"
-                  :searchable="true"
-                  :options="cities"
-                  placeholder="اختر المدينة "
-                  v-model="formDataupdate.city_id"
-                  @change="district($event, cities)"
-                  :class="{ 'is-invalid': hasFieldError('city_id') }"
-                />
+                <label class="form-label required">
+                  المدينة <span class="text-danger">*</span>
+                </label>
                 <div
-                  class="invalid-feedback d-block"
-                  v-if="hasFieldError('city_id')"
+                  :class="{
+                    'border border-danger rounded':
+                      hasFieldError('city_id') && !formDataupdate.city_id,
+                  }"
+                >
+                  <Multiselect
+                    label="name"
+                    :searchable="true"
+                    :options="cities"
+                    placeholder="اختر المدينة"
+                    v-model="formDataupdate.city_id"
+                    @change="district($event, cities)"
+                    @select="clearFieldError('city_id')"
+                    :disabled="!formDataupdate.region_id"
+                  />
+                </div>
+                <div
+                  class="text-danger small mt-1"
+                  v-if="hasFieldError('city_id') && !formDataupdate.city_id"
                 >
                   {{ getFieldError("city_id") }}
                 </div>
               </div>
+
+              <!-- District Selection -->
               <div class="col-md-6 mb-3">
-                <label class="form-label"> المنطقة </label>
-                <Multiselect
-                  label="name"
-                  :searchable="true"
-                  :options="districta"
-                  placeholder="اختر المنطقة "
-                  v-model="formDataupdate.district_id"
-                  :class="{ 'is-invalid': hasFieldError('district_id') }"
-                />
+                <label class="form-label required">
+                  المنطقة <span class="text-danger">*</span>
+                </label>
                 <div
-                  class="invalid-feedback d-block"
-                  v-if="hasFieldError('district_id')"
+                  :class="{
+                    'border border-danger rounded':
+                      hasFieldError('district_id') &&
+                      !formDataupdate.district_id,
+                  }"
+                >
+                  <Multiselect
+                    label="name"
+                    :searchable="true"
+                    :options="districta"
+                    placeholder="اختر المنطقة"
+                    v-model="formDataupdate.district_id"
+                    @select="clearFieldError('district_id')"
+                    :disabled="!formDataupdate.city_id"
+                  />
+                </div>
+                <div
+                  class="text-danger small mt-1"
+                  v-if="
+                    hasFieldError('district_id') && !formDataupdate.district_id
+                  "
                 >
                   {{ getFieldError("district_id") }}
                 </div>
               </div>
             </div>
+
+            <!-- Form Validation Summary -->
+            <div v-if="!isFormValid" class="alert alert-warning mb-3">
+              <small>
+                <i class="fe fe-info"></i>
+                يرجى ملء جميع الحقول المطلوبة المميزة بعلامة النجمة (*) قبل
+                الحفظ
+              </small>
+            </div>
+
+            <!-- Submit Button -->
             <div class="text-center mt-4">
+              <button
+                type="button"
+                class="btn btn-secondary me-2"
+                @click="cancelEdit"
+                :disabled="isSubmitting"
+              >
+                إلغاء
+              </button>
               <button
                 class="btn btn-primary px-4"
                 type="submit"
-                :disabled="isSubmitting"
+                :disabled="isSubmitting || !isFormValid"
               >
                 <span
                   v-if="isSubmitting"
@@ -281,7 +439,13 @@
                   role="status"
                   aria-hidden="true"
                 ></span>
-                {{ isSubmitting ? "جاري التحديث..." : "تعديل" }}
+                {{
+                  isSubmitting
+                    ? "جاري التحديث..."
+                    : isEditMode
+                    ? "تعديل"
+                    : "إضافة"
+                }}
               </button>
             </div>
           </form>
@@ -304,12 +468,45 @@ export default {
     Multiselect,
   },
   mixins: [FormErrorMixin],
+
   data() {
     return {
       errormessage: "",
       id: null,
       ShowModeledit: false,
+      isEditMode: false,
       myList: {},
+
+      // ✅ Form validation rules
+      formValidationRules: {
+        name: {
+          required: true,
+          label: "اسم المتجر",
+          minLength: 2,
+        },
+        store_phone: {
+          required: true,
+          label: "جوال المتجر",
+          minLength: 10,
+        },
+        country_id: {
+          required: true,
+          label: "البلد",
+        },
+        region_id: {
+          required: true,
+          label: "الاقليم",
+        },
+        city_id: {
+          required: true,
+          label: "المدينة",
+        },
+        district_id: {
+          required: true,
+          label: "المنطقة",
+        },
+      },
+
       formDataupdate: {
         name: "",
         store_phone: "",
@@ -322,6 +519,7 @@ export default {
         brands_ids: [],
         categories_ids: [],
       },
+
       isSubmitting: false,
       loading: false,
       regions: [],
@@ -332,7 +530,8 @@ export default {
       imageUrl: "",
       videoUrl: "",
       showVideo: false,
-      // Fields to watch for clearing errors
+
+      // ✅ Fields to watch for clearing errors
       watchedFields: [
         "formDataupdate.name",
         "formDataupdate.store_phone",
@@ -343,146 +542,366 @@ export default {
       ],
     };
   },
+
+  computed: {
+    // ✅ Check if there are any errors
+    hasAnyErrors() {
+      return Object.keys(this.fieldErrors).length > 0;
+    },
+
+    // ✅ Check if form is valid for submission
+    isFormValid() {
+      return this.formDataupdate.name &&
+        this.formDataupdate.store_phone &&
+        this.formDataupdate.country_id &&
+        this.formDataupdate.region_id &&
+        this.formDataupdate.city_id &&
+        this.formDataupdate.district_id
+        ? true
+        : false;
+    },
+  },
+
   methods: {
+    // ✅ Open add modal
+    openAddModal() {
+      this.clearAllErrors();
+      this.isEditMode = false;
+      this.resetForm();
+      this.ShowModeledit = true;
+    },
+
+    // ✅ Enhanced edit method with error clearing
     async edit(data) {
       this.clearAllErrors(); // Clear previous errors when opening modal
+      this.isEditMode = true;
       this.ShowModeledit = true;
       this.id = data.id;
-      this.formDataupdate.name = data.name;
-      this.formDataupdate.store_phone = data.phone;
-      this.formDataupdate.country_id = 1;
-      this.formDataupdate.region_id = data.region_id;
-      this.formDataupdate.city_id = data.city_id;
-      this.formDataupdate.district_id = data.district_id;
-      // data.categories.forEach(element => {
-      //   this.formDataupdate.categories_ids.push(element.id)
-      //           });
-      //  data.brands.forEach(element => {
-      //   this.formDataupdate.brands_ids.push(element.id)
-      //       })
-      this.imageUrl = data.image;
-      this.videoUrl = data.video;
+
+      // Populate form data
+      this.formDataupdate.name = data.name || "";
+      this.formDataupdate.store_phone = data.phone || "";
+      this.formDataupdate.country_id = data.country_id || 1;
+      this.formDataupdate.region_id = data.region_id || "";
+      this.formDataupdate.city_id = data.city_id || "";
+      this.formDataupdate.district_id = data.district_id || "";
+
+      this.imageUrl = data.image || "";
+      this.videoUrl = data.video || "";
+
+      // Load dependent data if IDs exist
+      if (this.formDataupdate.country_id) {
+        await this.changecountry();
+      }
+      if (this.formDataupdate.region_id) {
+        await this.changecities(this.formDataupdate.region_id, this.regions);
+      }
+      if (this.formDataupdate.city_id) {
+        await this.district(this.formDataupdate.city_id, this.cities);
+      }
     },
 
-    validateFormData() {
-      // Basic form validation
-      return this.validateForm({
-        name: { required: true, label: "اسم المتجر" },
-        store_phone: { required: true, label: "جوال المتجر" },
-        country_id: { required: true, label: "البلد" },
-        region_id: { required: true, label: "الاقليم" },
-        city_id: { required: true, label: "المدينة" },
-        district_id: { required: true, label: "المنطقة" },
-      });
+    // ✅ Cancel edit operation
+    cancelEdit() {
+      this.ShowModeledit = false;
+      this.clearAllErrors();
+      this.resetForm();
     },
 
+    // ✅ Handle modal hidden event
+    onModalHidden() {
+      this.clearAllErrors();
+      this.resetForm();
+    },
+
+    // ✅ Reset form to initial state
+    resetForm() {
+      this.formDataupdate = {
+        name: "",
+        store_phone: "",
+        image: "",
+        video: "",
+        country_id: "",
+        region_id: "",
+        city_id: "",
+        district_id: "",
+        brands_ids: [],
+        categories_ids: [],
+      };
+      this.imageUrl = "";
+      this.videoUrl = "";
+      this.regions = [];
+      this.cities = [];
+      this.districta = [];
+    },
+
+    // ✅ Remove image
+    removeImage() {
+      this.imageUrl = "";
+      this.formDataupdate.image = "";
+      this.clearFieldError("image");
+    },
+
+    // ✅ Remove video
+    removeVideo() {
+      this.videoUrl = "";
+      this.formDataupdate.video = "";
+      this.clearFieldError("video");
+    },
+
+    // ✅ Enhanced update method with proper error handling
     async update() {
       const toast = useToast();
+
+      // Clear previous errors
+      this.clearAllErrors();
+
       this.isSubmitting = true;
 
       try {
-        const res = await crudDataService.create(
-          `store?_method=put`,
-          this.formDataupdate,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          }
-        );
+        const formData = new FormData();
 
-        this.stores();
-        this.ShowModeledit = false;
-        toast.success(res.data.message, {
-          position: "top-center",
-          timeout: 5000,
+        // Append basic fields
+        formData.append("name", this.formDataupdate.name);
+        formData.append("store_phone", this.formDataupdate.store_phone);
+        formData.append("country_id", this.formDataupdate.country_id);
+        formData.append("region_id", this.formDataupdate.region_id);
+        formData.append("city_id", this.formDataupdate.city_id);
+        formData.append("district_id", this.formDataupdate.district_id);
+
+        // Append files if they exist
+        if (this.formDataupdate.image instanceof File) {
+          formData.append("image", this.formDataupdate.image);
+        }
+        if (this.formDataupdate.video instanceof File) {
+          formData.append("video", this.formDataupdate.video);
+        }
+
+        // Append arrays
+        if (this.formDataupdate.brands_ids.length > 0) {
+          this.formDataupdate.brands_ids.forEach((id, index) => {
+            formData.append(`brands_ids[${index}]`, id);
+          });
+        }
+        if (this.formDataupdate.categories_ids.length > 0) {
+          this.formDataupdate.categories_ids.forEach((id, index) => {
+            formData.append(`categories_ids[${index}]`, id);
+          });
+        }
+
+        const endpoint = this.isEditMode ? `store?_method=put` : "store";
+        const res = await crudDataService.create(endpoint, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
         });
+
+        if (res.data.status) {
+          toast.success(
+            res.data.message ||
+              (this.isEditMode
+                ? "تم تحديث المتجر بنجاح"
+                : "تم إضافة المتجر بنجاح"),
+            {
+              position: "top-right",
+              timeout: 5000,
+            }
+          );
+
+          this.stores();
+          this.ShowModeledit = false;
+          this.resetForm();
+        }
       } catch (error) {
+        console.error("Store update/create error:", error);
         this.handleApiErrors(error, toast);
       } finally {
         this.isSubmitting = false;
       }
     },
-    async country() {
-      const result = await axios.get("https://mall.alharazy.com/api/countries");
-      this.countries = result.data.data;
-      this.SelectOptions = this.countries.map((country) => ({
-        value: country.id,
-        name: country.name,
-      }));
-    },
-    changecountry() {
-      this.countries.find((country) => {
-        this.regions = country.regions.map((reg) => ({
-          value: reg.id,
-          name: reg.name,
-          cities: reg.cities,
-        }));
-      });
-      this.changecities();
-      this.clearFieldError("country_id");
-    },
-    changecities(events, regions) {
-      this.regions.forEach((ele) => {
-        if (
-          events === ele.value ||
-          this.formDataupdate.region_id === ele.value
-        ) {
-          this.cities = ele.cities.map((city) => ({
-            value: city.id,
-            name: city.name,
-            districts: city.districts,
-          }));
-        }
-      });
-      this.district();
-      this.clearFieldError("region_id");
-    },
-    district(events, dis) {
-      this.cities.forEach((ele) => {
-        if (events === ele.value || this.formDataupdate.city_id === ele.value) {
-          this.districta = ele.districts.map((dist) => ({
-            value: dist.id,
-            name: dist.name,
-          }));
-        }
-      });
-      this.clearFieldError("city_id");
-    },
+
+    // ✅ Enhanced file handlers with validation
     editFileSelected(event) {
-      this.formDataupdate.image = event.target.files[0];
+      this.clearFieldError("image");
+
+      const file = event.target.files[0];
+      if (!file) return;
+
+      // Validate file size (5MB)
+      const maxSize = 5 * 1024 * 1024;
+      if (file.size > maxSize) {
+        const toast = useToast();
+        toast.error("حجم الصورة كبير جداً. الحد الأقصى 5 ميجابايت", {
+          position: "top-right",
+          timeout: 5000,
+        });
+        return;
+      }
+
+      // Validate file type
+      const allowedTypes = ["image/jpeg", "image/jpg", "image/png"];
+      if (!allowedTypes.includes(file.type)) {
+        const toast = useToast();
+        toast.error("نوع الملف غير مدعوم. الأنواع المدعومة: JPG, PNG", {
+          position: "top-right",
+          timeout: 5000,
+        });
+        return;
+      }
+
+      this.formDataupdate.image = file;
       const reader = new FileReader();
       reader.onload = () => {
         this.imageUrl = reader.result;
       };
-      reader.readAsDataURL(this.formDataupdate.image);
-      this.clearFieldError("image");
+      reader.readAsDataURL(file);
     },
+
     editFilevideo(event) {
-      this.formDataupdate.video = event.target.files[0];
+      this.clearFieldError("video");
+
+      const file = event.target.files[0];
+      if (!file) return;
+
+      // Validate file size (10MB)
+      const maxSize = 10 * 1024 * 1024;
+      if (file.size > maxSize) {
+        const toast = useToast();
+        toast.error("حجم الفيديو كبير جداً. الحد الأقصى 10 ميجابايت", {
+          position: "top-right",
+          timeout: 5000,
+        });
+        return;
+      }
+
+      // Validate file type
+      const allowedTypes = ["video/mp4", "video/mov", "video/webm"];
+      if (!allowedTypes.includes(file.type)) {
+        const toast = useToast();
+        toast.error("نوع الملف غير مدعوم. الأنواع المدعومة: MP4, MOV, WEBM", {
+          position: "top-right",
+          timeout: 5000,
+        });
+        return;
+      }
+
+      this.formDataupdate.video = file;
       const reader = new FileReader();
       reader.onload = () => {
         this.videoUrl = reader.result;
       };
-      reader.readAsDataURL(this.formDataupdate.video);
-      this.clearFieldError("video");
+      reader.readAsDataURL(file);
+    },
+
+    async country() {
+      try {
+        const result = await axios.get(
+          "https://mall.alharazy.com/api/countries"
+        );
+        this.countries = result.data.data;
+        this.SelectOptions = this.countries.map((country) => ({
+          value: country.id,
+          name: country.name,
+        }));
+      } catch (error) {
+        console.error("Error fetching countries:", error);
+        const toast = useToast();
+        toast.error("خطأ في تحميل البلدان", {
+          position: "top-right",
+          timeout: 5000,
+        });
+      }
+    },
+
+    changecountry() {
+      this.clearFieldError("country_id");
+
+      const selectedCountry = this.countries.find(
+        (country) => country.id === this.formDataupdate.country_id
+      );
+
+      if (selectedCountry && selectedCountry.regions) {
+        this.regions = selectedCountry.regions.map((reg) => ({
+          value: reg.id,
+          name: reg.name,
+          cities: reg.cities,
+        }));
+      } else {
+        this.regions = [];
+      }
+
+      // Reset dependent fields
+      this.formDataupdate.region_id = "";
+      this.formDataupdate.city_id = "";
+      this.formDataupdate.district_id = "";
+      this.cities = [];
+      this.districta = [];
+    },
+
+    changecities(events, regions) {
+      this.clearFieldError("region_id");
+
+      const regionId = events || this.formDataupdate.region_id;
+      const selectedRegion = this.regions.find(
+        (region) => region.value === regionId
+      );
+
+      if (selectedRegion && selectedRegion.cities) {
+        this.cities = selectedRegion.cities.map((city) => ({
+          value: city.id,
+          name: city.name,
+          districts: city.districts,
+        }));
+      } else {
+        this.cities = [];
+      }
+
+      // Reset dependent fields
+      this.formDataupdate.city_id = "";
+      this.formDataupdate.district_id = "";
+      this.districta = [];
+    },
+
+    district(events, dis) {
+      this.clearFieldError("city_id");
+
+      const cityId = events || this.formDataupdate.city_id;
+      const selectedCity = this.cities.find((city) => city.value === cityId);
+
+      if (selectedCity && selectedCity.districts) {
+        this.districta = selectedCity.districts.map((dist) => ({
+          value: dist.id,
+          name: dist.name,
+        }));
+      } else {
+        this.districta = [];
+      }
+
+      // Reset dependent field
+      this.formDataupdate.district_id = "";
     },
 
     async stores() {
-      this.loading = true; // Start loading
+      this.loading = true;
       try {
         let res = await crudDataService.getAll("store");
         this.myList = res.data.data;
       } catch (error) {
-        console.error("Failed to fetch data:", error);
-        // Handle error
+        console.error("Failed to fetch store data:", error);
+        const toast = useToast();
+        toast.error("خطأ في تحميل بيانات المتجر", {
+          position: "top-right",
+          timeout: 5000,
+        });
       } finally {
-        this.loading = false; // End loading regardless of success or failure
+        this.loading = false;
       }
     },
+
     formatDate(date) {
       return moment(date).format("DD/MM/YYYY");
     },
+
     getFullAddress() {
       const parts = [];
       if (this.myList.district_name) parts.push(this.myList.district_name);
@@ -493,12 +912,14 @@ export default {
       return parts.length > 0 ? parts.join("، ") : "غير متوفر";
     },
   },
+
   mounted() {
     this.stores();
     this.country();
   },
+
   watch: {
-    // Reset errors when modal closes
+    // ✅ Reset errors when modal closes
     ShowModeledit(val) {
       if (!val) {
         this.clearAllErrors();
@@ -512,9 +933,11 @@ export default {
 .card {
   box-shadow: 0px 3px 3px 0px #e6edf0;
 }
+
 .list_item:not(:last-child) {
   border-bottom: 1px solid #e8e7ff;
 }
+
 .table-responsive .table > :not(caption) > * > * {
   border-bottom: 0px solid #e8e8f7 !important;
 }
@@ -522,6 +945,7 @@ export default {
 .tab-menu-heading {
   border: 1px solid #e8e8f7;
 }
+
 .tabs-style-3 .nav.panel-tabs li a {
   padding: 10px 18px 10px 18px;
   background: transparent;
@@ -536,6 +960,7 @@ export default {
 .preview-image {
   display: flex;
   justify-content: center;
+
   img {
     width: 180px;
     height: 180px;
@@ -551,6 +976,7 @@ export default {
 
 .store-header {
   margin-bottom: 1.5rem;
+
   .page-title {
     color: #1f2937;
     font-weight: 600;
@@ -644,6 +1070,7 @@ export default {
     }
   }
 }
+
 .dark-theme {
   .info-label {
     color: white;
@@ -687,6 +1114,88 @@ export default {
   }
 }
 
+.text-danger.small {
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-top: 0.25rem;
+  display: block;
+}
+
+.form-label.required {
+  position: relative;
+}
+
+.form-label .text-danger {
+  color: #dc3545 !important;
+  font-weight: bold;
+  margin-left: 2px;
+}
+
+.alert-danger {
+  color: #721c24;
+  background-color: #f8d7da;
+  border-color: #f5c6cb;
+  border-radius: 0.375rem;
+  padding: 0.75rem 1.25rem;
+  margin-bottom: 1rem;
+  border: 1px solid transparent;
+}
+
+.alert-danger ul {
+  margin-bottom: 0;
+  padding-left: 1.25rem;
+}
+
+.alert-warning {
+  color: #856404;
+  background-color: #fff3cd;
+  border-color: #ffecb5;
+  border-radius: 0.375rem;
+  padding: 0.75rem 1.25rem;
+  margin-bottom: 1rem;
+  border: 1px solid transparent;
+}
+
+.border-danger {
+  border-color: #dc3545 !important;
+}
+
+.spinner-border-sm {
+  width: 1rem;
+  height: 1rem;
+  border-width: 0.125rem;
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.position-relative {
+  position: relative;
+}
+
+.position-absolute {
+  position: absolute;
+}
+
+/* Animation for Error Display */
+.invalid-feedback,
+.text-danger.small {
+  animation: fadeInError 0.3s ease-in-out;
+}
+
+@keyframes fadeInError {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -695,16 +1204,56 @@ export default {
     opacity: 1;
   }
 }
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .store-info {
+    .info-row {
+      flex-direction: column;
+
+      .info-label {
+        flex: none;
+        margin-bottom: 4px;
+      }
+    }
+  }
+
+  .preview-image img {
+    width: 120px;
+    height: 120px;
+  }
+
+  .invalid-feedback,
+  .text-danger.small {
+    font-size: 0.8rem;
+  }
+
+  .alert-danger,
+  .alert-warning {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+  }
+
+  .btn {
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
+
+  .btn:last-child {
+    margin-bottom: 0;
+  }
+}
 </style>
+
 <style lang="scss">
-// Using global styles from style.scss instead of component-specific styles
+// Global styles
 video {
   width: 100%;
   border-radius: 4px;
   background-color: #f8f8f8;
 }
 
-// Multiselect enhancements
+// Multiselect enhancements with error states
 .multiselect {
   border-color: #e8e8f7 !important;
   min-height: 38px !important;
@@ -716,5 +1265,43 @@ video {
 
 .multiselect-option.is-selected {
   background-color: var(--primary-bg-color) !important;
+}
+
+// Disabled state for dependent selects
+.multiselect:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.multiselect:disabled .multiselect-wrapper {
+  background-color: #f8f9fa;
+  border-color: #e9ecef;
+}
+
+// Loading state
+.btn.loading {
+  position: relative;
+  color: transparent;
+}
+
+.btn.loading::after {
+  content: "";
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  top: 50%;
+  left: 50%;
+  margin-left: -8px;
+  margin-top: -8px;
+  border: 2px solid #ffffff;
+  border-radius: 50%;
+  border-top-color: transparent;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 </style>
