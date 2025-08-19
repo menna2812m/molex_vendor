@@ -76,24 +76,13 @@
               :key="index"
             >
               <div class="col-md-4 overflow-hidden">
-                <div
-                  class="d-flex justify-content-between py-2"
-                  style="width: max-content"
-                >
-                  <!-- <input
-                    type="checkbox"
-                    class="my-3 ms-0 me-2"
-                    @change="selectthis($event.target.checked, $event.target)"
-                  /> -->
-
-                  <vueper-slides fade>
-                    <vueper-slide
-                      v-for="img in item.images"
-                      :key="img.id"
-                      :image="img.path"
-                    />
-                  </vueper-slides>
-                </div>
+                <vueper-slides fade>
+                  <vueper-slide
+                    v-for="img in item.images"
+                    :key="img.id"
+                    :image="img.path"
+                  />
+                </vueper-slides>
               </div>
               <div class="col-md-6">
                 <div class="h-100 border rounded p-2">
@@ -295,215 +284,351 @@
         </div>
       </section>
     </div>
-    <teleport to="body">
-      <b-modal id="add" v-model="ShowModel" hide-footer>
-        <div class="imgtoadd">
-          <img src="../../assets/img/delet.png" alt="img2" />
-        </div>
-        <div class="mt-5">
-          <form @submit.prevent="add">
-            <h5 class="text-center pb-4">سيتم حذف المنتج نهائيا</h5>
-            <div class="text-center">
-              <button class="fs-15 btn-save mx-1">موافق</button>
-              <button class="fs-15 btn-cancel mx-1" @click="ShowModel = false">
-                الغاء
-              </button>
-            </div>
-          </form>
-        </div>
-      </b-modal>
-    </teleport>
+    <!-- Edit Product Modal with improved positioning -->
     <teleport to="body">
       <b-modal
-        id="add-page"
+        id="edit-product-modal"
         v-model="ShowModelEdit"
         hide-footer
-        class="edit"
-        title="تعديل منتج "
+        class="edit-modal"
+        title="تعديل منتج"
+        size="xl"
+        centered
+        scrollable
       >
-        <div class="row pos-relative" style="z-index: 5555">
-          <div class="col-lg-12">
+        <div class="modal-content-wrapper">
+          <form @submit.prevent="update" class="product-edit-form">
             <div class="row">
-              <div class="col-md-6 mt-1">
-                <label for=""> الإسم عربي </label>
+              <!-- Arabic Name -->
+              <div class="col-md-6 mb-3">
+                <label class="form-label required">الإسم عربي</label>
                 <input
                   type="text"
-                  placeholder=""
                   v-model="formData.name.ar"
                   class="form-control"
+                  :class="{ 'is-invalid': hasFieldError('name.ar') }"
+                  @input="clearFieldError('name.ar')"
+                  placeholder="أدخل اسم المنتج بالعربية"
                 />
+                <div v-if="hasFieldError('name.ar')" class="invalid-feedback">
+                  {{ getFieldError("name.ar") }}
+                </div>
               </div>
-              <div class="col-md-6 mt-1">
-                <label for="">الإسم انجليزي</label>
+
+              <!-- English Name -->
+              <div class="col-md-6 mb-3">
+                <label class="form-label required">الإسم انجليزي</label>
                 <input
                   type="text"
-                  placeholder=""
                   v-model="formData.name.en"
                   class="form-control"
+                  :class="{ 'is-invalid': hasFieldError('name.en') }"
+                  @input="clearFieldError('name.en')"
+                  placeholder="Enter product name in English"
                 />
+                <div v-if="hasFieldError('name.en')" class="invalid-feedback">
+                  {{ getFieldError("name.en") }}
+                </div>
               </div>
-              <div class="col-md-6 mt-1">
-                <label for="">الوصف عربي</label>
+
+              <!-- Arabic Description -->
+              <div class="col-md-6 mb-3">
+                <label class="form-label">الوصف عربي</label>
                 <ckeditor
                   :editor="editor"
                   v-model="formData.description.ar"
-                  :editorConfigs="editorConfigs"
-                ></ckeditor>
+                  :config="editorConfigs"
+                  :class="{ 'is-invalid': hasFieldError('description.ar') }"
+                  @ready="clearFieldError('description.ar')"
+                />
+                <div
+                  v-if="hasFieldError('description.ar')"
+                  class="invalid-feedback d-block"
+                >
+                  {{ getFieldError("description.ar") }}
+                </div>
               </div>
-              <div class="col-md-6 mt-1">
-                <label for="">الوصف انجليزي</label>
+
+              <!-- English Description -->
+              <div class="col-md-6 mb-3">
+                <label class="form-label">الوصف انجليزي</label>
                 <ckeditor
                   :editor="editor"
                   v-model="formData.description.en"
-                  :editorConfigs="editorConfigs"
-                ></ckeditor>
+                  :config="editorConfigs"
+                  :class="{ 'is-invalid': hasFieldError('description.en') }"
+                  @ready="clearFieldError('description.en')"
+                />
+                <div
+                  v-if="hasFieldError('description.en')"
+                  class="invalid-feedback d-block"
+                >
+                  {{ getFieldError("description.en") }}
+                </div>
               </div>
-              <div class="col-md-6 mt-1">
-                <label for=""> اختر العلامة التجارية </label>
+
+              <!-- Brand Selection -->
+              <div class="col-md-6 mb-3">
+                <label class="form-label">اختر العلامة التجارية</label>
                 <Multiselect
                   label="name"
                   :searchable="true"
                   :options="Selectbrand"
                   placeholder="اختر العلامة التجارية"
                   v-model="formData.brand_id"
+                  :class="{ 'is-invalid': hasFieldError('brand_id') }"
+                  @change="clearFieldError('brand_id')"
                 />
+                <div
+                  v-if="hasFieldError('brand_id')"
+                  class="invalid-feedback d-block"
+                >
+                  {{ getFieldError("brand_id") }}
+                </div>
               </div>
-              <div class="col-md-6 mt-1">
-                <label for=""> اختر القسم </label>
+
+              <!-- Categories Selection -->
+              <div class="col-md-6 mb-3">
+                <label class="form-label">اختر القسم</label>
                 <Multiselect
                   label="name"
                   :searchable="true"
                   :options="Selectcategories"
-                  placeholder="اختر القسم "
+                  placeholder="اختر القسم"
                   v-model="formData.categories_ids"
                   mode="tags"
                   :close-on-select="false"
                   group-values="options"
                   group-label="name"
-                  class="itteemm"
+                  :class="{ 'is-invalid': hasFieldError('categories_ids') }"
+                  @change="clearFieldError('categories_ids')"
                 >
                   <template v-slot:option="{ option }">
-                    <!-- Check if the option is a main category or a sub-category -->
                     <div
                       :style="getOptionStyle(option)"
-                      style="
-                        padding: 10px;
-                        width: 100%;
-                        text-align: right;
-                        margin-bottom: 2px;
-                      "
+                      class="multiselect-option"
                     >
                       {{ option.name }}
                     </div>
                   </template>
                 </Multiselect>
+                <div
+                  v-if="hasFieldError('categories_ids')"
+                  class="invalid-feedback d-block"
+                >
+                  {{ getFieldError("categories_ids") }}
+                </div>
               </div>
-              <div class="col-md-6 mt-1">
-                <label for=""> السعر الأساسي</label>
+
+              <!-- Base Price -->
+              <div class="col-md-6 mb-3">
+                <label class="form-label required">السعر الأساسي</label>
                 <input
-                  type="text"
-                  placeholder=""
+                  type="number"
+                  step="0.01"
+                  min="0"
                   v-model="formData.base_price"
                   class="form-control"
+                  :class="{ 'is-invalid': hasFieldError('base_price') }"
+                  @input="clearFieldError('base_price')"
+                  placeholder="0.00"
                 />
+                <div
+                  v-if="hasFieldError('base_price')"
+                  class="invalid-feedback"
+                >
+                  {{ getFieldError("base_price") }}
+                </div>
               </div>
-              <div class="col-md-6 mt-1">
-                <label for=""> لينك seo </label>
+
+              <!-- SEO URL -->
+              <div class="col-md-6 mb-3">
+                <label class="form-label">لينك SEO</label>
                 <input
                   type="text"
-                  placeholder=""
                   v-model="formData.seo_url"
                   class="form-control"
+                  :class="{ 'is-invalid': hasFieldError('seo_url') }"
+                  @input="clearFieldError('seo_url')"
+                  placeholder="product-url-slug"
                 />
+                <div v-if="hasFieldError('seo_url')" class="invalid-feedback">
+                  {{ getFieldError("seo_url") }}
+                </div>
               </div>
-              <div class="col-md-6 mt-1">
-                <label for=""> عنوان seo </label>
+
+              <!-- SEO Title -->
+              <div class="col-md-6 mb-3">
+                <label class="form-label">عنوان SEO</label>
                 <input
                   type="text"
-                  placeholder=""
                   v-model="formData.seo_title"
                   class="form-control"
+                  :class="{ 'is-invalid': hasFieldError('seo_title') }"
+                  @input="clearFieldError('seo_title')"
+                  placeholder="عنوان محسن لمحركات البحث"
                 />
+                <div v-if="hasFieldError('seo_title')" class="invalid-feedback">
+                  {{ getFieldError("seo_title") }}
+                </div>
               </div>
-              <div class="col-md-6 mt-1">
-                <label for=""> وصف seo </label>
+
+              <!-- SEO Description -->
+              <div class="col-md-6 mb-3">
+                <label class="form-label">وصف SEO</label>
                 <input
                   type="text"
-                  placeholder=""
                   v-model="formData.seo_description"
                   class="form-control"
+                  :class="{ 'is-invalid': hasFieldError('seo_description') }"
+                  @input="clearFieldError('seo_description')"
+                  placeholder="وصف محسن لمحركات البحث"
                 />
+                <div
+                  v-if="hasFieldError('seo_description')"
+                  class="invalid-feedback"
+                >
+                  {{ getFieldError("seo_description") }}
+                </div>
               </div>
-              <div class="col-md-6 mt-1">
-                <label for=""> باركود </label>
+
+              <!-- Barcode -->
+              <div class="col-md-6 mb-3">
+                <label class="form-label">باركود</label>
                 <input
                   type="text"
-                  placeholder=""
                   v-model="formData.barcode"
                   class="form-control"
+                  :class="{ 'is-invalid': hasFieldError('barcode') }"
+                  @input="clearFieldError('barcode')"
+                  placeholder="رقم الباركود"
                 />
+                <div v-if="hasFieldError('barcode')" class="invalid-feedback">
+                  {{ getFieldError("barcode") }}
+                </div>
               </div>
-              <div class="col-md-6 mt-1">
-                <label for=""> كمية </label>
+
+              <!-- Quantity -->
+              <div class="col-md-6 mb-3">
+                <label class="form-label">كمية</label>
                 <input
-                  type="text"
-                  placeholder=""
+                  type="number"
+                  min="0"
                   v-model="formData.quantity"
                   class="form-control"
+                  :class="{ 'is-invalid': hasFieldError('quantity') }"
+                  @input="clearFieldError('quantity')"
+                  placeholder="0"
                 />
+                <div v-if="hasFieldError('quantity')" class="invalid-feedback">
+                  {{ getFieldError("quantity") }}
+                </div>
               </div>
-              <div class="col-md-6 mt-1">
-                <label for=""> السعر </label>
+
+              <!-- Price -->
+              <div class="col-md-6 mb-3">
+                <label class="form-label">السعر</label>
                 <input
-                  type="text"
-                  placeholder=""
+                  type="number"
+                  step="0.01"
+                  min="0"
                   v-model="formData.price"
                   class="form-control"
+                  :class="{ 'is-invalid': hasFieldError('price') }"
+                  @input="clearFieldError('price')"
+                  placeholder="0.00"
                 />
+                <div v-if="hasFieldError('price')" class="invalid-feedback">
+                  {{ getFieldError("price") }}
+                </div>
               </div>
-              <div class="col-md-6 mt-1">
-                <label for=""> سعر الكلفة </label>
+
+              <!-- Cost Price -->
+              <div class="col-md-6 mb-3">
+                <label class="form-label">سعر الكلفة</label>
                 <input
-                  type="text"
-                  placeholder=""
+                  type="number"
+                  step="0.01"
+                  min="0"
                   v-model="formData.cost_price"
                   class="form-control"
+                  :class="{ 'is-invalid': hasFieldError('cost_price') }"
+                  @input="clearFieldError('cost_price')"
+                  placeholder="0.00"
                 />
+                <div
+                  v-if="hasFieldError('cost_price')"
+                  class="invalid-feedback"
+                >
+                  {{ getFieldError("cost_price") }}
+                </div>
               </div>
-              <div class="col-md-6 mt-1">
-                <label for=""> السعر بعد الخصم</label>
+
+              <!-- Discounted Price -->
+              <div class="col-md-6 mb-3">
+                <label class="form-label">السعر بعد الخصم</label>
                 <input
-                  type="text"
-                  placeholder=""
+                  type="number"
+                  step="0.01"
+                  min="0"
                   v-model="formData.discounted_price"
                   class="form-control"
+                  :class="{ 'is-invalid': hasFieldError('discounted_price') }"
+                  @input="clearFieldError('discounted_price')"
+                  placeholder="0.00"
                 />
+                <div
+                  v-if="hasFieldError('discounted_price')"
+                  class="invalid-feedback"
+                >
+                  {{ getFieldError("discounted_price") }}
+                </div>
               </div>
-              <div class="col-md-6 mt-1">
-                <label for=""> تاريخ انتهاء الخصم </label>
+
+              <!-- Discount End Date -->
+              <div class="col-md-6 mb-3">
+                <label class="form-label">تاريخ انتهاء الخصم</label>
                 <input
                   type="date"
-                  placeholder=""
                   v-model="formData.discount_end_date"
                   class="form-control"
+                  :class="{ 'is-invalid': hasFieldError('discount_end_date') }"
+                  @input="clearFieldError('discount_end_date')"
                 />
+                <div
+                  v-if="hasFieldError('discount_end_date')"
+                  class="invalid-feedback"
+                >
+                  {{ getFieldError("discount_end_date") }}
+                </div>
               </div>
-              <div class="col-md-12 mt-3">
-                <label for="">الصوره</label>
-                <div class="form-group">
-                  <input
-                    type="file"
-                    @change="handleFileChange"
-                    accept="image/jpg, image/jpeg, image/png, video/mp4,video/mov"
-                    class="form-control"
-                    multiple
-                  />
-                  <div class="d-flex flex-wrap mt-2">
-                    <!-- Preview for Images -->
+
+              <!-- Images Upload -->
+              <div class="col-12 mb-3">
+                <label class="form-label">الصور والفيديوهات</label>
+                <input
+                  type="file"
+                  @change="handleFileChange"
+                  accept="image/jpg, image/jpeg, image/png, video/mp4,video/mov"
+                  class="form-control"
+                  :class="{ 'is-invalid': hasFieldError('images') }"
+                  multiple
+                />
+                <div v-if="hasFieldError('images')" class="invalid-feedback">
+                  {{ getFieldError("images") }}
+                </div>
+
+                <!-- Media Preview -->
+                <div
+                  class="media-preview mt-3"
+                  v-if="imageUrls.length || videoUrls.length"
+                >
+                  <div class="d-flex flex-wrap gap-3">
+                    <!-- Image Previews -->
                     <div
                       v-for="(file, index) in imageUrls"
                       :key="'image-' + index"
-                      class="pos-relative p-1"
+                      class="media-item"
                     >
                       <img
                         v-if="
@@ -511,56 +636,84 @@
                         "
                         :src="file.path"
                         alt="Image preview"
-                        style="width: 200px; height: 200px"
+                        class="preview-image"
                       />
-                      <i
-                        class="mdi mdi-close-circle-outline pos-absolute"
-                        style="top: 6px; right: 6px; cursor: pointer"
+                      <button
+                        type="button"
+                        class="btn-remove"
                         @click="removeMedia(file.id, index, 'image')"
-                      ></i>
+                        title="حذف الصورة"
+                      >
+                        <i class="mdi mdi-close"></i>
+                      </button>
                     </div>
 
-                    <!-- Preview for Videos -->
+                    <!-- Video Previews -->
                     <div
                       v-for="(file, index) in videoUrls"
                       :key="'video-' + index"
-                      class="pos-relative p-1"
+                      class="media-item"
                     >
                       <video
-                        width="200"
-                        height="200"
-                        controls
                         v-if="
                           file && file.type && file.type.startsWith('video')
                         "
+                        class="preview-video"
+                        controls
                       >
                         <source :src="file.path" :type="file.type" />
                       </video>
-                      <i
-                        class="mdi mdi-close-circle-outline pos-absolute"
-                        style="top: 6px; right: 6px; cursor: pointer"
+                      <button
+                        type="button"
+                        class="btn-remove"
                         @click="removeMedia(file.id, index, 'video')"
-                      ></i>
+                        title="حذف الفيديو"
+                      >
+                        <i class="mdi mdi-close"></i>
+                      </button>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
 
-            <button class="btn btn-primary m-auto d-block" @click="update">
-              تعديل
-            </button>
-          </div>
+            <!-- Modal Footer -->
+            <div class="modal-footer-custom">
+              <button
+                type="button"
+                class="btn btn-secondary me-2"
+                @click="cancelEdit"
+              >
+                إلغاء
+              </button>
+              <button
+                type="submit"
+                class="btn btn-primary"
+                :disabled="isUpdating"
+              >
+                <span
+                  v-if="isUpdating"
+                  class="spinner-border spinner-border-sm me-2"
+                ></span>
+                {{ isUpdating ? "جاري الحفظ..." : "حفظ التعديلات" }}
+              </button>
+            </div>
+          </form>
         </div>
       </b-modal>
     </teleport>
+
+    <!-- Product Options Modal with improved positioning -->
     <teleport to="body">
       <b-modal
-        id="add-page"
+        id="product-options-modal"
         v-model="addModel"
         hide-footer
-        class="edit"
-        title="  خيارات المنتج  "
+        class="options-modal"
+        title="خيارات المنتج"
+        size="lg"
+        centered
+        scrollable
       >
         <div class="mt-4">
           <div class="form-group">
@@ -919,6 +1072,43 @@
         </div>
       </b-modal>
     </teleport>
+
+    <!-- Delete Confirmation Modal -->
+    <teleport to="body">
+      <b-modal
+        id="delete-confirmation-modal"
+        v-model="ShowModel"
+        hide-footer
+        class="delete-modal"
+        centered
+      >
+        <div class="delete-modal-content">
+          <div class="delete-icon">
+            <img src="../../assets/img/delet.png" alt="Delete" />
+          </div>
+          <h5 class="text-center mb-4 mt-4">سيتم حذف المنتج نهائياً</h5>
+          <p class="text-center text-muted mb-4">
+            هذا الإجراء لا يمكن التراجع عنه
+          </p>
+          <div class="text-center">
+            <button
+              type="button"
+              class="btn btn-danger me-2"
+              @click="confirmDelete"
+            >
+              موافق
+            </button>
+            <button
+              type="button"
+              class="btn btn-secondary"
+              @click="ShowModel = false"
+            >
+              إلغاء
+            </button>
+          </div>
+        </div>
+      </b-modal>
+    </teleport>
   </div>
 </template>
 
@@ -932,7 +1122,11 @@ import "vueperslides/dist/vueperslides.css";
 import { VueperSlides, VueperSlide } from "vueperslides";
 import { reactive } from "vue";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
+import { FormErrorMixin } from "../../Shared/mixins/FormErrorMixin.js";
+
 export default {
+  name: "ProductList",
+  mixins: [FormErrorMixin],
   components: {
     Prouductdrop,
     Multiselect,
@@ -940,7 +1134,24 @@ export default {
     VueperSlide,
   },
   setup() {
-    const editorConfigs = reactive({});
+    const editorConfigs = reactive({
+      toolbar: [
+        "heading",
+        "|",
+        "bold",
+        "italic",
+        "link",
+        "bulletedList",
+        "numberedList",
+        "|",
+        "outdent",
+        "indent",
+        "|",
+        "blockQuote",
+        "undo",
+        "redo",
+      ],
+    });
     return { editor: ClassicEditor, editorConfigs };
   },
   data() {
@@ -1030,6 +1241,25 @@ export default {
       cardnew: false,
       cartdetail: false,
       valueoptionsec: [],
+      isUpdating: false,
+      watchedFields: [
+        "formData.name.ar",
+        "formData.name.en",
+        "formData.description.ar",
+        "formData.description.en",
+        "formData.base_price",
+        "formData.brand_id",
+        "formData.categories_ids",
+        "formData.seo_url",
+        "formData.seo_title",
+        "formData.seo_description",
+        "formData.barcode",
+        "formData.quantity",
+        "formData.price",
+        "formData.cost_price",
+        "formData.discounted_price",
+        "formData.discount_end_date",
+      ],
     };
   },
 
@@ -1328,93 +1558,65 @@ export default {
       this.items = res.data.data.data;
     },
     async edit(data) {
-      console.log(data);
+      this.clearAllErrors();
       this.id = data.id;
-      let res = await crudDataService.getAll(`products/${this.id}/variants`);
-      this.variant = res.data.data;
-      this.ShowModelEdit = true;
-      this.formData.name.ar = data.name.ar;
-      this.formData.name.en = data.name.en;
-      this.formData.description.ar = data.description.ar;
-      this.formData.description.en = data.description.en;
-      this.formData.brand_id = data.brand ? data.brand.id : "";
-      this.formData.description.en = data.description.en;
-      this.formData.barcode = data.barcode;
-      this.formData.base_price = data.base_price;
-      this.formData.seo_url = data.seo_url;
-      this.formData.seo_title = data.seo_title;
-      this.formData.seo_description = data.seo_description;
-      this.formData.quantity = data.quantity;
-      this.formData.price = data.price;
-      this.formData.cost_price = data.cost_price;
-      this.formData.discounted_price = data.discounted_price;
-      this.formData.discount_end_date = data.discount_end_date
-        ? moment(data.discount_end_date).format("YYYY-MM-DD")
-        : data.discount_end_date;
-      this.formData.categories_ids = Array.isArray(data.categories)
-        ? data.categories.map((category) => (category ? category.id : ""))
-        : [];
-      this.imageUrls = [];
-      this.videoUrls = [];
-      if (Array.isArray(data.images)) {
-        data.images.forEach((element) => {
-          const extension = element.path.split(".").pop().toLowerCase();
-          if (["png", "jpg", "jpeg", "gif"].includes(extension)) {
-            this.imageUrls.push({ ...element, type: `image/${extension}` });
-          } else if (["mp4", "avi", "webm"].includes(extension)) {
-            this.videoUrls.push({ ...element, type: `video/${extension}` });
-          }
+
+      try {
+        let res = await crudDataService.getAll(`products/${this.id}/variants`);
+        this.variant = res.data.data;
+        this.ShowModelEdit = true;
+
+        // Populate form data
+        this.formData.name.ar = data.name.ar || "";
+        this.formData.name.en = data.name.en || "";
+        this.formData.description.ar = data.description.ar || "";
+        this.formData.description.en = data.description.en || "";
+        this.formData.brand_id = data.brand ? data.brand.id : "";
+        this.formData.barcode = data.barcode || "";
+        this.formData.base_price = data.base_price || "";
+        this.formData.seo_url = data.seo_url || "";
+        this.formData.seo_title = data.seo_title || "";
+        this.formData.seo_description = data.seo_description || "";
+        this.formData.quantity = data.quantity || "";
+        this.formData.price = data.price || "";
+        this.formData.cost_price = data.cost_price || "";
+        this.formData.discounted_price = data.discounted_price || "";
+        this.formData.discount_end_date = data.discount_end_date
+          ? moment(data.discount_end_date).format("YYYY-MM-DD")
+          : "";
+        this.formData.categories_ids = Array.isArray(data.categories)
+          ? data.categories.map((category) => (category ? category.id : ""))
+          : [];
+
+        // Handle images and videos
+        this.imageUrls = [];
+        this.videoUrls = [];
+        if (Array.isArray(data.images)) {
+          data.images.forEach((element) => {
+            const extension = element.path.split(".").pop().toLowerCase();
+            if (["png", "jpg", "jpeg", "gif"].includes(extension)) {
+              this.imageUrls.push({ ...element, type: `image/${extension}` });
+            } else if (["mp4", "avi", "webm"].includes(extension)) {
+              this.videoUrls.push({ ...element, type: `video/${extension}` });
+            }
+          });
+        }
+      } catch (error) {
+        console.error("Error loading product data:", error);
+        const toast = useToast();
+        toast.error("حدث خطأ في تحميل بيانات المنتج", {
+          position: "top-center",
+          timeout: 5000,
         });
       }
     },
-    async update() {
-      console.log(this.formData);
-      let res = await crudDataService
-        .create(`products/${this.id}?_method=put`, this.formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        })
-        .then((res) => {
-          this.ShowModelEdit = false;
-          this.getAllData();
-          this.imageUrls = [];
-          this.videoUrls = [];
-          const toast = useToast();
-          toast.success(res.data.message, {
-            position: "top-center",
-            timeout: 5000,
-          });
-        })
-        .catch((err) => {
-          this.imageUrls = [];
-          this.videoUrls = [];
-          this.ShowModelEdit = false;
-          const toast = useToast();
-          toast.error(err.data.message, {
-            position: "top-center",
-            timeout: 5000,
-          });
-        });
+
+    confirmDelete() {
+      // Handle delete confirmation logic here
+      this.ShowModel = false;
     },
-    del(data, index, name) {
-      this.$swal
-        .fire({
-          title: ` ؟"${name.ar}" هل تريد حذف `,
-          showCancelButton: true,
-          confirmButtonText: "Yes",
-        })
-        .then((result) => {
-          /* Read more about isConfirmed, isDenied below */
-          if (result.isConfirmed) {
-            this.$swal.fire("Deleted successfully!", "", "success");
-            crudDataService.delete("products", `${data}`).then(() => {
-              this.items.splice(index, 1);
-              this.ShowModelEdit = false;
-            });
-          }
-        });
-    },
+
+    // ...existing methods...
   },
 
   mounted() {
@@ -1489,41 +1691,296 @@ export default {
     width: 30px;
   }
 }
-</style>
-<style lang="scss">
-.modal.show.edit .modal-header {
-  display: inline-flex;
-}
-.modal.show.edit .modal-dialog {
-  max-width: 800px;
-}
 
-.vueperslides {
-  width: 400px;
-}
-.vueperslides__bullets {
-  display: none;
-}
+/* Modal Improvements */
+.edit-modal,
+.options-modal,
+.delete-modal {
+  ::v-deep .modal-dialog {
+    margin: 1rem auto;
+    max-height: calc(100vh - 2rem);
+  }
 
-.imgtoadd {
-  background: #fff;
-  width: 100px;
-  height: 100px;
-  position: absolute;
-  right: 40%;
-  border-radius: 50%;
-  top: -50px;
-  text-align: center;
-  img {
-    width: 90%;
-    height: 90%;
-    object-fit: cover;
+  ::v-deep .modal-content {
+    height: auto;
+    max-height: calc(100vh - 2rem);
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  }
+
+  ::v-deep .modal-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
+    padding: 1rem 1.5rem;
+
+    .modal-title {
+      font-weight: 600;
+      color: #495057;
+    }
+
+    .btn-close {
+      padding: 0.5rem;
+      margin: -0.5rem -0.5rem -0.5rem auto;
+    }
+  }
+
+  ::v-deep .modal-body {
+    padding: 1.5rem;
+    max-height: calc(100vh - 200px);
+    overflow-y: auto;
   }
 }
 
-@media (min-width: 576px) {
-  .modal-dialog {
-    margin: 8.75rem auto;
+/* Form Styling */
+.product-edit-form {
+  .form-label {
+    font-weight: 500;
+    color: #495057;
+    margin-bottom: 0.5rem;
+
+    &.required::after {
+      content: " *";
+      color: #dc3545;
+    }
+  }
+
+  .form-control {
+    border-radius: 6px;
+    border: 1px solid #ced4da;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+
+    &:focus {
+      border-color: #e66239;
+      box-shadow: 0 0 0 0.2rem rgba(230, 98, 57, 0.25);
+    }
+
+    &.is-invalid {
+      border-color: #dc3545;
+
+      &:focus {
+        border-color: #dc3545;
+        box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+      }
+    }
+  }
+
+  .invalid-feedback {
+    display: block;
+    width: 100%;
+    margin-top: 0.25rem;
+    font-size: 0.875rem;
+    color: #dc3545;
+  }
+}
+
+/* Multiselect Styling */
+.multiselect-option {
+  padding: 10px;
+  width: 100%;
+  text-align: right;
+  margin-bottom: 2px;
+}
+
+/* Media Preview */
+.media-preview {
+  .media-item {
+    position: relative;
+    display: inline-block;
+
+    .preview-image,
+    .preview-video {
+      width: 120px;
+      height: 120px;
+      object-fit: cover;
+      border-radius: 6px;
+      border: 2px solid #e9ecef;
+    }
+
+    .btn-remove {
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      border: none;
+      background-color: #dc3545;
+      color: white;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      transition: background-color 0.15s;
+
+      &:hover {
+        background-color: #c82333;
+      }
+    }
+  }
+}
+
+/* Modal Footer */
+.modal-footer-custom {
+  padding: 1rem 1.5rem;
+  border-top: 1px solid #e9ecef;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+
+  .btn {
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+
+    &.btn-primary {
+      background-color: #e66239;
+      border-color: #e66239;
+
+      &:hover {
+        background-color: #d85429;
+        border-color: #d85429;
+      }
+
+      &:disabled {
+        opacity: 0.65;
+        cursor: not-allowed;
+      }
+    }
+  }
+}
+
+/* Delete Modal */
+.delete-modal {
+  ::v-deep .modal-dialog {
+    max-width: 400px;
+  }
+
+  .delete-modal-content {
+    text-align: center;
+    padding: 1rem;
+
+    .delete-icon {
+      margin-bottom: 1rem;
+
+      img {
+        width: 60px;
+        height: 60px;
+        object-fit: contain;
+      }
+    }
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .edit-modal,
+  .options-modal {
+    ::v-deep .modal-dialog {
+      margin: 0.5rem;
+      max-width: none;
+      max-height: calc(100vh - 1rem);
+    }
+
+    ::v-deep .modal-content {
+      max-height: calc(100vh - 1rem);
+    }
+
+    ::v-deep .modal-body {
+      padding: 1rem;
+      max-height: calc(100vh - 150px);
+    }
+  }
+
+  .modal-footer-custom {
+    padding: 1rem;
+
+    .btn {
+      width: 100%;
+      margin-bottom: 0.5rem;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+}
+
+/* Loading Spinner */
+.spinner-border-sm {
+  width: 1rem;
+  height: 1rem;
+}
+</style>
+
+<style lang="scss">
+/* Global Modal Styles */
+.modal-backdrop {
+  background-color: rgba(0, 0, 0, 0.6);
+}
+
+/* CKEditor Styling */
+.ck-editor__editable_inline {
+  min-height: 150px;
+  border-radius: 6px;
+
+  &.ck-focused {
+    border-color: #e66239;
+    box-shadow: 0 0 0 0.2rem rgba(230, 98, 57, 0.25);
+  }
+}
+
+/* Multiselect Custom Styling */
+.multiselect {
+  &.is-invalid {
+    border-color: #dc3545;
+  }
+
+  .multiselect-dropdown {
+    border-radius: 6px;
+    border-color: #ced4da;
+  }
+
+  .multiselect-option {
+    &.is-selected {
+      background-color: #e66239;
+      color: white;
+    }
+
+    &.is-highlighted {
+      background-color: rgba(230, 98, 57, 0.1);
+    }
+  }
+}
+
+/* Fix for Modal Z-index Issues */
+.modal {
+  z-index: 1055;
+}
+
+.modal-backdrop {
+  z-index: 1050;
+}
+
+/* Custom Scrollbar for Modal */
+.modal-body {
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+
+    &:hover {
+      background: #a8a8a8;
+    }
   }
 }
 </style>
