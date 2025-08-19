@@ -285,6 +285,7 @@
       </section>
     </div>
     <!-- Edit Product Modal with improved positioning -->
+    <!-- Updated Edit Product Modal with Error Handling -->
     <teleport to="body">
       <b-modal
         id="edit-product-modal"
@@ -292,23 +293,40 @@
         hide-footer
         class="edit-modal"
         title="تعديل منتج"
-        size="xl"
+        size="lg"
         centered
-        scrollable
+        @hidden="clearAllErrors"
       >
         <div class="modal-content-wrapper">
+          <!-- Show general form errors if any -->
+          <div v-if="hasAnyErrors" class="alert alert-danger mb-3">
+            <strong>يرجى تصحيح الأخطاء التالية:</strong>
+            <ul class="mb-0 mt-2">
+              <li v-for="(errors, field) in fieldErrors" :key="field">
+                {{ Array.isArray(errors) ? errors[0] : errors }}
+              </li>
+            </ul>
+          </div>
+
           <form @submit.prevent="update" class="product-edit-form">
             <div class="row">
               <!-- Arabic Name -->
               <div class="col-md-6 mb-3">
-                <label class="form-label required">الإسم عربي</label>
+                <label class="form-label required">
+                  الإسم عربي <span class="text-danger">*</span>
+                </label>
                 <input
                   type="text"
                   v-model="formData.name.ar"
                   class="form-control"
-                  :class="{ 'is-invalid': hasFieldError('name.ar') }"
+                  :class="{
+                    'is-invalid': hasFieldError('name.ar'),
+                    'is-valid': !hasFieldError('name.ar') && formData.name.ar,
+                  }"
                   @input="clearFieldError('name.ar')"
+                  @blur="clearFieldError('name.ar')"
                   placeholder="أدخل اسم المنتج بالعربية"
+                  required
                 />
                 <div v-if="hasFieldError('name.ar')" class="invalid-feedback">
                   {{ getFieldError("name.ar") }}
@@ -317,14 +335,21 @@
 
               <!-- English Name -->
               <div class="col-md-6 mb-3">
-                <label class="form-label required">الإسم انجليزي</label>
+                <label class="form-label required">
+                  الإسم انجليزي <span class="text-danger">*</span>
+                </label>
                 <input
                   type="text"
                   v-model="formData.name.en"
                   class="form-control"
-                  :class="{ 'is-invalid': hasFieldError('name.en') }"
+                  :class="{
+                    'is-invalid': hasFieldError('name.en'),
+                    'is-valid': !hasFieldError('name.en') && formData.name.en,
+                  }"
                   @input="clearFieldError('name.en')"
+                  @blur="clearFieldError('name.en')"
                   placeholder="Enter product name in English"
+                  required
                 />
                 <div v-if="hasFieldError('name.en')" class="invalid-feedback">
                   {{ getFieldError("name.en") }}
@@ -334,16 +359,23 @@
               <!-- Arabic Description -->
               <div class="col-md-6 mb-3">
                 <label class="form-label">الوصف عربي</label>
-                <ckeditor
-                  :editor="editor"
-                  v-model="formData.description.ar"
-                  :config="editorConfigs"
-                  :class="{ 'is-invalid': hasFieldError('description.ar') }"
-                  @ready="clearFieldError('description.ar')"
-                />
+                <div
+                  :class="{
+                    'border border-danger rounded':
+                      hasFieldError('description.ar'),
+                  }"
+                >
+                  <ckeditor
+                    :editor="editor"
+                    v-model="formData.description.ar"
+                    :config="editorConfigs"
+                    @ready="clearFieldError('description.ar')"
+                    @input="clearFieldError('description.ar')"
+                  />
+                </div>
                 <div
                   v-if="hasFieldError('description.ar')"
-                  class="invalid-feedback d-block"
+                  class="text-danger small mt-1"
                 >
                   {{ getFieldError("description.ar") }}
                 </div>
@@ -352,16 +384,23 @@
               <!-- English Description -->
               <div class="col-md-6 mb-3">
                 <label class="form-label">الوصف انجليزي</label>
-                <ckeditor
-                  :editor="editor"
-                  v-model="formData.description.en"
-                  :config="editorConfigs"
-                  :class="{ 'is-invalid': hasFieldError('description.en') }"
-                  @ready="clearFieldError('description.en')"
-                />
+                <div
+                  :class="{
+                    'border border-danger rounded':
+                      hasFieldError('description.en'),
+                  }"
+                >
+                  <ckeditor
+                    :editor="editor"
+                    v-model="formData.description.en"
+                    :config="editorConfigs"
+                    @ready="clearFieldError('description.en')"
+                    @input="clearFieldError('description.en')"
+                  />
+                </div>
                 <div
                   v-if="hasFieldError('description.en')"
-                  class="invalid-feedback d-block"
+                  class="text-danger small mt-1"
                 >
                   {{ getFieldError("description.en") }}
                 </div>
@@ -369,19 +408,27 @@
 
               <!-- Brand Selection -->
               <div class="col-md-6 mb-3">
-                <label class="form-label">اختر العلامة التجارية</label>
-                <Multiselect
-                  label="name"
-                  :searchable="true"
-                  :options="Selectbrand"
-                  placeholder="اختر العلامة التجارية"
-                  v-model="formData.brand_id"
-                  :class="{ 'is-invalid': hasFieldError('brand_id') }"
-                  @change="clearFieldError('brand_id')"
-                />
+                <label class="form-label required">
+                  اختر العلامة التجارية <span class="text-danger">*</span>
+                </label>
+                <div
+                  :class="{
+                    'border border-danger rounded': hasFieldError('brand_id'),
+                  }"
+                >
+                  <Multiselect
+                    label="name"
+                    :searchable="true"
+                    :options="Selectbrand"
+                    placeholder="اختر العلامة التجارية"
+                    v-model="formData.brand_id"
+                    @change="clearFieldError('brand_id')"
+                    @select="clearFieldError('brand_id')"
+                  />
+                </div>
                 <div
                   v-if="hasFieldError('brand_id')"
-                  class="invalid-feedback d-block"
+                  class="text-danger small mt-1"
                 >
                   {{ getFieldError("brand_id") }}
                 </div>
@@ -389,32 +436,41 @@
 
               <!-- Categories Selection -->
               <div class="col-md-6 mb-3">
-                <label class="form-label">اختر القسم</label>
-                <Multiselect
-                  label="name"
-                  :searchable="true"
-                  :options="Selectcategories"
-                  placeholder="اختر القسم"
-                  v-model="formData.categories_ids"
-                  mode="tags"
-                  :close-on-select="false"
-                  group-values="options"
-                  group-label="name"
-                  :class="{ 'is-invalid': hasFieldError('categories_ids') }"
-                  @change="clearFieldError('categories_ids')"
+                <label class="form-label required">
+                  اختر القسم <span class="text-danger">*</span>
+                </label>
+                <div
+                  :class="{
+                    'border border-danger rounded':
+                      hasFieldError('categories_ids'),
+                  }"
                 >
-                  <template v-slot:option="{ option }">
-                    <div
-                      :style="getOptionStyle(option)"
-                      class="multiselect-option"
-                    >
-                      {{ option.name }}
-                    </div>
-                  </template>
-                </Multiselect>
+                  <Multiselect
+                    label="name"
+                    :searchable="true"
+                    :options="Selectcategories"
+                    placeholder="اختر القسم"
+                    v-model="formData.categories_ids"
+                    mode="tags"
+                    :close-on-select="false"
+                    group-values="options"
+                    group-label="name"
+                    @change="clearFieldError('categories_ids')"
+                    @select="clearFieldError('categories_ids')"
+                  >
+                    <template v-slot:option="{ option }">
+                      <div
+                        :style="getOptionStyle(option)"
+                        class="multiselect-option"
+                      >
+                        {{ option.name }}
+                      </div>
+                    </template>
+                  </Multiselect>
+                </div>
                 <div
                   v-if="hasFieldError('categories_ids')"
-                  class="invalid-feedback d-block"
+                  class="text-danger small mt-1"
                 >
                   {{ getFieldError("categories_ids") }}
                 </div>
@@ -422,16 +478,24 @@
 
               <!-- Base Price -->
               <div class="col-md-6 mb-3">
-                <label class="form-label required">السعر الأساسي</label>
+                <label class="form-label required">
+                  السعر الأساسي <span class="text-danger">*</span>
+                </label>
                 <input
                   type="number"
                   step="0.01"
                   min="0"
                   v-model="formData.base_price"
                   class="form-control"
-                  :class="{ 'is-invalid': hasFieldError('base_price') }"
+                  :class="{
+                    'is-invalid': hasFieldError('base_price'),
+                    'is-valid':
+                      !hasFieldError('base_price') && formData.base_price,
+                  }"
                   @input="clearFieldError('base_price')"
+                  @blur="clearFieldError('base_price')"
                   placeholder="0.00"
+                  required
                 />
                 <div
                   v-if="hasFieldError('base_price')"
@@ -448,8 +512,12 @@
                   type="text"
                   v-model="formData.seo_url"
                   class="form-control"
-                  :class="{ 'is-invalid': hasFieldError('seo_url') }"
+                  :class="{
+                    'is-invalid': hasFieldError('seo_url'),
+                    'is-valid': !hasFieldError('seo_url') && formData.seo_url,
+                  }"
                   @input="clearFieldError('seo_url')"
+                  @blur="clearFieldError('seo_url')"
                   placeholder="product-url-slug"
                 />
                 <div v-if="hasFieldError('seo_url')" class="invalid-feedback">
@@ -464,8 +532,13 @@
                   type="text"
                   v-model="formData.seo_title"
                   class="form-control"
-                  :class="{ 'is-invalid': hasFieldError('seo_title') }"
+                  :class="{
+                    'is-invalid': hasFieldError('seo_title'),
+                    'is-valid':
+                      !hasFieldError('seo_title') && formData.seo_title,
+                  }"
                   @input="clearFieldError('seo_title')"
+                  @blur="clearFieldError('seo_title')"
                   placeholder="عنوان محسن لمحركات البحث"
                 />
                 <div v-if="hasFieldError('seo_title')" class="invalid-feedback">
@@ -480,8 +553,14 @@
                   type="text"
                   v-model="formData.seo_description"
                   class="form-control"
-                  :class="{ 'is-invalid': hasFieldError('seo_description') }"
+                  :class="{
+                    'is-invalid': hasFieldError('seo_description'),
+                    'is-valid':
+                      !hasFieldError('seo_description') &&
+                      formData.seo_description,
+                  }"
                   @input="clearFieldError('seo_description')"
+                  @blur="clearFieldError('seo_description')"
                   placeholder="وصف محسن لمحركات البحث"
                 />
                 <div
@@ -499,8 +578,12 @@
                   type="text"
                   v-model="formData.barcode"
                   class="form-control"
-                  :class="{ 'is-invalid': hasFieldError('barcode') }"
+                  :class="{
+                    'is-invalid': hasFieldError('barcode'),
+                    'is-valid': !hasFieldError('barcode') && formData.barcode,
+                  }"
                   @input="clearFieldError('barcode')"
+                  @blur="clearFieldError('barcode')"
                   placeholder="رقم الباركود"
                 />
                 <div v-if="hasFieldError('barcode')" class="invalid-feedback">
@@ -516,8 +599,12 @@
                   min="0"
                   v-model="formData.quantity"
                   class="form-control"
-                  :class="{ 'is-invalid': hasFieldError('quantity') }"
+                  :class="{
+                    'is-invalid': hasFieldError('quantity'),
+                    'is-valid': !hasFieldError('quantity') && formData.quantity,
+                  }"
                   @input="clearFieldError('quantity')"
+                  @blur="clearFieldError('quantity')"
                   placeholder="0"
                 />
                 <div v-if="hasFieldError('quantity')" class="invalid-feedback">
@@ -534,8 +621,12 @@
                   min="0"
                   v-model="formData.price"
                   class="form-control"
-                  :class="{ 'is-invalid': hasFieldError('price') }"
+                  :class="{
+                    'is-invalid': hasFieldError('price'),
+                    'is-valid': !hasFieldError('price') && formData.price,
+                  }"
                   @input="clearFieldError('price')"
+                  @blur="clearFieldError('price')"
                   placeholder="0.00"
                 />
                 <div v-if="hasFieldError('price')" class="invalid-feedback">
@@ -552,8 +643,13 @@
                   min="0"
                   v-model="formData.cost_price"
                   class="form-control"
-                  :class="{ 'is-invalid': hasFieldError('cost_price') }"
+                  :class="{
+                    'is-invalid': hasFieldError('cost_price'),
+                    'is-valid':
+                      !hasFieldError('cost_price') && formData.cost_price,
+                  }"
                   @input="clearFieldError('cost_price')"
+                  @blur="clearFieldError('cost_price')"
                   placeholder="0.00"
                 />
                 <div
@@ -573,8 +669,14 @@
                   min="0"
                   v-model="formData.discounted_price"
                   class="form-control"
-                  :class="{ 'is-invalid': hasFieldError('discounted_price') }"
+                  :class="{
+                    'is-invalid': hasFieldError('discounted_price'),
+                    'is-valid':
+                      !hasFieldError('discounted_price') &&
+                      formData.discounted_price,
+                  }"
                   @input="clearFieldError('discounted_price')"
+                  @blur="clearFieldError('discounted_price')"
                   placeholder="0.00"
                 />
                 <div
@@ -592,8 +694,14 @@
                   type="date"
                   v-model="formData.discount_end_date"
                   class="form-control"
-                  :class="{ 'is-invalid': hasFieldError('discount_end_date') }"
+                  :class="{
+                    'is-invalid': hasFieldError('discount_end_date'),
+                    'is-valid':
+                      !hasFieldError('discount_end_date') &&
+                      formData.discount_end_date,
+                  }"
                   @input="clearFieldError('discount_end_date')"
+                  @change="clearFieldError('discount_end_date')"
                 />
                 <div
                   v-if="hasFieldError('discount_end_date')"
@@ -617,6 +725,10 @@
                 <div v-if="hasFieldError('images')" class="invalid-feedback">
                   {{ getFieldError("images") }}
                 </div>
+                <small class="form-text text-muted">
+                  أنواع الملفات المدعومة: JPG, PNG, MP4, MOV. الحد الأقصى لحجم
+                  الملف: 5 ميجابايت
+                </small>
 
                 <!-- Media Preview -->
                 <div
@@ -677,19 +789,29 @@
               </div>
             </div>
 
+            <!-- Form Validation Summary -->
+            <div v-if="!isFormValid" class="alert alert-warning mb-3">
+              <small>
+                <i class="mdi mdi-information"></i>
+                يرجى ملء جميع الحقول المطلوبة المميزة بعلامة النجمة (*) قبل
+                الحفظ
+              </small>
+            </div>
+
             <!-- Modal Footer -->
             <div class="modal-footer-custom">
               <button
                 type="button"
                 class="btn btn-secondary me-2"
                 @click="cancelEdit"
+                :disabled="isUpdating"
               >
                 إلغاء
               </button>
               <button
                 type="submit"
                 class="btn btn-primary"
-                :disabled="isUpdating"
+                :disabled="isUpdating || !isFormValid"
               >
                 <span
                   v-if="isUpdating"
@@ -703,7 +825,7 @@
       </b-modal>
     </teleport>
 
-    <!-- Product Options Modal with improved positioning -->
+    <!-- Product Options Modal -->
     <teleport to="body">
       <b-modal
         id="product-options-modal"
@@ -711,9 +833,10 @@
         hide-footer
         class="options-modal"
         title="خيارات المنتج"
-        size="lg"
+        size="md"
         centered
         scrollable
+        @hidden="clearAllErrors"
       >
         <div class="mt-4">
           <div class="form-group">
@@ -739,30 +862,79 @@
                   type="number"
                   class="form-control mb-2"
                   placeholder="الرقم التسلسلي"
+                  :class="{ 'is-invalid': hasFieldError(`options.${i}.id`) }"
+                  @input="clearFieldError(`options.${i}.id`)"
                 />
+                <div
+                  v-if="hasFieldError(`options.${i}.id`)"
+                  class="invalid-feedback"
+                >
+                  {{ getFieldError(`options.${i}.id`) }}
+                </div>
+
                 <input
                   v-model="option.name.ar"
                   placeholder="مسمي الخيار مثل (اللون و المقاس)"
                   type="text"
                   class="form-control mb-2"
+                  :class="{
+                    'is-invalid': hasFieldError(`options.${i}.name.ar`),
+                  }"
+                  @input="clearFieldError(`options.${i}.name.ar`)"
                 />
+                <div
+                  v-if="hasFieldError(`options.${i}.name.ar`)"
+                  class="invalid-feedback"
+                >
+                  {{ getFieldError(`options.${i}.name.ar`) }}
+                </div>
               </div>
+
               <div class="col-md-6 mb-2">
-                <Multiselect
-                  label="name"
-                  :searchable="true"
-                  :options="Selectone"
-                  @change="selctchange($event, i)"
-                  v-model="option.select"
-                  class="mb-2"
-                />
+                <div
+                  :class="{
+                    'border border-danger rounded': hasFieldError(
+                      `options.${i}.select`
+                    ),
+                  }"
+                >
+                  <Multiselect
+                    label="name"
+                    :searchable="true"
+                    :options="Selectone"
+                    @change="
+                      selctchange($event, i);
+                      clearFieldError(`options.${i}.select`);
+                    "
+                    v-model="option.select"
+                    class="mb-2"
+                  />
+                </div>
+                <div
+                  v-if="hasFieldError(`options.${i}.select`)"
+                  class="text-danger small"
+                >
+                  {{ getFieldError(`options.${i}.select`) }}
+                </div>
+
                 <input
                   v-model="option.name.en"
                   placeholder="Name the option, such as (color and size)"
                   type="text"
                   class="form-control"
+                  :class="{
+                    'is-invalid': hasFieldError(`options.${i}.name.en`),
+                  }"
+                  @input="clearFieldError(`options.${i}.name.en`)"
                 />
+                <div
+                  v-if="hasFieldError(`options.${i}.name.en`)"
+                  class="invalid-feedback"
+                >
+                  {{ getFieldError(`options.${i}.name.en`) }}
+                </div>
               </div>
+
               <div class="col-md-12 mb-2">
                 <div v-for="(element, index) in option.values" :key="index">
                   <input
@@ -770,7 +942,20 @@
                     type="number"
                     class="form-control mb-2"
                     placeholder="الرقم التسلسلي"
+                    :class="{
+                      'is-invalid': hasFieldError(
+                        `options.${i}.values.${index}.id`
+                      ),
+                    }"
+                    @input="clearFieldError(`options.${i}.values.${index}.id`)"
                   />
+                  <div
+                    v-if="hasFieldError(`options.${i}.values.${index}.id`)"
+                    class="invalid-feedback"
+                  >
+                    {{ getFieldError(`options.${i}.values.${index}.id`) }}
+                  </div>
+
                   <div class="pos-relative">
                     <input
                       v-if="option.is_color"
@@ -778,14 +963,35 @@
                       class="pos-absolute p-0 border-0"
                       style="width: 40px; top: 5px; left: 25px"
                       v-model="element.color"
+                      @change="
+                        clearFieldError(`options.${i}.values.${index}.color`)
+                      "
                     />
                     <input
                       type="text"
                       class="form-control mb-2"
                       :placeholder="'القيمة' + `${index + 1}`"
                       v-model="element.value.ar"
+                      :class="{
+                        'is-invalid': hasFieldError(
+                          `options.${i}.values.${index}.value.ar`
+                        ),
+                      }"
                       @keyup="addElement"
+                      @input="
+                        clearFieldError(`options.${i}.values.${index}.value.ar`)
+                      "
                     />
+                    <div
+                      v-if="
+                        hasFieldError(`options.${i}.values.${index}.value.ar`)
+                      "
+                      class="invalid-feedback"
+                    >
+                      {{
+                        getFieldError(`options.${i}.values.${index}.value.ar`)
+                      }}
+                    </div>
                   </div>
 
                   <input
@@ -793,8 +999,24 @@
                     class="form-control mb-2"
                     :placeholder="'value' + `${index + 1}`"
                     v-model="element.value.en"
+                    :class="{
+                      'is-invalid': hasFieldError(
+                        `options.${i}.values.${index}.value.en`
+                      ),
+                    }"
                     @keyup="addElement"
+                    @input="
+                      clearFieldError(`options.${i}.values.${index}.value.en`)
+                    "
                   />
+                  <div
+                    v-if="
+                      hasFieldError(`options.${i}.values.${index}.value.en`)
+                    "
+                    class="invalid-feedback"
+                  >
+                    {{ getFieldError(`options.${i}.values.${index}.value.en`) }}
+                  </div>
                 </div>
               </div>
 
@@ -803,27 +1025,34 @@
                   @click="addNewInput(i)"
                   class="w-100 p-2 bg-transparent rounded"
                   style="border: 1px dashed #87a9e3"
+                  type="button"
                 >
                   <i class="fa fa-plus"></i>
                   اضافة قيمة جديدة
                 </button>
               </div>
             </div>
+
             <button
               @click="addNewOption"
               class="w-100 p-2 bg-transparent rounded mb-2"
               style="border: 1px dashed #87a9e3"
+              type="button"
             >
               <i class="fa fa-plus"></i>
               اضافة خيار جديد
             </button>
+
             <button
               @click="addalloptions"
               class="w-100 p-2 bg-primary rounded mb-2 border-0"
+              type="button"
             >
               <i class="fa fa-plus"></i>
               اضافة للمتغيرات
             </button>
+
+            <!-- Variants Section -->
             <div
               aria-multiselectable="true"
               class="accordion"
@@ -844,8 +1073,7 @@
                     data-bs-toggle="collapse"
                     :href="`#collapse_${iover}`"
                   >
-                    متغير
-                    {{ iover + 1 }}
+                    متغير {{ iover + 1 }}
                   </a>
                 </div>
                 <div
@@ -856,7 +1084,7 @@
                   role="tabpanel"
                 >
                   <div class="card-body">
-                    <form action="">
+                    <form @submit.prevent>
                       <div class="row">
                         <div class="col-md-12 mb-2">
                           <input
@@ -864,28 +1092,30 @@
                             type="number"
                             class="form-control"
                             placeholder="الرقم التسلسلي"
+                            :class="{
+                              'is-invalid': hasFieldError(
+                                `variants.${iover}.id`
+                              ),
+                            }"
+                            @input="clearFieldError(`variants.${iover}.id`)"
                           />
+                          <div
+                            v-if="hasFieldError(`variants.${iover}.id`)"
+                            class="invalid-feedback"
+                          >
+                            {{ getFieldError(`variants.${iover}.id`) }}
+                          </div>
                         </div>
-                        <div class="col-md-6 mb-2">
-                          <!-- <select
-                            style="
-                              width: 100%;
-                              padding: 4px;
-                              border-radius: 6px;
-                              color: #999999;
-                              border: 1px solid #e8e8f7;
-                            " 
-                            v-model="optionfirstid"
-                            @click="addvalueoption"       >
-                            <option v-for="(oneoption, i) in options" :key="i" :value="oneoption.id"                     
-                            >
 
-                              {{ oneoption.name.ar }}
-                            </option>
-                          </select> -->
+                        <div class="col-md-6 mb-2">
                           <select
                             v-model="onevar.selectSettings.optionfirstid"
-                            @change="addvalueoption($event.target.value)"
+                            @change="
+                              addvalueoption($event.target.value);
+                              clearFieldError(
+                                `variants.${iover}.optionfirstid`
+                              );
+                            "
                             style="
                               width: 100%;
                               padding: 4px;
@@ -893,7 +1123,13 @@
                               color: #999999;
                               border: 1px solid #e8e8f7;
                             "
+                            :class="{
+                              'border-danger': hasFieldError(
+                                `variants.${iover}.optionfirstid`
+                              ),
+                            }"
                           >
+                            <option value="">اختر الخيار الأول</option>
                             <option
                               v-for="option in options"
                               :value="option.id"
@@ -902,7 +1138,18 @@
                               {{ option.name.ar }}
                             </option>
                           </select>
+                          <div
+                            v-if="
+                              hasFieldError(`variants.${iover}.optionfirstid`)
+                            "
+                            class="text-danger small"
+                          >
+                            {{
+                              getFieldError(`variants.${iover}.optionfirstid`)
+                            }}
+                          </div>
                         </div>
+
                         <div class="col-md-6 mb-2">
                           <select
                             style="
@@ -913,7 +1160,16 @@
                               border: 1px solid #e8e8f7;
                             "
                             v-model="onevar.selectSettings.valfirstid"
+                            :class="{
+                              'border-danger': hasFieldError(
+                                `variants.${iover}.valfirstid`
+                              ),
+                            }"
+                            @change="
+                              clearFieldError(`variants.${iover}.valfirstid`)
+                            "
                           >
+                            <option value="">اختر القيمة الأولى</option>
                             <option
                               v-for="(valoption, i) in onevar.selectSettings
                                 .valueinoption"
@@ -923,188 +1179,150 @@
                               {{ valoption.value.ar }}
                             </option>
                           </select>
-                        </div>
-                        <div class="col-md-6 mb-2">
-                          <!-- <select
-                            style="
-                              width: 100%;
-                              padding: 4px;
-                              border-radius: 6px;
-                              color: #999999;
-                              border: 1px solid #e8e8f7;
-                            "
-                            v-model="optionsecondid"
-                            @click="addsecoption" 
-
+                          <div
+                            v-if="hasFieldError(`variants.${iover}.valfirstid`)"
+                            class="text-danger small"
                           >
-                            <option v-for="(oneoption, i) in options" :key="i" :value="oneoption.id" >
-                              {{ oneoption.name.ar }}
-                            </option>
-                          </select> -->
-                          <select
-                            v-model="onevar.selectSettings.optionsecondid"
-                            @change="addsecoption($event.target.value)"
-                            style="
-                              width: 100%;
-                              padding: 4px;
-                              border-radius: 6px;
-                              color: #999999;
-                              border: 1px solid #e8e8f7;
-                            "
-                          >
-                            <option
-                              v-for="option in options"
-                              :value="option.id"
-                              :key="option.id"
-                            >
-                              {{ option.name.ar }}
-                            </option>
-                          </select>
+                            {{ getFieldError(`variants.${iover}.valfirstid`) }}
+                          </div>
                         </div>
 
-                        <div class="col-md-6 mb-2">
-                          <!-- <select
-                            style="
-                              width: 100%;
-                              padding: 4px;
-                              border-radius: 6px;
-                              color: #999999;
-                              border: 1px solid #e8e8f7;
-                            "
-                            v-model="valsecondid"
-                          >
-                            <option v-for="(valoption, i) in valueoptionsec" :key="i" :value="valoption.id" >
-                              {{ valoption.value.ar }}
-                            </option>
-                          </select> -->
-                          <select
-                            style="
-                              width: 100%;
-                              padding: 4px;
-                              border-radius: 6px;
-                              color: #999999;
-                              border: 1px solid #e8e8f7;
-                            "
-                            v-model="onevar.selectSettings.valsecondid"
-                          >
-                            <option
-                              v-for="(valoption, i) in onevar.selectSettings
-                                .valueoptionsec"
-                              :key="i"
-                              :value="valoption.id"
-                            >
-                              {{ valoption.value.ar }}
-                            </option>
-                          </select>
-                        </div>
-
+                        <!-- Additional variant fields with error handling -->
                         <div class="col-md-12 mb-2">
-                          <label for=""> السعر </label>
+                          <label for="">السعر</label>
                           <input
                             type="number"
+                            step="0.01"
+                            min="0"
                             class="form-control"
                             v-model="onevar.price"
+                            :class="{
+                              'is-invalid': hasFieldError(
+                                `variants.${iover}.price`
+                              ),
+                            }"
+                            @input="clearFieldError(`variants.${iover}.price`)"
                           />
-                        </div>
-                        <div class="col-md-6 mb-2">
-                          <label for=""> سعر التكلفه </label>
-                          <input
-                            type="number"
-                            class="form-control"
-                            v-model="onevar.cost_price"
-                          />
-                        </div>
-                        <div class="col-md-6 mb-2">
-                          <label for=""> سعر المخفض </label>
-                          <input
-                            type="number"
-                            class="form-control"
-                            v-model="onevar.discounted_price"
-                          />
-                        </div>
-                        <div class="col-md-4 mb-2">
-                          <label for=""> الوزن </label>
-                          <input
-                            type="text"
-                            class="form-control"
-                            v-model="onevar.weight"
-                          />
-                        </div>
-                        <div class="col-md-4 mb-2">
-                          <label for=""> الباركود </label>
-                          <input
-                            type="text"
-                            class="form-control"
-                            v-model="onevar.barcode"
-                          />
+                          <div
+                            v-if="hasFieldError(`variants.${iover}.price`)"
+                            class="invalid-feedback"
+                          >
+                            {{ getFieldError(`variants.${iover}.price`) }}
+                          </div>
                         </div>
 
-                        <div class="col-md-4 mb-2">
-                          <label for=""> رمز التخزين </label>
-                          <input
-                            type="text"
-                            class="form-control"
-                            v-model="onevar.sku"
-                          />
-                        </div>
-                        <div class="col-md-12 mb-2">
-                          <label for=""> الكمية </label>
+                        <div class="col-md-6 mb-2">
+                          <label for="">سعر التكلفه</label>
                           <input
                             type="number"
+                            step="0.01"
+                            min="0"
+                            class="form-control"
+                            v-model="onevar.cost_price"
+                            :class="{
+                              'is-invalid': hasFieldError(
+                                `variants.${iover}.cost_price`
+                              ),
+                            }"
+                            @input="
+                              clearFieldError(`variants.${iover}.cost_price`)
+                            "
+                          />
+                          <div
+                            v-if="hasFieldError(`variants.${iover}.cost_price`)"
+                            class="invalid-feedback"
+                          >
+                            {{ getFieldError(`variants.${iover}.cost_price`) }}
+                          </div>
+                        </div>
+
+                        <div class="col-md-6 mb-2">
+                          <label for="">سعر المخفض</label>
+                          <input
+                            type="number"
+                            step="0.01"
+                            min="0"
+                            class="form-control"
+                            v-model="onevar.discounted_price"
+                            :class="{
+                              'is-invalid': hasFieldError(
+                                `variants.${iover}.discounted_price`
+                              ),
+                            }"
+                            @input="
+                              clearFieldError(
+                                `variants.${iover}.discounted_price`
+                              )
+                            "
+                          />
+                          <div
+                            v-if="
+                              hasFieldError(
+                                `variants.${iover}.discounted_price`
+                              )
+                            "
+                            class="invalid-feedback"
+                          >
+                            {{
+                              getFieldError(
+                                `variants.${iover}.discounted_price`
+                              )
+                            }}
+                          </div>
+                        </div>
+
+                        <div class="col-md-12 mb-2">
+                          <label for="">الكمية</label>
+                          <input
+                            type="number"
+                            min="0"
                             class="form-control"
                             v-model="onevar.quantity"
+                            :class="{
+                              'is-invalid': hasFieldError(
+                                `variants.${iover}.quantity`
+                              ),
+                            }"
+                            @input="
+                              clearFieldError(`variants.${iover}.quantity`)
+                            "
                           />
+                          <div
+                            v-if="hasFieldError(`variants.${iover}.quantity`)"
+                            class="invalid-feedback"
+                          >
+                            {{ getFieldError(`variants.${iover}.quantity`) }}
+                          </div>
                         </div>
+
                         <div class="col-md-12 mb-2">
-                          <input v-model="onevar.is_default" type="checkbox" />
-                          افتراضي
+                          <label class="form-check-label">
+                            <input
+                              v-model="onevar.is_default"
+                              type="checkbox"
+                              class="form-check-input"
+                            />
+                            افتراضي
+                          </label>
                         </div>
                       </div>
                     </form>
                   </div>
                 </div>
               </div>
-              <button class="w-100 btn btn-primary" @click="newvariant()">
-                حفظ
+
+              <button
+                class="w-100 btn btn-primary"
+                @click="newvariant()"
+                :disabled="isUpdating"
+              >
+                <span
+                  v-if="isUpdating"
+                  class="spinner-border spinner-border-sm me-2"
+                ></span>
+                {{ isUpdating ? "جاري الحفظ..." : "حفظ" }}
               </button>
             </div>
-          </div>
-        </div>
-      </b-modal>
-    </teleport>
-
-    <!-- Delete Confirmation Modal -->
-    <teleport to="body">
-      <b-modal
-        id="delete-confirmation-modal"
-        v-model="ShowModel"
-        hide-footer
-        class="delete-modal"
-        centered
-      >
-        <div class="delete-modal-content">
-          <div class="delete-icon">
-            <img src="../../assets/img/delet.png" alt="Delete" />
-          </div>
-          <h5 class="text-center mb-4 mt-4">سيتم حذف المنتج نهائياً</h5>
-          <p class="text-center text-muted mb-4">
-            هذا الإجراء لا يمكن التراجع عنه
-          </p>
-          <div class="text-center">
-            <button
-              type="button"
-              class="btn btn-danger me-2"
-              @click="confirmDelete"
-            >
-              موافق
-            </button>
-            <button
-              type="button"
-              class="btn btn-secondary"
-              @click="ShowModel = false"
-            >
-              إلغاء
-            </button>
           </div>
         </div>
       </b-modal>
@@ -1260,12 +1478,201 @@ export default {
         "formData.discounted_price",
         "formData.discount_end_date",
       ],
+      formValidationRules: {
+        "name.ar": {
+          required: true,
+          label: "الاسم بالعربية",
+          minLength: 2,
+        },
+        "name.en": {
+          required: true,
+          label: "الاسم بالإنجليزية",
+          minLength: 2,
+        },
+        base_price: {
+          required: true,
+          label: "السعر الأساسي",
+        },
+        brand_id: {
+          required: true,
+          label: "العلامة التجارية",
+        },
+        categories_ids: {
+          required: true,
+          label: "الفئات",
+        },
+      },
     };
   },
 
   methods: {
+    async update() {
+      const toast = useToast();
+
+      // Clear previous errors
+      this.clearAllErrors();
+
+      // Client-side validation
+      if (!this.validateForm(this.formValidationRules)) {
+        toast.error("يرجى تصحيح الأخطاء المذكورة", {
+          position: "top-right",
+          timeout: 5000,
+        });
+        return;
+      }
+
+      this.isUpdating = true;
+
+      try {
+        const formData = new FormData();
+
+        // Append basic fields
+        formData.append("name[ar]", this.formData.name.ar);
+        formData.append("name[en]", this.formData.name.en);
+        formData.append("description[ar]", this.formData.description.ar);
+        formData.append("description[en]", this.formData.description.en);
+        formData.append("base_price", this.formData.base_price);
+        formData.append("brand_id", this.formData.brand_id);
+
+        // Append categories
+        if (Array.isArray(this.formData.categories_ids)) {
+          this.formData.categories_ids.forEach((categoryId, index) => {
+            formData.append(`categories_ids[${index}]`, categoryId);
+          });
+        }
+
+        // Append optional fields
+        if (this.formData.seo_url)
+          formData.append("seo_url", this.formData.seo_url);
+        if (this.formData.seo_title)
+          formData.append("seo_title", this.formData.seo_title);
+        if (this.formData.seo_description)
+          formData.append("seo_description", this.formData.seo_description);
+        if (this.formData.barcode)
+          formData.append("barcode", this.formData.barcode);
+        if (this.formData.quantity)
+          formData.append("quantity", this.formData.quantity);
+        if (this.formData.price) formData.append("price", this.formData.price);
+        if (this.formData.cost_price)
+          formData.append("cost_price", this.formData.cost_price);
+        if (this.formData.discounted_price)
+          formData.append("discounted_price", this.formData.discounted_price);
+        if (this.formData.discount_end_date)
+          formData.append("discount_end_date", this.formData.discount_end_date);
+
+        // Append images
+        if (this.formData.images && this.formData.images.length > 0) {
+          this.formData.images.forEach((image, index) => {
+            formData.append(`images[${index}]`, image);
+          });
+        }
+
+        let response = await crudDataService.create(
+          `products/${this.id}?_method=put`,
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+        if (response.data.status) {
+          toast.success(response.data.message || "تم تحديث المنتج بنجاح", {
+            position: "top-right",
+            timeout: 5000,
+          });
+
+          this.ShowModelEdit = false;
+          this.getAllData(); // Refresh the product list
+        }
+      } catch (error) {
+        console.error("Update error:", error);
+        this.handleApiErrors(error, toast);
+      } finally {
+        this.isUpdating = false;
+      }
+    },
+    async edit(data) {
+      // Clear all previous errors when opening edit modal
+      this.clearAllErrors();
+
+      this.id = data.id;
+
+      try {
+        let res = await crudDataService.getAll(`products/${this.id}/variants`);
+        this.variant = res.data.data;
+        this.ShowModelEdit = true;
+
+        // Populate form data
+        this.formData.name.ar = data.name.ar || "";
+        this.formData.name.en = data.name.en || "";
+        this.formData.description.ar = data.description.ar || "";
+        this.formData.description.en = data.description.en || "";
+        this.formData.brand_id = data.brand ? data.brand.id : "";
+        this.formData.barcode = data.barcode || "";
+        this.formData.base_price = data.base_price || "";
+        this.formData.seo_url = data.seo_url || "";
+        this.formData.seo_title = data.seo_title || "";
+        this.formData.seo_description = data.seo_description || "";
+        this.formData.quantity = data.quantity || "";
+        this.formData.price = data.price || "";
+        this.formData.cost_price = data.cost_price || "";
+        this.formData.discounted_price = data.discounted_price || "";
+        this.formData.discount_end_date = data.discount_end_date
+          ? moment(data.discount_end_date).format("YYYY-MM-DD")
+          : "";
+        this.formData.categories_ids = Array.isArray(data.categories)
+          ? data.categories.map((category) => (category ? category.id : ""))
+          : [];
+
+        // Handle images and videos
+        this.imageUrls = [];
+        this.videoUrls = [];
+        if (Array.isArray(data.images)) {
+          data.images.forEach((element) => {
+            const extension = element.path.split(".").pop().toLowerCase();
+            if (["png", "jpg", "jpeg", "gif"].includes(extension)) {
+              this.imageUrls.push({ ...element, type: `image/${extension}` });
+            } else if (["mp4", "avi", "webm"].includes(extension)) {
+              this.videoUrls.push({ ...element, type: `video/${extension}` });
+            }
+          });
+        }
+      } catch (error) {
+        console.error("Error loading product data:", error);
+        const toast = useToast();
+        this.handleApiErrors(error, toast);
+      }
+    },
+    resetForm() {
+      this.formData = {
+        name: { ar: "", en: "" },
+        description: { ar: "", en: "" },
+        base_price: "",
+        seo_url: "",
+        seo_title: "",
+        seo_description: "",
+        barcode: "",
+        quantity: "",
+        price: "",
+        cost_price: "",
+        discounted_price: "",
+        discount_end_date: "",
+        categories_ids: [],
+        images: [],
+        brand_id: "",
+      };
+      this.imageUrls = [];
+      this.videoUrls = [];
+    },
+    // ✅ Enhanced cancel method with error clearing
+    cancelEdit() {
+      this.clearAllErrors();
+      this.ShowModelEdit = false;
+      this.resetForm();
+    },
     updateProductsList(products) {
-      this.items = products; // Update the product list in the parent component
+      this.items = products;
     },
     handleSelectChange(selectedValue) {
       this.valfirstid = selectedValue.target.value;
@@ -1292,18 +1699,28 @@ export default {
       };
     },
     async removeMedia(file, index, type) {
-      let id_image = [];
-      id_image.push(file);
-      let res = await crudDataService.create(
-        `products/${this.id}/delete-image`,
-        {
-          images_ids: id_image,
+      try {
+        let id_image = [file];
+        let res = await crudDataService.create(
+          `products/${this.id}/delete-image`,
+          { images_ids: id_image }
+        );
+
+        if (type === "image") {
+          this.imageUrls.splice(index, 1);
+        } else if (type === "video") {
+          this.videoUrls.splice(index, 1);
         }
-      );
-      if (type === "image") {
-        this.imageUrls.splice(index, 1);
-      } else if (type === "video") {
-        this.videoUrls.splice(index, 1);
+
+        const toast = useToast();
+        toast.success("تم حذف الملف بنجاح", {
+          position: "top-right",
+          timeout: 3000,
+        });
+      } catch (error) {
+        console.error("Error removing media:", error);
+        const toast = useToast();
+        this.handleApiErrors(error, toast);
       }
     },
     addsecoption(e) {
@@ -1465,26 +1882,65 @@ export default {
       }
     },
     handleFileChange(event) {
+      this.clearFieldError("images");
+
       const files = event.target.files;
+      const maxFileSize = 5 * 1024 * 1024; // 5MB
+      const allowedImageTypes = [
+        "image/jpeg",
+        "image/jpg",
+        "image/png",
+        "image/gif",
+      ];
+      const allowedVideoTypes = ["video/mp4", "video/mov", "video/webm"];
+
+      this.formData.images = [];
+
       Array.from(files).forEach((file) => {
-        const reader = new FileReader();
-        this.formData.images = [];
+        // Validate file size
+        if (file.size > maxFileSize) {
+          const toast = useToast();
+          toast.error(
+            `حجم الملف ${file.name} كبير جداً. الحد الأقصى 5 ميجابايت`,
+            {
+              position: "top-right",
+              timeout: 5000,
+            }
+          );
+          return;
+        }
+
+        // Validate file type
+        if (
+          !allowedImageTypes.includes(file.type) &&
+          !allowedVideoTypes.includes(file.type)
+        ) {
+          const toast = useToast();
+          toast.error(`نوع الملف ${file.name} غير مدعوم`, {
+            position: "top-right",
+            timeout: 5000,
+          });
+          return;
+        }
+
         this.formData.images.push(file);
+
+        const reader = new FileReader();
         reader.onload = (e) => {
           const fileData = {
             thumbnail: e.target.result,
             path: e.target.result,
             type: file.type,
           };
+
           if (file.type.startsWith("image")) {
             this.imageUrls.push(fileData);
           } else if (file.type.startsWith("video")) {
             this.videoUrls.push(fileData);
           }
         };
-        if (file.type.startsWith("image") || file.type.startsWith("video")) {
-          reader.readAsDataURL(file);
-        }
+
+        reader.readAsDataURL(file);
       });
     },
     async getbrands() {
@@ -1557,68 +2013,46 @@ export default {
       let res = await crudDataService.getAll(`products?page=${this.page}`);
       this.items = res.data.data.data;
     },
-    async edit(data) {
-      this.clearAllErrors();
-      this.id = data.id;
-
-      try {
-        let res = await crudDataService.getAll(`products/${this.id}/variants`);
-        this.variant = res.data.data;
-        this.ShowModelEdit = true;
-
-        // Populate form data
-        this.formData.name.ar = data.name.ar || "";
-        this.formData.name.en = data.name.en || "";
-        this.formData.description.ar = data.description.ar || "";
-        this.formData.description.en = data.description.en || "";
-        this.formData.brand_id = data.brand ? data.brand.id : "";
-        this.formData.barcode = data.barcode || "";
-        this.formData.base_price = data.base_price || "";
-        this.formData.seo_url = data.seo_url || "";
-        this.formData.seo_title = data.seo_title || "";
-        this.formData.seo_description = data.seo_description || "";
-        this.formData.quantity = data.quantity || "";
-        this.formData.price = data.price || "";
-        this.formData.cost_price = data.cost_price || "";
-        this.formData.discounted_price = data.discounted_price || "";
-        this.formData.discount_end_date = data.discount_end_date
-          ? moment(data.discount_end_date).format("YYYY-MM-DD")
-          : "";
-        this.formData.categories_ids = Array.isArray(data.categories)
-          ? data.categories.map((category) => (category ? category.id : ""))
-          : [];
-
-        // Handle images and videos
-        this.imageUrls = [];
-        this.videoUrls = [];
-        if (Array.isArray(data.images)) {
-          data.images.forEach((element) => {
-            const extension = element.path.split(".").pop().toLowerCase();
-            if (["png", "jpg", "jpeg", "gif"].includes(extension)) {
-              this.imageUrls.push({ ...element, type: `image/${extension}` });
-            } else if (["mp4", "avi", "webm"].includes(extension)) {
-              this.videoUrls.push({ ...element, type: `video/${extension}` });
-            }
-          });
-        }
-      } catch (error) {
-        console.error("Error loading product data:", error);
-        const toast = useToast();
-        toast.error("حدث خطأ في تحميل بيانات المنتج", {
-          position: "top-center",
-          timeout: 5000,
-        });
-      }
-    },
 
     confirmDelete() {
       // Handle delete confirmation logic here
       this.ShowModel = false;
     },
 
-    // ...existing methods...
+    del(data, index, name) {
+      this.$swal
+        .fire({
+          title: ` ؟"${name.ar}" هل تريد حذف `,
+          showCancelButton: true,
+          confirmButtonText: "Yes",
+        })
+        .then((result) => {
+          /* Read more about isConfirmed, isDenied below */
+          if (result.isConfirmed) {
+            this.$swal.fire("Deleted successfully!", "", "success");
+            crudDataService.delete("products", `${data}`).then(() => {
+              this.items.splice(index, 1);
+              this.ShowModelEdit = false;
+            });
+          }
+        });
+    },
   },
+  computed: {
+    hasAnyErrors() {
+      return Object.keys(this.fieldErrors).length > 0;
+    },
 
+    isFormValid() {
+      return (
+        this.formData.name.ar &&
+        this.formData.name.en &&
+        this.formData.base_price &&
+        this.formData.brand_id &&
+        this.formData.categories_ids.length > 0
+      );
+    },
+  },
   mounted() {
     this.getAllData();
     this.getbrands();
@@ -1729,48 +2163,6 @@ export default {
     padding: 1.5rem;
     max-height: calc(100vh - 200px);
     overflow-y: auto;
-  }
-}
-
-/* Form Styling */
-.product-edit-form {
-  .form-label {
-    font-weight: 500;
-    color: #495057;
-    margin-bottom: 0.5rem;
-
-    &.required::after {
-      content: " *";
-      color: #dc3545;
-    }
-  }
-
-  .form-control {
-    border-radius: 6px;
-    border: 1px solid #ced4da;
-    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-
-    &:focus {
-      border-color: #e66239;
-      box-shadow: 0 0 0 0.2rem rgba(230, 98, 57, 0.25);
-    }
-
-    &.is-invalid {
-      border-color: #dc3545;
-
-      &:focus {
-        border-color: #dc3545;
-        box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
-      }
-    }
-  }
-
-  .invalid-feedback {
-    display: block;
-    width: 100%;
-    margin-top: 0.25rem;
-    font-size: 0.875rem;
-    color: #dc3545;
   }
 }
 
@@ -1928,29 +2320,6 @@ export default {
   &.ck-focused {
     border-color: #e66239;
     box-shadow: 0 0 0 0.2rem rgba(230, 98, 57, 0.25);
-  }
-}
-
-/* Multiselect Custom Styling */
-.multiselect {
-  &.is-invalid {
-    border-color: #dc3545;
-  }
-
-  .multiselect-dropdown {
-    border-radius: 6px;
-    border-color: #ced4da;
-  }
-
-  .multiselect-option {
-    &.is-selected {
-      background-color: #e66239;
-      color: white;
-    }
-
-    &.is-highlighted {
-      background-color: rgba(230, 98, 57, 0.1);
-    }
   }
 }
 
