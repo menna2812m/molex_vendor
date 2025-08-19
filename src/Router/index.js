@@ -277,11 +277,16 @@ router.beforeEach((to, from, next) => {
 
   // Authentication guard
   const loggedInUserData = localStorage.getItem("authvendor");
-  if (loggedInUserData && to.name == "SignIn") {
-    next("/store");
+  const publicRoutes = ["SignIn", "forgotpassword", "resetpassword"]; // Routes that don't require authentication
+
+  if (loggedInUserData && to.name === "SignIn") {
+    next("/Dashboard");
   } else {
-    if (!localStorage.getItem("authvendor") && to.name !== "SignIn") {
-      next("SignIn"); // Redirect to SignIn if token is not present and the current route is not SignIn
+    if (
+      !localStorage.getItem("authvendor") &&
+      !publicRoutes.includes(to.name)
+    ) {
+      next({ name: "SignIn" }); // Redirect to SignIn if token is not present and the current route requires authentication
     } else {
       next(); // Allow the navigation to proceed
     }

@@ -24,6 +24,16 @@ http.interceptors.response.use(
     }
     if (error && error.response) {
       if (error.response.status == 401) {
+        // Clear authentication data
+        localStorage.removeItem("authvendor");
+
+        // Show session expired message
+        toast.error("جلستك انتهت. يرجى تسجيل الدخول مرة أخرى.", {
+          position: "top-center",
+          timeout: 5000,
+        });
+
+        // Redirect to signin page
         router.push({
           name: "SignIn",
         });

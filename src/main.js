@@ -22,6 +22,8 @@ import OpenLayersMap from "vue3-openlayers";
 import "vue3-openlayers/dist/vue3-openlayers.css";
 import Toast from "vue-toastification";
 import "vue-toastification/dist/index.css";
+import { useToast } from "vue-toastification";
+import axios from "axios";
 import Datepicker from "@vuepic/vue-datepicker";
 import "@vuepic/vue-datepicker/dist/main.css";
 import Vue3ColorPicker from "vue3-colorpicker";
@@ -30,7 +32,6 @@ import "highlight.js/styles/solarized-light.css";
 import CKEditor from "@ckeditor/ckeditor5-vue";
 import "vue3-colorpicker/style.css";
 import VueTelInput from "vue-tel-input";
-// import Vue3FormWizard from "vue-form-wizard";
 import InputColorPicker from "vue-native-color-picker";
 import ColorPicker from "@oysterlee/vue-color-picker";
 import "vue3-form-wizard/dist/style.css";
@@ -39,23 +40,47 @@ import "vue3-perfect-scrollbar/dist/vue3-perfect-scrollbar.css";
 import Vue3Autocounter from "vue3-autocounter";
 import VueCountdown from "@chenfengyuan/vue-countdown";
 import { createStore } from "vuex";
-// import VueContentPlaceholders from 'vue-content-placeholders';
 import VueBarcode from "@chenfengyuan/vue-barcode";
 import { createPinia } from "pinia";
 import print from "vue3-print-nb";
 
 import "./axios";
 
+// Set up global axios interceptor for unauthorized responses
+axios.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    const toast = useToast();
+
+    if (error.response && error.response.status === 401) {
+      // Clear authentication data
+      localStorage.removeItem("authvendor");
+
+      // Show session expired message
+      toast.error("جلستك انتهت. يرجى تسجيل الدخول مرة أخرى.", {
+        position: "top-center",
+        timeout: 5000,
+      });
+
+      // Redirect to signin page if not already there
+      if (router.currentRoute.value.name !== "SignIn") {
+        router.push({ name: "SignIn" });
+      }
+    }
+
+    return Promise.reject(error);
+  }
+);
+
 const pinia = createPinia();
 pinia.use(({ store }) => {
   store.router = markRaw(router);
 });
-//LDS End
+
 const app = createApp(App).component("vue3-autocounter", Vue3Autocounter);
 app.component(VueCountdown.name, VueCountdown);
 app.component(VueBarcode.name, VueBarcode);
-// app.use(VueContentPlaceholders);
-app.use(pinia); // LDS
+app.use(pinia);
 app.use(print);
 app.use(PerfectScrollbar, {
   watchOptions: 0,
@@ -77,29 +102,6 @@ const store = createStore({
 });
 app.config.globalProperties.$themeManager = themeManager;
 
-// const initializeDarkTheme = () => {
-//   // Force dark theme as default regardless of saved preferences
-//   document.body.classList.add("dark-theme");
-//   document.body.classList.remove("light-theme");
-//   document.body.classList.remove("light-menu");
-//   document.body.classList.remove("header-light");
-//   document.body.classList.remove("color-menu");
-//   document.body.classList.remove("color-header");
-//   document.body.classList.add("dark-menu");
-//   document.body.classList.add("header-dark");
-
-//   // Set the primary color to #fd601f
-//   document
-//     .querySelector("html")
-//     .style.setProperty("--primary-rgb", "253, 96, 31");
-
-//   // Always save dark theme preference
-//   localStorage.setItem("Spruhadark", true);
-//   localStorage.removeItem("SpruhaLighttheme");
-// };
-
-// // Initialize theme before mounting
-// initializeDarkTheme();
 app.use(store);
 app.use(ColorPicker);
 app.use(VueHighlightJS);

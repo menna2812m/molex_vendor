@@ -5,7 +5,7 @@
       <div class="row align-items-center">
         <div class="col">
           <h2 class="main-content-title tx-24 mg-b-5">لوحة التحكم</h2>
-          <p class="text-muted mt-1 mb-0">مرحباً بك في لوحة تحكم المتجر</p>
+          <p class="mt-1 mb-0">مرحباً بك في لوحة تحكم المتجر</p>
         </div>
         <div class="col-auto">
           <div class="btn-group gap-3" role="group">
@@ -34,7 +34,7 @@
                 <i class="si text-white" :class="admin[key]"></i>
               </div>
               <div class="flex-grow-1">
-                <p class="mb-2 tx-12 text-muted">{{ key }}</p>
+                <p class="mb-2 tx-12">{{ key }}</p>
                 <h4 class="font-weight-bold mb-1">{{ item }}</h4>
                 <div class="progress ht-5 mt-1 mb-0">
                   <div
@@ -88,7 +88,7 @@
                 class="chart-placeholder d-flex align-items-center justify-content-center flex-column"
               >
                 <i
-                  class="fe fe-bar-chart-2 fs-1 text-muted mb-3"
+                  class="fe fe-bar-chart-2 fs-1 mb-3 text-muted"
                   style="font-size: 48px"
                 ></i>
                 <p class="text-muted">بيانات المبيعات ستظهر هنا</p>

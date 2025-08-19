@@ -55,6 +55,12 @@ export const FormErrorMixin = {
 
     // ✅ معالجة أخطاء الاستجابة العامة
     handleApiErrors(error, toast) {
+      // التحقق من انتهاء الجلسة أولاً (401 Unauthorized)
+      if (error?.response?.status === 401) {
+        // تم معالجة هذا الخطأ بالفعل في http-common.js
+        return;
+      }
+
       // استخراج أخطاء الحقول من مسارات مختلفة محتملة
       const errors = error?.response?.data?.errors || error?.data?.errors || {};
 
