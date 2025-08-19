@@ -1,217 +1,288 @@
 <template>
-  <section class="mt-5 pt-5">
-    <div class="pos-relative">
-      <button @click="ShowModel = true" class="btn-add me-0 mb-4">
-        <i class="fe fe-plus"></i>
+  <section class="slider-container mt-5 pt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h4 class="section-title mb-0">إدارة الاسلايدر</h4>
+      <button @click="ShowModel = true" class="btn-add">
+        <i class="fe fe-plus me-1"></i>
         اسلايد جديد
       </button>
     </div>
-    <section
-      class="position-relative"
-      style="height: 100vh; display: grid; place-items: center"
-      v-if="loading"
-    >
+
+    <!-- Loading state -->
+    <div class="loading-container" v-if="loading">
       <section class="cate"></section>
       <progress class="pure-material-progress-circular" />
-    </section>
-    <section v-else>
-      <div class="card custom-card border-0 mg-b-20" v-if="myList.length > 0">
-        <div class="card-body p-0">
-          <div
-            class="table-responsive border-0 rounded border-bottom-0 px-4 mb-0"
-          >
-            <table class="table text-nowrap text-md-nowrap mg-b-0">
-              <tr>
-                <td class="text-muted">صورة الاسلايد</td>
-                <td class="text-muted">عنوان الاسلايد</td>
-                <td class="text-muted">اللينك</td>
-                <td class="text-muted">التفعيل</td>
-              </tr>
-              <tr
-                v-for="(item, index) in myList"
-                :key="index"
-                class="list_item py-3 w-100 align-items-center justify-content-between"
-              >
-                <td>
-                  <img :src="item.image" alt="" width="250" height="250" />
-                </td>
-                <td>
-                  {{ item.title.ar }}
-                </td>
-                <td>
-                  {{ item.link }}
-                </td>
+    </div>
 
-                <td>
-                  <label class="custom-switch justify-content-start w-100">
-                    <input
-                      type="checkbox"
-                      name="custom-switch-checkbox"
-                      class="custom-switch-input"
-                      :checked="item.is_active"
-                      @change="toggleactive(item.id)"
-                    />
-                    <span class="custom-switch-description"> </span>
-                    <span class="custom-switch-indicator"></span>
-                  </label>
-                </td>
-                <td>
-                  <button class="btn me-2" @click="edit(item)">
+    <!-- Content when loaded -->
+    <section v-else>
+      <!-- Grid view of slides -->
+      <div class="row" v-if="myList.length > 0">
+        <div
+          class="col-md-6 col-lg-4 mb-4"
+          v-for="(item, index) in myList"
+          :key="index"
+        >
+          <div class="slide-card card">
+            <div class="slide-image-container">
+              <img :src="item.image" :alt="item.title.ar" class="slide-image" />
+              <div
+                class="slide-status"
+                :class="{ 'status-active': item.is_active }"
+              >
+                {{ item.is_active ? "نشط" : "غير نشط" }}
+              </div>
+            </div>
+
+            <div class="slide-content">
+              <h5 class="slide-title">{{ item.title.ar }}</h5>
+              <p class="slide-link">{{ item.link || "لا يوجد رابط" }}</p>
+
+              <div class="slide-actions">
+                <label class="custom-switch me-3">
+                  <input
+                    type="checkbox"
+                    class="custom-switch-input"
+                    :checked="item.is_active"
+                    @change="toggleactive(item.id)"
+                  />
+                  <span class="custom-switch-indicator"></span>
+                  <span class="custom-switch-description">تفعيل</span>
+                </label>
+
+                <div class="action-buttons">
+                  <button
+                    class="btn btn-icon"
+                    @click="edit(item)"
+                    title="تعديل"
+                  >
                     <i class="fe fe-edit-2 text-info"></i>
                   </button>
                   <button
-                    class="btn me-2"
+                    class="btn btn-icon"
                     @click="del(item.id, index, item.title)"
+                    title="حذف"
                   >
                     <i class="fe fe-trash text-danger"></i>
                   </button>
-                </td>
-              </tr>
-            </table>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-      <section
-        class="position-relative"
-        style="height: 100vh; display: grid; place-items: center"
-        v-else
-      >
-        <div
-          style="background: #e66239; padding: 30px; font-size: 20px"
-          class="w-50 text-center text-white rounded-10"
-        >
-          لا يوجد اسلايدر حتي الان
-        </div>
-      </section>
+
+      <!-- Empty state -->
+      <div class="empty-state" v-else>
+        <div class="empty-state-message">لا يوجد اسلايدر حتي الان</div>
+      </div>
     </section>
 
+    <!-- Add Slider Modal -->
     <teleport to="body">
-      <b-modal id="add" v-model="ShowModel" hide-footer title="اضافة اسلايد">
-        <div class="p-0 pos-relative" style="z-index: 555">
-          <form @submit.prevent="add">
-            <div class="row">
+      <b-modal
+        id="add-slide-modal"
+        v-model="ShowModel"
+        hide-footer
+        centered
+        size="md"
+      >
+        <template #modal-header>
+          <h5 class="modal-title">إضافة اسلايد جديد</h5>
+        </template>
+
+        <div class="modal-body-content">
+          <form @submit.prevent="add" class="slide-form">
+            <div class="row g-3">
               <div class="col-md-6">
-                <div class="mt-1">
-                  <label>الاسم عربي </label>
+                <div class="form-group">
+                  <label class="form-label">الاسم عربي</label>
                   <input
                     type="text"
                     class="form-control"
+                    placeholder="أدخل العنوان بالعربي"
                     v-model="formData.title.ar"
                   />
                 </div>
               </div>
+
               <div class="col-md-6">
-                <div class="mt-1">
-                  <label>الاسم انجليزي </label>
+                <div class="form-group">
+                  <label class="form-label">الاسم انجليزي</label>
                   <input
                     type="text"
                     class="form-control"
+                    placeholder="أدخل العنوان بالإنجليزي"
                     v-model="formData.title.en"
                   />
                 </div>
               </div>
-              <div class="col-md-12">
-                <div class="mt-1">
-                  <label>اللينك </label>
-                  <input
-                    type="text"
-                    class="form-control"
-                    v-model="formData.link"
-                  />
+
+              <div class="col-12">
+                <div class="form-group">
+                  <label class="form-label">الرابط</label>
+                  <div class="input-with-icon">
+                    <i class="fe fe-link input-icon"></i>
+                    <input
+                      type="text"
+                      class="form-control"
+                      placeholder="أدخل الرابط"
+                      v-model="formData.link"
+                    />
+                  </div>
                 </div>
               </div>
 
-              <div class="col-md-6">
-                <div class="mt-1">
-                  <label>الصورة</label>
-                  <input
-                    type="file"
-                    class="form-control"
-                    @change="onFileSelected($event)"
-                    accept=".pdf, image/jpeg, image/png"
-                  />
-
-                  <img
-                    :src="imgurl"
-                    style="width: 180px; height: 180px; object-fit: fill"
-                    class="m-1"
-                    v-if="imgurl.length > 0"
-                  />
+              <div class="col-12">
+                <div class="form-group">
+                  <label class="form-label">صورة الاسلايد</label>
+                  <div class="image-upload-container">
+                    <div class="image-upload-area" @click="triggerFileInput">
+                      <input
+                        type="file"
+                        ref="fileInput"
+                        class="file-input"
+                        @change="onFileSelected"
+                        accept="image/jpeg, image/png"
+                      />
+                      <div v-if="!imgurl.length" class="upload-placeholder">
+                        <i class="fe fe-upload"></i>
+                        <p>اضغط لاختيار صورة</p>
+                      </div>
+                      <img
+                        v-else
+                        :src="imgurl"
+                        class="preview-image"
+                        alt="معاينة الصورة"
+                      />
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
-            <button class="btn btn-primary m-auto mt-3 d-block" type="submit">
-              اضافة
-            </button>
+
+            <div class="form-actions">
+              <button
+                class="btn btn-primary"
+                type="submit"
+                :disabled="isLoading || !isFormValid"
+              >
+                <span v-if="!isLoading"> إضافة الاسلايد </span>
+                <span v-if="isLoading"> جاري الاضافه... </span>
+              </button>
+
+              <button
+                class="btn btn-light"
+                type="button"
+                @click="ShowModel = false"
+              >
+                إلغاء
+              </button>
+            </div>
           </form>
         </div>
       </b-modal>
     </teleport>
+
+    <!-- Edit Slider Modal -->
     <teleport to="body">
       <b-modal
-        id="add"
+        id="edit-slide-modal"
         v-model="ShowEditModel"
         hide-footer
-        title="تعديل اسلايد"
+        centered
+        size="md"
       >
-        <div class="p-0 pos-relative" style="z-index: 555">
-          <form @submit.prevent="update">
-            <div class="row">
+        <template #modal-header>
+          <h5 class="modal-title">تعديل الاسلايد</h5>
+        </template>
+
+        <div class="modal-body-content">
+          <form @submit.prevent="update" class="slide-form">
+            <div class="row g-3">
               <div class="col-md-6">
-                <div class="mt-1">
-                  <label>الاسم عربي </label>
+                <div class="form-group">
+                  <label class="form-label">الاسم عربي</label>
                   <input
                     type="text"
                     class="form-control"
+                    placeholder="أدخل العنوان بالعربي"
                     v-model="EditData.title.ar"
                   />
                 </div>
               </div>
+
               <div class="col-md-6">
-                <div class="mt-1">
-                  <label>الاسم انجليزي </label>
+                <div class="form-group">
+                  <label class="form-label">الاسم انجليزي</label>
                   <input
                     type="text"
                     class="form-control"
+                    placeholder="أدخل العنوان بالإنجليزي"
                     v-model="EditData.title.en"
                   />
                 </div>
               </div>
-              <div class="col-md-12">
-                <div class="mt-1">
-                  <label>اللينك </label>
-                  <input
-                    type="text"
-                    class="form-control"
-                    v-model="EditData.link"
-                  />
+
+              <div class="col-12">
+                <div class="form-group">
+                  <label class="form-label">الرابط</label>
+                  <div class="input-with-icon">
+                    <i class="fe fe-link input-icon"></i>
+                    <input
+                      type="text"
+                      class="form-control"
+                      placeholder="أدخل الرابط"
+                      v-model="EditData.link"
+                    />
+                  </div>
                 </div>
               </div>
 
-              <div class="col-md-6">
-                <div class="mt-1">
-                  <label>الصورة</label>
-
-                  <div class="pos-relative overflow-hidden">
-                    <input
-                      type="file"
-                      class="form-control pos-relative"
-                      @change="editFileSelected($event)"
-                      accept=".pdf, image/jpeg, image/png"
-                    />
+              <div class="col-12">
+                <div class="form-group">
+                  <label class="form-label">صورة الاسلايد</label>
+                  <div class="image-upload-container">
+                    <div
+                      class="image-upload-area"
+                      @click="triggerEditFileInput"
+                    >
+                      <input
+                        type="file"
+                        ref="editFileInput"
+                        class="file-input"
+                        @change="editFileSelected"
+                        accept="image/jpeg, image/png"
+                      />
+                      <img
+                        :src="imageedit"
+                        class="preview-image"
+                        alt="معاينة الصورة"
+                      />
+                    </div>
                   </div>
-                  <img
-                    :src="imageedit"
-                    style="width: 180px; height: 180px; object-fit: fill"
-                    class="m-1"
-                    v-if="imageedit.length > 0"
-                  />
                 </div>
               </div>
             </div>
-            <button class="btn btn-primary m-auto mt-3 d-block" type="submit">
-              تعديل
-            </button>
+
+            <div class="form-actions">
+              <button
+                class="btn btn-primary"
+                type="submit"
+                :disabled="isEditLoading"
+              >
+                <span v-if="!isEditLoading"> حفظ التغييرات </span>
+                <span v-if="isEditLoading"> جاري حفظ التغييرات... </span>
+              </button>
+
+              <button
+                class="btn btn-light"
+                type="button"
+                @click="ShowEditModel = false"
+              >
+                إلغاء
+              </button>
+            </div>
           </form>
         </div>
       </b-modal>
@@ -254,7 +325,14 @@ export default {
         link: "",
         image: "",
       },
+      isLoading: false,
+      isEditLoading: false,
     };
+  },
+  computed: {
+    isFormValid() {
+      return this.formData.title.ar && this.formData.image;
+    },
   },
   methods: {
     async toggleactive(id) {
@@ -265,8 +343,18 @@ export default {
           position: "top-center",
           timeout: 5000,
         });
+        this.sliders(); // Refresh the list to update the status
       }
     },
+
+    triggerFileInput() {
+      this.$refs.fileInput.click();
+    },
+
+    triggerEditFileInput() {
+      this.$refs.editFileInput.click();
+    },
+
     onFileSelected(event) {
       this.formData.image = event.target.files[0];
       const reader = new FileReader();
@@ -275,6 +363,7 @@ export default {
       };
       reader.readAsDataURL(this.formData.image);
     },
+
     editFileSelected(event) {
       console.log(event);
       if (event.target) {
@@ -292,8 +381,8 @@ export default {
         this.EditData.image = event;
       }
     },
+
     async edit(data) {
-      console.log(data);
       this.id = data.id;
       this.ShowEditModel = true;
       this.EditData.title.ar = data.title.ar;
@@ -303,106 +392,115 @@ export default {
         (this.EditData.image = this.editFileSelected(data.image));
       this.imageedit = data.image;
     },
+
     async update() {
       const toast = useToast();
-      let res = await crudDataService
-        .create(`sliders/${this.id}?_method=put`, this.EditData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        })
-        .then((res) => {
-          this.ShowEditModel = false;
-          this.sliders();
-          const toast = useToast();
-          toast.success(res.data.message, {
-            position: "top-center",
-            timeout: 5000,
-          });
-        })
-        .catch((error) => {
-          const errorData = error?.data?.errors || {};
-          console.log(errorData);
-
-          if (typeof errorData === "object") {
-            console.log("ojoqw");
-
-            const errorMessages = Object.values(errorData)
-              .flat()
-              .filter((msg) => typeof msg === "string");
-            if (errorMessages.length) {
-              toast.error(errorMessages[0], {
-                position: "top-center",
-                timeout: 5000,
-              });
-            }
-          } else {
-            toast.error(error.data.errors, {
+      this.isEditLoading = true;
+      try {
+        let res = await crudDataService.create(
+          `sliders/${this.id}?_method=put`,
+          this.EditData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+        this.isEditLoading = false;
+        this.ShowEditModel = false;
+        this.sliders();
+        toast.success(res.data.message, {
+          position: "top-center",
+          timeout: 5000,
+        });
+      } catch (error) {
+        const errorData = error?.data?.errors || {};
+        this.isEditLoading = false;
+        if (typeof errorData === "object") {
+          const errorMessages = Object.values(errorData)
+            .flat()
+            .filter((msg) => typeof msg === "string");
+          if (errorMessages.length) {
+            toast.error(errorMessages[0], {
               position: "top-center",
               timeout: 5000,
             });
           }
-        });
+        } else {
+          toast.error(error.data.errors, {
+            position: "top-center",
+            timeout: 5000,
+          });
+        }
+      }
     },
+
     async sliders() {
-      this.loading = true; // Start loading
+      this.loading = true;
 
       try {
         let res = await crudDataService.getAll("sliders");
         this.myList = res.data.data.data;
       } catch (error) {
         console.error("Failed to fetch data:", error);
-        // Handle error
       } finally {
-        this.loading = false; // End loading regardless of success or failure
+        this.loading = false;
       }
     },
+
     async add() {
       const toast = useToast();
-      let res = await crudDataService
-        .create(`sliders`, this.formData, {
+      this.isLoading = true;
+
+      if (!this.isFormValid) {
+        toast.error("يرجى ملء جميع الحقول المطلوبة", {
+          position: "top-center",
+          timeout: 5000,
+        });
+        return;
+      }
+
+      try {
+        let res = await crudDataService.create(`sliders`, this.formData, {
           headers: {
             "Content-Type": "multipart/form-data",
           },
-        })
-        .then((response) => {
-          this.sliders();
-          this.ShowModel = false;
-          (this.formData.title.ar = ""),
-            (this.formData.title.en = ""),
-            (this.formData.link = ""),
-            (this.formData.image = ""),
-            (this.imgurl = "");
-          const toast = useToast();
-          toast.success(response.data.message, {
-            position: "top-center",
-            timeout: 5000,
-          });
-        })
-        .catch((error) => {
-          const errorData = error?.data?.errors || {};
-          console.log(errorData);
+        });
+        this.isLoading = false;
+        this.sliders();
+        this.ShowModel = false;
+        this.formData.title.ar = "";
+        this.formData.title.en = "";
+        this.formData.link = "";
+        this.formData.image = "";
+        this.imgurl = "";
 
-          if (typeof errorData === "object") {
-            console.log("ojoqw");
-
-            const errorMessages = Object.values(errorData)
-              .flat()
-              .filter((msg) => typeof msg === "string");
-            if (errorMessages.length) {
-              toast.error(errorMessages[0], {
-                position: "top-center",
-                timeout: 5000,
-              });
-            }
-          } else {
-            toast.error(error.data.errors, {
+        toast.success(res.data.message, {
+          position: "top-center",
+          timeout: 5000,
+        });
+      } catch (error) {
+        const errorData = error?.data?.errors || {};
+        this.isLoading = false;
+        if (typeof errorData === "object") {
+          const errorMessages = Object.values(errorData)
+            .flat()
+            .filter((msg) => typeof msg === "string");
+          if (errorMessages.length) {
+            toast.error(errorMessages[0], {
               position: "top-center",
               timeout: 5000,
             });
           }
-        });
+        } else {
+          toast.error(error.data.errors, {
+            position: "top-center",
+            timeout: 5000,
+          });
+        }
+      }
     },
+
     del(data, index, name) {
       this.$swal
         .fire({
@@ -411,7 +509,6 @@ export default {
           confirmButtonText: "نعم",
         })
         .then((result) => {
-          /* Read more about isConfirmed, isDenied below */
           if (result.isConfirmed) {
             this.$swal.fire("تم الحذف بنجاح!", "", "success");
             crudDataService.delete("sliders", `${data}`).then(() => {
@@ -428,13 +525,242 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.card {
-  box-shadow: 0px 3px 3px 0px #e6edf0;
+.slider-container {
+  padding-bottom: 2rem;
 }
-.list_item:not(:last-child) {
-  border-bottom: 1px solid #e8e7ff;
+
+.section-title {
+  font-weight: 600;
 }
-.table-responsive .table > :not(caption) > * > * {
-  border-bottom: 0px solid #e8e8f7 !important;
+
+.loading-container {
+  height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+/* Slide Card Styling */
+.slide-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.slide-image-container {
+  position: relative;
+  height: 200px;
+  overflow: hidden;
+}
+
+.slide-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.slide-status {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  background-color: rgba(255, 255, 255, 0.85);
+  color: #777;
+
+  &.status-active {
+    background-color: rgba(40, 167, 69, 0.85);
+    color: white;
+  }
+}
+
+.slide-content {
+  padding: 16px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.slide-title {
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.slide-link {
+  color: #777;
+  font-size: 0.9rem;
+  margin-bottom: 16px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.slide-actions {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  .action-buttons {
+    display: flex;
+    gap: 8px;
+  }
+}
+
+.custom-switch {
+  display: inline-flex;
+  align-items: center;
+
+  .custom-switch-description {
+    margin-right: 8px;
+    font-size: 0.9rem;
+    color: #555;
+  }
+
+  .custom-switch-indicator {
+    border-radius: 50px;
+  }
+}
+
+.btn-icon {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  background: #fff;
+  border: 1px solid #eee;
+
+  &:hover {
+    background: #f8f8f8;
+  }
+}
+
+.empty-state {
+  height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &-message {
+    background: #e66239;
+    padding: 20px 30px;
+    border-radius: 8px;
+    color: white;
+    font-size: 18px;
+    font-weight: 500;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(230, 98, 57, 0.2);
+  }
+}
+
+/* Modal Styling */
+.modal-body-content {
+  padding: 1rem;
+}
+
+.slide-form {
+  .form-group {
+    margin-bottom: 1.25rem;
+  }
+
+  .form-label {
+    font-weight: 500;
+    margin-bottom: 8px;
+    display: block;
+  }
+
+  .input-with-icon {
+    position: relative;
+
+    .input-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #999;
+    }
+
+    .form-control {
+      padding-left: 40px;
+    }
+  }
+}
+
+.form-actions {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 1.5rem;
+
+  .btn {
+    min-width: 120px;
+  }
+}
+
+/* Image Upload Styling */
+.image-upload-container {
+  width: 100%;
+}
+
+.image-upload-area {
+  position: relative;
+  width: 100%;
+  height: 200px;
+  border: 2px dashed #ddd;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  overflow: hidden;
+  transition: all 0.3s ease;
+
+  &:hover {
+    border-color: #e66239;
+
+    .upload-placeholder {
+      color: #e66239;
+    }
+  }
+}
+
+.file-input {
+  position: absolute;
+  width: 0;
+  height: 0;
+  opacity: 0;
+}
+
+.upload-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #777;
+
+  i {
+    font-size: 2rem;
+    margin-bottom: 10px;
+  }
+
+  p {
+    margin: 0;
+    font-size: 0.95rem;
+  }
+}
+
+.preview-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 </style>
