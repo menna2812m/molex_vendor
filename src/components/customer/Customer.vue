@@ -26,45 +26,71 @@
                 </th>
                 <th></th>
               </tr>
+              <tr>
+                <th>اسم العميل</th>
+                <th>رقم الجوال</th>
+                <th>الموقع</th>
+                <!-- <th>الفعل</th> -->
+              </tr>
+
               <tr
                 v-for="(item, index) in myList"
                 :key="index"
                 class="list_item py-3 w-100 align-items-center justify-content-between"
               >
-                <td class="text-center">
-                  <input
-                    type="checkbox"
-                    v-model="item.selected"
-                    @change="selectuser(item.id)"
-                  />
-                </td>
                 <td>
-                  <div class="d-flex align-items-center">
-                    <img
-                      src="../../assets/img/avatar_male.jpg"
-                      alt="img"
-                      style="width: 60px; height: 60px; border-radius: 50%"
-                    />
+                  <div class="checkbox-container">
+                    <label>
+                      <input
+                        type="checkbox"
+                        v-model="item.selected"
+                        @change="selectuser(item.id)"
+                      />
+                    </label>
 
-                    <div class="pe-2">
-                      <h5
-                        class="mb-0 fw-semibold"
-                        @click="SingleCustomer(item.id)"
-                        style="cursor: pointer"
-                      >
-                        {{ item.fname }}
-                        {{ item.lname }}
-                      </h5>
+                    <div class="customer-info">
+                      <img
+                        src="../../assets/img/avatar_male.jpg"
+                        alt="img"
+                        class="customer-avatar"
+                      />
+
+                      <div class="customer-details">
+                        <h5
+                          class="mb-0 fw-semibold"
+                          @click="SingleCustomer(item.id)"
+                          style="cursor: pointer"
+                        >
+                          {{ item.fname }}
+                          {{ item.lname }}
+                        </h5>
+                      </div>
                     </div>
                   </div>
                 </td>
-
                 <td class="text-secondary">
-                  <span class="text-secondary">
-                    <i class="typcn typcn-location text-black"></i>
-
-                    {{ loc }}
+                  <span class="text-secondary contact-info">
+                    <div class="contact-icon">
+                      <i class="fas fa-phone"></i>
+                    </div>
+                    <a :href="'tel:' + `${item.phone}`"> {{ item.phone }}</a>
                   </span>
+                </td>
+                <td>
+                  <span
+                    v-if="item?.city?.name || item?.country?.name"
+                    class="text-secondary location-tag"
+                  >
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span>
+                      {{
+                        item?.city?.name
+                          ? item?.city?.name
+                          : item?.country?.name
+                      }}
+                    </span>
+                  </span>
+                  <span v-else> {{ "-" }} </span>
                 </td>
               </tr>
             </table>
@@ -292,6 +318,80 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.customer-avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #e9ecef;
+  transition: all 0.3s ease;
+}
+.checkbox-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.custom-checkbox {
+  position: relative;
+  width: 18px;
+  height: 18px;
+}
+.contact-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #495057;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.contact-info:hover {
+  color: #667eea;
+  transform: translateX(-3px);
+}
+.contact-icon {
+  width: 20px;
+  height: 20px;
+  background: #fd601f;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 10px;
+}
+.location-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+  color: #1976d2;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+}
+.card {
+  box-shadow: 0px 3px 3px 0px #e6edf0;
+}
+
+.list_item:not(:last-child) {
+  border-bottom: 1px solid #e8e7ff;
+}
+
+.dropitem {
+  position: absolute;
+  left: 5px;
+  border: 1px solid #e8e8f7;
+  margin: 2px;
+  border-radius: 3px;
+  a {
+    cursor: pointer;
+  }
+}
+</style>
+<style scoped lang="scss">
 .card {
   box-shadow: 0px 3px 3px 0px #e6edf0;
 }
@@ -359,25 +459,6 @@ export default {
     border-bottom: 1px solid #fe85b2;
     color: #fe85b2;
     border-radius: 0;
-  }
-}
-.dropitem {
-  position: absolute;
-  left: 5px;
-  border: 1px solid #e8e8f7;
-  margin: 2px;
-  border-radius: 3px;
-  a {
-    cursor: pointer;
-  }
-}
-.dropend {
-  position: absolute;
-  left: 55%;
-  box-shadow: 0px 3px 3px 0px #e6edf0;
-  border-radius: 3px;
-  a {
-    cursor: pointer;
   }
 }
 </style>
