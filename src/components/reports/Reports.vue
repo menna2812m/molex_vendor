@@ -28,8 +28,12 @@
     </form>
     <div class="d-flex justify-content-end align-items-center mb-3">
       <div>
-        <button class="btn-add fs-15 twobtn ms-0" @click="getreports()">
-          عرض
+        <button
+          class="btn-add fs-15 twobtn ms-0"
+          @click="getreports()"
+          :disabled="isLoading"
+        >
+          {{ isLoading ? "جار التحميل..." : "عرض" }}
         </button>
       </div>
     </div>
@@ -270,7 +274,6 @@
                   <th>السعر</th>
                   <th>الكمية</th>
                   <th>التكلفة الكلي</th>
-                 
                 </thead>
                 <tbody>
                   <tr
@@ -290,7 +293,6 @@
                     <td>
                       {{ item.total }}
                     </td>
-                  
                   </tr>
                 </tbody>
               </table>
@@ -385,6 +387,7 @@ export default {
       remained_cart: false,
       productsReport: false,
       customerdata: false,
+      isLoading: false,
     };
   },
   methods: {
@@ -392,11 +395,13 @@ export default {
       window.print();
     },
     async getreports() {
+      this.isLoading = true;
       const res = await crudDataService
         .getAll(
           `reports?type=${this.formData.type}&start_date=${this.formData.start_date}&end_date=${this.formData.end_date}`
         )
         .then((response) => {
+          this.isLoading = false;
           this.myList = response.data.data;
           console.log(this.formData.type === "products");
           console.log(this.formData.type === "customers");
@@ -427,9 +432,11 @@ export default {
               this.productsReport = true;
             }
           }
-        }).catch((error)=>{
-          console.log(error)
         })
+        .catch((error) => {
+          this.isLoading = false;
+          console.log(error);
+        });
     },
     show() {
       this.$router.push({ name: "Reportscharts" });
@@ -450,7 +457,7 @@ export default {
   border-bottom: 1px solid #e8e7ff;
 }
 .progres {
-  color: #E66239;
+  color: #e66239;
   font-weight: 600;
   font-size: 16px;
 }
@@ -491,6 +498,10 @@ export default {
   &.print {
     background: #fff2f7;
     color: #fe7eae;
+  }
+  &:disabled {
+    background: #a46f3a;
+    color: #dad5d5;
   }
 }
 </style>

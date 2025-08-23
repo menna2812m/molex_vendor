@@ -162,6 +162,7 @@ export default {
           title: `؟"${name}" هل تريد حذف المسؤول `,
           showCancelButton: true,
           confirmButtonText: "نعم",
+          cancelButtonText: "إلغاء",
         })
         .then((result) => {
           /* Read more about isConfirmed, isDenied below */

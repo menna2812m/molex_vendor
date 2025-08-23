@@ -2025,6 +2025,7 @@ export default {
           title: ` ؟"${name.ar}" هل تريد حذف `,
           showCancelButton: true,
           confirmButtonText: "نعم",
+          cancelButtonText: "إلغاء",
         })
         .then((result) => {
           /* Read more about isConfirmed, isDenied below */

@@ -127,11 +127,12 @@ export default {
           title: `؟"${name}" هل تريد حذف الكوبون `,
           showCancelButton: true,
           confirmButtonText: "نعم",
+          cancelButtonText: "إلغاء",
         })
         .then((result) => {
           /* Read more about isConfirmed, isDenied below */
           if (result.isConfirmed) {
-            this.$swal.fire("Deleted successfully!", "", "success");
+            this.$swal.fire("تم الحذف بنجاح!", "", "success");
             crudDataService.delete("coupons", `${data}`).then(() => {
               this.myList.splice(index, 1);
             });

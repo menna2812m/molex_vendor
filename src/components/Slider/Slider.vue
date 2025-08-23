@@ -507,6 +507,7 @@ export default {
           title: `؟"${name.ar}" هل تريد حذف الاسلايد `,
           showCancelButton: true,
           confirmButtonText: "نعم",
+          cancelButtonText: "إلغاء",
         })
         .then((result) => {
           if (result.isConfirmed) {

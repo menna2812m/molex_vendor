@@ -341,12 +341,13 @@ export default {
         .fire({
           title: ` ؟"${name.ar}" هل تريد حذف قسم`,
           showCancelButton: true,
-          confirmButtonText: "Yes",
+          confirmButtonText: "نعم",
+          cancelButtonText: "إلغاء",
         })
         .then((result) => {
           /* Read more about isConfirmed, isDenied below */
           if (result.isConfirmed) {
-            this.$swal.fire("Deleted successfully!", "", "success");
+            this.$swal.fire("تم الحذف بنجاح!", "", "success");
             crudDataService.delete("categories", `${data}`).then(() => {
               this.rows.splice(index, 1);
               this.ShowModelEdit = false;
