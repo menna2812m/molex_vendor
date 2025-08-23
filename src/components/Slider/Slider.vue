@@ -765,3 +765,71 @@ export default {
   object-fit: cover;
 }
 </style>
+
+<style lang="scss">
+// Modal positioning and overflow fixes
+.modal {
+  overflow: auto;
+
+  .modal-dialog {
+    margin: 1.75rem auto;
+    max-height: calc(100vh - 3.5rem);
+
+    @media (max-width: 576px) {
+      margin: 0.5rem;
+      max-width: none;
+      max-height: calc(100vh - 1rem);
+    }
+  }
+
+  .modal-content {
+    border-radius: 8px;
+    border: none;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    max-height: calc(100vh - 3.5rem);
+    overflow: hidden;
+
+    @media (max-width: 576px) {
+      max-height: calc(100vh - 1rem);
+    }
+  }
+
+  .modal-header {
+    display: none;
+  }
+
+  .modal-body {
+    max-height: calc(100vh - 200px);
+    overflow-y: auto;
+
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 3px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: #c1c1c1;
+      border-radius: 3px;
+
+      &:hover {
+        background: #a8a8a8;
+      }
+    }
+  }
+}
+
+// Backdrop positioning
+.modal-backdrop {
+  background-color: rgba(0, 0, 0, 0.6);
+  z-index: 1050;
+}
+
+// Ensure proper z-index layering
+.modal {
+  z-index: 1055;
+}
+</style>

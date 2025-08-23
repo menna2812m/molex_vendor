@@ -900,7 +900,11 @@ export default {
   padding: 1rem;
   position: relative;
 }
-
+.modal-body-content {
+  height: 85vh;
+  overflow: scroll;
+  padding-bottom: 8px;
+}
 .modal-header-icon {
   position: absolute;
   top: -50px;
@@ -914,7 +918,7 @@ export default {
   align-items: center;
   justify-content: center;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-
+  z-index: 666;
   img {
     width: 80%;
     height: 80%;
@@ -1024,12 +1028,57 @@ export default {
   }
 }
 </style>
+
 <style lang="scss">
 .modal {
   overflow: auto;
+
+  .modal-dialog {
+    margin: 1.75rem auto;
+    max-height: calc(100vh - 3.5rem);
+
+    @media (max-width: 576px) {
+      margin: 0.5rem;
+      max-width: none;
+      max-height: calc(100vh - 1rem);
+    }
+  }
+
+  .modal-content {
+    overflow: unset !important;
+
+    @media (max-width: 576px) {
+      max-height: calc(100vh - 1rem);
+    }
+  }
+
   .modal-header {
     display: none;
   }
+
+  .modal-body {
+    max-height: calc(100vh - 50px);
+    overflow-y: unset !important;
+
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 3px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: #c1c1c1;
+      border-radius: 3px;
+
+      &:hover {
+        background: #a8a8a8;
+      }
+    }
+  }
+
   & .multiselect-placeholder,
   & ::placeholder {
     font-size: 13px;
@@ -1037,6 +1086,18 @@ export default {
   }
 }
 
+// Backdrop positioning
+.modal-backdrop {
+  background-color: rgba(0, 0, 0, 0.6);
+  z-index: 1050;
+}
+
+// Ensure proper z-index layering
+.modal {
+  z-index: 1055;
+}
+
+// Dropdown positioning fixes
 .dp__menu_index {
   z-index: 999999999 !important;
 }

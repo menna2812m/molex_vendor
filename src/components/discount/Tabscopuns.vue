@@ -7,11 +7,19 @@
       </button>
     </div>
     <teleport to="body">
-      <b-modal id="add" v-model="ShowModel" hide-footer>
+      <b-modal
+        id="add"
+        v-model="ShowModel"
+        hide-footer
+        modal-class="discount-isolated-modal"
+      >
         <div class="imgtoadd">
           <img src="../../assets/img/dis.png" alt="img2" />
         </div>
-        <div class="p-0 mt-5 pos-relative" style="z-index: 555">
+        <div
+          class="p-0 mt-5 pos-relative discount-isolated-modal-content"
+          style="z-index: 555"
+        >
           <h6 style="color: #febcd5" class="text-center my-3">
             إنشاء كوبون التخفيض
           </h6>
@@ -71,7 +79,7 @@
                   />
                 </div>
               </div>
-        
+
               <div class="col-md-6">
                 <div class="mt-1">
                   <label>نهاية التاريخ</label>
@@ -145,8 +153,6 @@
                   ></textarea>
                 </div>
               </div>
-
-           
 
               <div class="col-md-12">
                 <div class="mt-1 d-flex align-items-center">
@@ -225,9 +231,18 @@
                 </div>
               </div>
             </div>
-            <button class="btn btn-primary m-auto d-block" type="submit">
-              اضافة
-            </button>
+            <div class="form-actions">
+              <button class="btn btn-primary d-block" type="submit">
+                اضافة
+              </button>
+              <button
+                class="btn btn-light"
+                type="button"
+                @click="ShowModel = false"
+              >
+                إلغاء
+              </button>
+            </div>
           </form>
         </div>
       </b-modal>
@@ -269,7 +284,7 @@ export default {
         comission_type: "",
         comission_value: "",
         notes: "",
-        is_active:"",
+        is_active: "",
         couponables: [],
       },
       comission_type: [
@@ -282,50 +297,51 @@ export default {
   methods: {
     async getcoupons() {
       let res = await crudDataService.getAll("coupons");
-      this.$emit('customEvent',res.data.data.data);
+      this.$emit("customEvent", res.data.data.data);
     },
     toggleDropdown() {
       this.isDropdownOpen = !this.isDropdownOpen;
     },
     async add() {
       const toast = useToast();
-      let res = await crudDataService.create(`coupons`, this.formData).then((response)=>{
-        this.ShowModel=false;
-      this.getcoupons()
-        this.formData.code= "",
-        this.formData.discount_type= "",
-        this.formData.discount_value= "",
-        this.formData.start_date= "",
-        this.formData.end_date= "",
-        this.formData.max_usage_per_user= "",
-        this.formData.max_usage= "",
-        this.formData.minimum_price_without_vat= "",
-        this.formData.max_discounted_price= "",
-        this.formData.max_discounted_price_visibility= "",
-        this.formData.is_free_shipping= "",
-        this.formData.discounted_items_excluded= "",
-        this.formData.is_affiliated= "",
-        this.formData.name= "",
-        this.formData.notes= "",
-        this.formData.is_active= "",
-        this.formData.couponables= "",
-        this.formData.comission_type= "",
-        this.formData.comission_value= ""
-        this.ShowEditModel = false;
+      let res = await crudDataService
+        .create(`coupons`, this.formData)
+        .then((response) => {
+          this.ShowModel = false;
+          this.getcoupons();
+          (this.formData.code = ""),
+            (this.formData.discount_type = ""),
+            (this.formData.discount_value = ""),
+            (this.formData.start_date = ""),
+            (this.formData.end_date = ""),
+            (this.formData.max_usage_per_user = ""),
+            (this.formData.max_usage = ""),
+            (this.formData.minimum_price_without_vat = ""),
+            (this.formData.max_discounted_price = ""),
+            (this.formData.max_discounted_price_visibility = ""),
+            (this.formData.is_free_shipping = ""),
+            (this.formData.discounted_items_excluded = ""),
+            (this.formData.is_affiliated = ""),
+            (this.formData.name = ""),
+            (this.formData.notes = ""),
+            (this.formData.is_active = ""),
+            (this.formData.couponables = ""),
+            (this.formData.comission_type = ""),
+            (this.formData.comission_value = "");
+          this.ShowEditModel = false;
           const toast = useToast();
           toast.success(response.data.message, {
             position: "top-center",
             timeout: 5000,
           });
-        
-      })
-      .catch((error) => {
+        })
+        .catch((error) => {
           const errorData = error?.data?.errors || {};
           console.log(errorData);
-          
-          if (typeof errorData === "object" ) {
+
+          if (typeof errorData === "object") {
             console.log("ojoqw");
-            
+
             const errorMessages = Object.values(errorData)
               .flat()
               .filter((msg) => typeof msg === "string");
@@ -337,8 +353,6 @@ export default {
             }
           }
         });
-     
-      
     },
   },
 };
@@ -358,15 +372,20 @@ export default {
   color: #14112d;
 }
 </style>
+
 <style lang="scss">
-.modal {
-  overflow: auto;
-  .modal-header {
-    display: none;
+.discount-isolated-modal {
+  .modal-content {
+    overflow: unset !important;
   }
-  & .multiselect-placeholder,
-  & ::placeholder {
-    font-size: 12px;
+  .discount-isolated-modal-content {
+    height: 85vh;
+    overflow: scroll;
+    padding-bottom: 17px;
+  }
+  .modal-body {
+    overflow-y: unset !important;
+    max-height: unset !important;
   }
 }
 .imgtoadd {
@@ -374,31 +393,70 @@ export default {
   width: 100px;
   height: 100px;
   position: absolute;
-  right: 40%;
+  left: 50%;
+  transform: translateX(-50%);
   border-radius: 50%;
-  top: -50px;
+  top: -3%;
   text-align: center;
+  z-index: 666;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+
   img {
     width: 90%;
     height: 90%;
     object-fit: cover;
+    padding: 5px;
   }
 }
-@media (min-width: 576px) {
-  .modal-dialog {
-    margin: 8.75rem auto;
-  }
+
+.modal-backdrop {
+  background-color: rgba(0, 0, 0, 0.6);
+  z-index: 1050;
 }
+
+.modal {
+  z-index: 1055;
+}
+
 .dp__menu_index {
   z-index: 999999999 !important;
 }
+
 .dp__input_icon {
   margin-right: auto !important;
 }
+
 .dp__action_buttons {
   text-align: left;
+
   .dp__action.dp__cancel {
     display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .modal-body {
+    padding: 0.5rem;
+  }
+
+  .imgtoadd {
+    width: 80px;
+    height: 80px;
+    top: -40px;
+  }
+
+  .form-control {
+    font-size: 16px; // Prevent zoom on iOS
+  }
+}
+.form-actions {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 24px;
+
+  .btn {
+    min-width: 120px;
   }
 }
 </style>
