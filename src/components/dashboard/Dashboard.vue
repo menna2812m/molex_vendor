@@ -187,7 +187,8 @@
                     <p class="mb-1 font-weight-semibold">
                       {{ activity.title }}
                     </p>
-                    <p class="mb-0 tx-12">{{ activity.time }}</p>
+                    <p class="mb-0 tx-12">{{ activity.message }}</p>
+                    <p class="mb-0 tx-12 text-primary">{{ activity.time }}</p>
                   </div>
                 </div>
               </div>
@@ -307,32 +308,8 @@ export default {
         pending_withdrawals: "طلبات السحب المعلقة",
       },
 
-      activities: [
-        {
-          title: "تم إضافة منتج جديد",
-          time: "منذ 5 دقائق",
-          icon: "fe fe-shopping-bag",
-          iconClass: "bg-primary-transparent",
-        },
-        {
-          title: "طلب جديد #1082",
-          time: "منذ 10 دقائق",
-          icon: "fe fe-shopping-cart",
-          iconClass: "bg-success-transparent",
-        },
-        {
-          title: "تسجيل عميل جديد",
-          time: "منذ 30 دقيقة",
-          icon: "fe fe-user-plus",
-          iconClass: "bg-info-transparent",
-        },
-        {
-          title: "تم تحديث مخزون المنتجات",
-          time: "منذ ساعة",
-          icon: "fe fe-refresh-cw",
-          iconClass: "bg-warning-transparent",
-        },
-      ],
+      activities: [],
+
       salesStats: null,
       selectedMonth: `${String(currentMonth).padStart(2, "0")}`,
       months: Array.from({ length: 12 }, (_, i) => {
@@ -430,10 +407,36 @@ export default {
     onMonthChange() {
       this.getSalesStatistics(this.selectedMonth);
     },
+    async getActivities() {
+      try {
+        const res = await crudDataService.getAll("dashboard/notifications");
+        this.activities = (res.data.data || []).map((item) => {
+          // Dynamic icon class: if icon is present, use fe fe-ICON; else fallback
+          let iconClass = "fe fe-activity";
+          if (item.icon && typeof item.icon === "string") {
+            iconClass = `fe fe-${item.icon}`;
+          }
+          // Background color mapping by type
+          const bgMap = {
+            order: "bg-primary-transparent",
+            review: "bg-warning-transparent",
+            // ...add more if needed...
+          };
+          return {
+            ...item,
+            icon: iconClass,
+            iconClass: bgMap[item.type] || "bg-info-transparent",
+          };
+        });
+      } catch (err) {
+        console.error("Error fetching activities:", err);
+      }
+    },
   },
   mounted() {
     this.getstatistics();
     this.getSalesStatistics(this.selectedMonth);
+    this.getActivities();
   },
 };
 </script>
@@ -571,10 +574,22 @@ export default {
   margin-right: 1rem !important;
   margin-left: 0 !important;
 }
+.recent-activity {
+  max-height: 415px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
 
-.me-3 {
-  margin-left: 1rem !important;
-  margin-right: 0 !important;
+.recent-activity::-webkit-scrollbar {
+  width: 8px;
+  border-radius: 4px;
+}
+.recent-activity::-webkit-scrollbar-thumb {
+  background: #e66239;
+  border-radius: 4px;
+}
+.recent-activity::-webkit-scrollbar-thumb:hover {
+  background: #c94e1c;
 }
 
 @media (max-width: 768px) {
