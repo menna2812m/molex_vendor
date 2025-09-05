@@ -229,25 +229,40 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="i in 5" :key="i">
-                    <td>#ORD-{{ 1000 + i }}</td>
-                    <td>عميل {{ i }}</td>
-                    <td>{{ new Date().toLocaleDateString("ar-EG") }}</td>
-                    <td>{{ (Math.random() * 1000).toFixed(2) }} دينار عراقي</td>
+                  <tr v-for="order in recentOrders" :key="order.id">
+                    <td>{{ order.order_id }}</td>
+                    <td>{{ order.user?.name || "-" }}</td>
+                    <td>{{ formatOrderDate(order.created_at) }}</td>
                     <td>
-                      <span :class="['badge', getRandomStatus().class]">{{
-                        getRandomStatus().text
-                      }}</span>
+                      {{
+                        Number(order.total).toLocaleString("ar-EG", {
+                          maximumFractionDigits: 2,
+                        })
+                      }}
+                      دينار عراقي
+                    </td>
+                    <td>
+                      <span
+                        :class="['badge', getOrderStatusClass(order.status)]"
+                      >
+                        {{ order.status_translated || order.status }}
+                      </span>
                     </td>
                     <td>
                       <div class="btn-group gap-3">
-                        <button class="btn btn-sm btn-light">
+                        <button
+                          class="btn btn-sm btn-light"
+                          title="عرض"
+                          @click="gotopage(order.id)"
+                        >
                           <i class="fe fe-eye"></i>
                         </button>
-                        <button class="btn btn-sm btn-light">
-                          <i class="fe fe-edit"></i>
-                        </button>
                       </div>
+                    </td>
+                  </tr>
+                  <tr v-if="recentOrders.length === 0">
+                    <td colspan="6" class="text-center text-muted">
+                      لا توجد طلبات حديثة
                     </td>
                   </tr>
                 </tbody>
@@ -329,6 +344,7 @@ export default {
         pending: "قيد الانتظار",
         assigned: "تم التعيين",
       },
+      recentOrders: [],
     };
   },
   methods: {
@@ -432,11 +448,46 @@ export default {
         console.error("Error fetching activities:", err);
       }
     },
+    async getRecentOrders() {
+      try {
+        const res = await crudDataService.getAll("orders");
+        this.recentOrders =
+          res.data.data && res.data.data.data
+            ? res.data.data.data.slice(0, 7)
+            : [];
+      } catch (err) {
+        console.error("Error fetching recent orders:", err);
+        this.recentOrders = [];
+      }
+    },
+    formatOrderDate(date) {
+      if (!date) return "-";
+      return new Date(date).toLocaleDateString("ar-EG");
+    },
+    getOrderStatusClass(status) {
+      // Map status to badge color
+      const map = {
+        completed: "bg-success",
+        delivered: "bg-success",
+        shipped: "bg-info",
+        processing: "bg-warning",
+        pending: "bg-secondary",
+        assigned: "bg-primary",
+        cancelled: "bg-danger",
+        // fallback
+        default: "bg-light text-dark",
+      };
+      return map[status] || map.default;
+    },
+    gotopage(id) {
+      this.$router.push({ name: "SingleOrder", params: { id } });
+    },
   },
   mounted() {
     this.getstatistics();
     this.getSalesStatistics(this.selectedMonth);
     this.getActivities();
+    this.getRecentOrders();
   },
 };
 </script>

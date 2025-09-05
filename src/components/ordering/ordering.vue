@@ -80,18 +80,17 @@
           </div>
         </div>
       </div>
-
-      <b-pagination
-        v-model="page"
-        :total-rows="last"
-        :per-page="1"
-        @click="paginag(page)"
-      ></b-pagination>
     </section>
 
     <section class="empty-orders" v-else>
       <div class="empty-message">لا يوجد 'طلبات' حتي الان</div>
     </section>
+    <b-pagination
+      v-model="page"
+      :total-rows="last"
+      :per-page="1"
+      @click="paginag(page)"
+    ></b-pagination>
   </section>
 </template>
 
@@ -125,7 +124,6 @@ export default {
   },
   methods: {
     async handleTypeChange(e) {
-      console.log(e);
       let res = await crudDataService
         .getAll(`orders?filter[status]=${e}`)
         .then((res) => {
@@ -149,7 +147,6 @@ export default {
       this.loading = true;
       let res = await crudDataService.getAll("orders").then((res) => {
         this.myList = res.data.data.data;
-        console.log(res.data.data.data);
         this.last = res.data.data.last_page;
         this.loading = false;
         if (this.myList.length > 0) {
@@ -336,6 +333,10 @@ export default {
 
   &.cancelled {
     background-color: #ffebeb;
+    color: $danger;
+  }
+  &.assigned {
+    background-color: #eddca0;
     color: $danger;
   }
 }

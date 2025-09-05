@@ -41,7 +41,7 @@
         </div>
       </div>
     </div>
-    
+
     <div class="p-4 d-flex align-items-center justify-content-end">
       <!-- <div>
         <h5 class="mb-0 text-muted">العنوان </h5>
@@ -73,13 +73,13 @@
     <div class="card-body p-4">
       <div class="d-flex justify-content-between flex-wrap">
         <div>
-          <h5 class="mb-0 text-muted">*طريقة التوصيل* </h5>
+          <h5 class="mb-0 text-muted">*طريقة التوصيل*</h5>
           <p class="mt-4">{{ list.delivery_option.name.ar }}</p>
         </div>
         <div>
           <h5 class="mb-0 text-muted">
             <i class="fa fa-money"></i>
-             طريقة الدفع
+            طريقة الدفع
           </h5>
           <p class="mt-4">
             {{ list.transaction.payment_method }}
@@ -101,18 +101,12 @@
         </div>
       </div>
       <div class="text-danger" v-if="list.delivery">
-        *
-        اذا كنت تريد الغاء هذا المندوب من هذا الاوردر
-        <button class="btn "         
-          @click="removedelivery(list.delivery, list.id)"
-        >
+        * اذا كنت تريد الغاء هذا المندوب من هذا الاوردر
+        <button class="btn" @click="removedelivery(list.delivery, list.id)">
           اضغط هنا
         </button>
       </div>
     </div>
-    
-    
-   
   </div>
   <div class="card custom-card border-0 mg-b-20" v-if="userData">
     <div class="card-header">
@@ -207,48 +201,90 @@
     </div>
   </div>
   <teleport to="body">
-    <b-modal id="add-body" v-model="showmodal" hide-footer title="تغير الحالة ">
-      <div class="pos-relative" style="z-index: 5555">
-        <form @submit.prevent="change()">
-          <div class="m-2">
-            <Multiselect
-              label="name"
-              :searchable="true"
-              :options="status_type"
-              placeholder="الحالة"
-              v-model="status"
-            />
-          </div>
-          <div class="text-center">
-            <button class="fs-15 btn-save mx-1">حفظ</button>
-            <button class="fs-15 btn-cancel mx-1" @click="showmodal = false">
+    <b-modal
+      id="add-body"
+      v-model="showmodal"
+      modal-class="modal-dropdown-fix modal-fixed-footer"
+      dialog-class="modal-dialog-dropdown"
+      size="md"
+      hide-footer
+      title="تغير الحالة "
+    >
+      <div class="modal-content-wrapper">
+        <div class="modal-body-content">
+          <form @submit.prevent="change()">
+            <div class="m-2">
+              <Multiselect
+                label="name"
+                :searchable="true"
+                :options="status_type"
+                placeholder="الحالة"
+                v-model="status"
+              />
+            </div>
+          </form>
+        </div>
+        <div class="modal-fixed-actions">
+          <div class="d-flex gap-2 justify-content-center">
+            <button
+              class="fs-15 btn-save mx-1 d-flex justify-content-center"
+              :disabled="saveLoading"
+              @click="change()"
+            >
+              <span>{{ saveLoading ? "جاري الحفظ ..." : "حفظ" }}</span>
+            </button>
+            <button
+              class="fs-15 btn-cancel mx-1 d-flex justify-content-center"
+              @click="showmodal = false"
+            >
               الغاء
             </button>
           </div>
-        </form>
+        </div>
       </div>
     </b-modal>
   </teleport>
   <teleport to="body">
-    <b-modal id="add-body" v-model="showdeliveries" hide-footer title="اضافة مندوب  ">
-      <div class="pos-relative" style="z-index: 5555">
-        <form @submit.prevent="adddelivery(delivery_id)">
-          <div class="m-2">
-            <Multiselect
-              label="name"
-              :searchable="true"
-              :options="deliveries"
-              placeholder="المندوب"
-              v-model="delivery_id"
-            />
-          </div>
-          <div class="text-center">
-            <button class="fs-15 btn-save mx-1">حفظ</button>
-            <button class="fs-15 btn-cancel mx-1" @click="showmodal = false">
+    <b-modal
+      id="add-body"
+      v-model="showdeliveries"
+      modal-class="modal-dropdown-fix modal-fixed-footer"
+      dialog-class="modal-dialog-dropdown"
+      size="md"
+      hide-footer
+      title="اضافة مندوب  "
+    >
+      <div class="modal-content-wrapper">
+        <div class="modal-body-content">
+          <form @submit.prevent="adddelivery(delivery_id)">
+            <div class="m-2">
+              <Multiselect
+                label="name"
+                :searchable="true"
+                :options="deliveries"
+                placeholder="المندوب"
+                v-model="delivery_id"
+              />
+            </div>
+          </form>
+        </div>
+        <div class="modal-fixed-actions">
+          <div class="d-flex gap-2 justify-content-center">
+            <button
+              class="fs-15 btn-save mx-1 d-flex justify-content-center"
+              :disabled="deliverySaveLoading"
+              @click="adddelivery(delivery_id)"
+            >
+              <span>{{ deliverySaveLoading ? "جاري الحفظ ..." : "حفظ" }}</span>
+            </button>
+            <button
+              class="fs-15 btn-cancel mx-1 d-flex justify-content-center"
+              @click="showmodal = false"
+            >
               الغاء
             </button>
           </div>
-        </form>
+        </div>
       </div>
     </b-modal>
   </teleport>
@@ -273,9 +309,11 @@ export default {
       userData: "",
       showmodal: false,
       status: "",
-      deliveries:[],
-      showdeliveries:false,
-      delivery_id:null
+      deliveries: [],
+      showdeliveries: false,
+      delivery_id: null,
+      saveLoading: false,
+      deliverySaveLoading: false,
     };
   },
   methods: {
@@ -283,9 +321,9 @@ export default {
       try {
         let res = await crudDataService.getAll("deliveries");
         this.deliveries = res.data.data.map((delivery) => ({
-        value: delivery.id,
-        name: delivery.full_name,
-      }));
+          value: delivery.id,
+          name: delivery.full_name,
+        }));
       } catch (error) {
         console.error("Failed to fetch data:", error);
       } finally {
@@ -299,45 +337,51 @@ export default {
       this.$swal
         .fire({
           title: `؟"${data.full_name}" هل تريد حذف المندوب  `,
-           showCancelButton: true,
+          showCancelButton: true,
           cancelButtonText: "إلغاء",
           confirmButtonText: "نعم",
         })
         .then((result) => {
           if (result.isConfirmed) {
-            crudDataService.delete(`deliveries/${data.id}/orders`,`${orderid}`).then((res) => {              
-                this.$swal.fire(res.data.message,"", "success");
+            crudDataService
+              .delete(`deliveries/${data.id}/orders`, `${orderid}`)
+              .then((res) => {
+                this.$swal.fire(res.data.message, "", "success");
                 this.order();
               })
               .catch((error) => {
-                this.$swal.fire(error.data.message,"", "error");
+                this.$swal.fire(error.data.message, "", "error");
               });
-          }         
+          }
         });
     },
-    async adddelivery(id) {      
-      let res = await crudDataService.create(
-        `deliveries/${id}/orders`,
-        {
+    async adddelivery(id) {
+      this.deliverySaveLoading = true;
+      try {
+        let res = await crudDataService.create(`deliveries/${id}/orders`, {
           order_id: this.$route.params.id,
-        }
-      ).then((result) => {
+        });
         this.showdeliveries = false;
-      this.order();
-          this.$swal.fire(result.data.message,"", "success");
-                
-      })
-      
+        this.order();
+        this.$swal.fire(res.data.message, "", "success");
+      } finally {
+        this.deliverySaveLoading = false;
+      }
     },
     async change() {
-      let res = await crudDataService.create(
-        `orders/${this.$route.params.id}/status`,
-        {
-          status: this.status,
-        }
-      );
-      this.showmodal = false;
-      this.order();
+      this.saveLoading = true;
+      try {
+        let res = await crudDataService.create(
+          `orders/${this.$route.params.id}/status`,
+          {
+            status: this.status,
+          }
+        );
+        this.showmodal = false;
+        this.order();
+      } finally {
+        this.saveLoading = false;
+      }
     },
     async order() {
       let res = await crudDataService.get("orders", `${this.$route.params.id}`);
@@ -353,7 +397,6 @@ export default {
   mounted() {
     this.order();
     this.alldeliveries();
-
   },
 };
 </script>
@@ -367,5 +410,68 @@ export default {
   color: #e66239;
   border: 1px solid #e66239;
   margin-left: 5px;
+}
+.modal-content-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 300px;
+}
+
+.modal-body-content {
+  flex: 1;
+  overflow: visible;
+  padding-bottom: 20px;
+  min-height: 200px;
+}
+
+.modal-form {
+  overflow: visible;
+}
+// ✅ Fixed action buttons at bottom
+.modal-fixed-actions {
+  position: sticky;
+  bottom: 0;
+  border-top: 1px solid #676a6d;
+  padding: 15px 20px;
+  margin: 0 -20px -25px -20px;
+  z-index: 10;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+}
+
+// ✅ Global styles for modal with fixed footer
+:deep(.modal-fixed-footer) {
+  .modal-dialog {
+    height: auto;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .modal-content {
+    height: 100%;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .modal-body {
+    flex: 1;
+    overflow: visible;
+    padding: 25px 20px 0 20px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .modal-header {
+    flex-shrink: 0;
+  }
+}
+
+// ✅ Multiselect dropdown z-index
+:deep(.multiselect-dropdown) {
+  z-index: 999999 !important;
+  position: absolute !important;
 }
 </style>
