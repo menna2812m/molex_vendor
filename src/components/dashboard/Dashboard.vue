@@ -7,7 +7,7 @@
           <h2 class="main-content-title tx-24 mg-b-5">لوحة التحكم</h2>
           <p class="mt-1 mb-0">مرحباً بك في لوحة تحكم المتجر</p>
         </div>
-        <div class="col-auto">
+        <!-- <div class="col-auto">
           <div class="btn-group gap-3" role="group">
             <button class="btn btn-white btn-icon">
               <i class="fe fe-download"></i> تقرير
@@ -16,7 +16,7 @@
               <i class="fe fe-refresh-cw"></i> تحديث
             </button>
           </div>
-        </div>
+        </div> -->
       </div>
     </div>
 
@@ -24,7 +24,7 @@
     <div v-if="items" class="row row-sm">
       <div
         class="col-xl-3 col-lg-6 col-md-6 col-sm-12 mb-3"
-        v-for="(item, key) in items"
+        v-for="key in statisticsOrder"
         :key="key"
       >
         <div class="card custom-card dashboard-card">
@@ -34,8 +34,8 @@
                 <i class="si text-white" :class="admin[key]"></i>
               </div>
               <div class="flex-grow-1">
-                <p class="mb-2 tx-12">{{ key }}</p>
-                <h4 class="font-weight-bold mb-1">{{ item }}</h4>
+                <p class="mb-2 tx-12">{{ statisticsLabels[key] || key }}</p>
+                <h4 class="font-weight-bold mb-1">{{ items[key] }}</h4>
                 <div class="progress ht-5 mt-1 mb-0">
                   <div
                     class="progress-bar"
@@ -58,33 +58,101 @@
       <div class="col-lg-8 col-md-12">
         <div class="card custom-card">
           <div
-            class="card-header border-bottom-0 d-flex justify-content-between"
+            class="card-header border-bottom-0 d-flex justify-content-between align-items-center"
           >
             <h6 class="main-content-label mb-0">إحصائيات المبيعات</h6>
-            <div class="dropdown">
-              <button
-                class="btn btn-link dropdown-toggle p-0 tx-14"
-                type="button"
-                id="chartOptions"
-                data-bs-toggle="dropdown"
-                aria-expanded="false"
+            <div class="d-flex align-items-center gap-2">
+              <select
+                v-model="selectedMonth"
+                @change="onMonthChange"
+                class="form-select form-select-sm"
+                style="width: auto; min-width: 120px"
               >
-                هذا الشهر
-              </button>
-              <ul class="dropdown-menu" aria-labelledby="chartOptions">
-                <li><a class="dropdown-item" href="#">هذا الأسبوع</a></li>
-                <li><a class="dropdown-item" href="#">الشهر الماضي</a></li>
-                <li><a class="dropdown-item" href="#">هذه السنة</a></li>
-              </ul>
+                <option
+                  v-for="(month, idx) in months"
+                  :key="idx"
+                  :value="month.value"
+                >
+                  {{ month.label }}
+                </option>
+              </select>
             </div>
           </div>
           <div class="card-body">
-            <!-- Chart Placeholder (can be replaced with actual chart component) -->
             <div
-              class="chart-container"
-              style="height: 300px; position: relative"
+              v-if="isSalesStatLoading"
+              class="d-flex align-items-center justify-content-center"
+              style="min-height: 300px"
             >
+              <i class="fe fe-loader fe-spin fs-1 mb-3"></i>
+              <p class="">جاري تحميل البيانات...</p>
+            </div>
+            <div
+              v-if="!isSalesStatLoading"
+              class="chart-container"
+              style="min-height: 300px; position: relative"
+            >
+              <div v-if="salesStats" class="sales-stats-details">
+                <div class="row mb-3">
+                  <div class="col-md-4 col-12 mb-2">
+                    <div class="stat-box">
+                      <span class="stat-label">إجمالي الطلبات</span>
+                      <span class="stat-value">{{
+                        salesStats.total_orders
+                      }}</span>
+                    </div>
+                  </div>
+                  <div class="col-md-4 col-12 mb-2">
+                    <div class="stat-box">
+                      <span class="stat-label">إجمالي المبيعات</span>
+                      <span class="stat-value"
+                        >{{
+                          salesStats.total_sales.toLocaleString("ar-EG", {
+                            maximumFractionDigits: 2,
+                          })
+                        }}
+                        دينار عراقي</span
+                      >
+                    </div>
+                  </div>
+                  <div class="col-md-4 col-12 mb-2">
+                    <div class="stat-box">
+                      <span class="stat-label">متوسط قيمة الطلب</span>
+                      <span class="stat-value"
+                        >{{
+                          salesStats.average_order_value.toLocaleString(
+                            "ar-EG",
+                            { maximumFractionDigits: 2 }
+                          )
+                        }}
+                        دينار عراقي</span
+                      >
+                    </div>
+                  </div>
+                </div>
+                <div class="orders-status-table mt-3">
+                  <h6 class="mb-2">الطلبات حسب الحالة</h6>
+                  <table class="table table-sm table-bordered mb-0">
+                    <thead>
+                      <tr>
+                        <th>الحالة</th>
+                        <th>عدد الطلبات</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr
+                        v-for="(count, status) in salesStats.orders_by_status"
+                        :key="status"
+                      >
+                        <td>{{ orderStatusLabels[status] || status }}</td>
+                        <td>{{ count }}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
               <div
+                v-else
                 class="chart-placeholder d-flex align-items-center justify-content-center flex-column"
               >
                 <i
@@ -164,7 +232,7 @@
                     <td>#ORD-{{ 1000 + i }}</td>
                     <td>عميل {{ i }}</td>
                     <td>{{ new Date().toLocaleDateString("ar-EG") }}</td>
-                    <td>{{ (Math.random() * 1000).toFixed(2) }} ريال</td>
+                    <td>{{ (Math.random() * 1000).toFixed(2) }} دينار عراقي</td>
                     <td>
                       <span :class="['badge', getRandomStatus().class]">{{
                         getRandomStatus().text
@@ -195,7 +263,7 @@
         <div class="spinner-border text-primary" role="status">
           <span class="visually-hidden">جاري التحميل...</span>
         </div>
-        <p class="mt-3 text-muted">جاري تحميل البيانات...</p>
+        <p class="mt-3">جاري تحميل البيانات...</p>
       </div>
     </div>
   </div>
@@ -206,23 +274,39 @@ import crudDataService from "../../Services/crudDataService.js";
 export default {
   name: "Dashboard",
   data() {
+    const now = new Date();
+    const currentMonth = now.getMonth() + 1;
+    const currentYear = now.getFullYear();
     return {
       items: null,
       icon: false,
       admin: {},
       loading: true,
+      isSalesStatLoading: false,
       useStaticData: false, // Set to true to use static data directly
-      staticData: {
-        admins: 5,
-        users: 248,
-        contacts: 36,
-        coupons: 12,
-        offers: 28,
-        orders: 175,
-        products: 96,
-        questions: 42,
-        reviews: 83,
+      statisticsOrder: [
+        "orders",
+        "monthly_orders",
+        "products",
+        "offers",
+        "coupons",
+        "reviews",
+        "earnings",
+        "recent_earnings",
+        "pending_withdrawals",
+      ],
+      statisticsLabels: {
+        orders: "إجمالي الطلبات",
+        monthly_orders: "طلبات هذا الشهر",
+        products: "المنتجات",
+        offers: "العروض",
+        coupons: "الكوبونات",
+        reviews: "المراجعات",
+        earnings: "إجمالي الأرباح",
+        recent_earnings: "أرباح حديثة",
+        pending_withdrawals: "طلبات السحب المعلقة",
       },
+
       activities: [
         {
           title: "تم إضافة منتج جديد",
@@ -249,44 +333,50 @@ export default {
           iconClass: "bg-warning-transparent",
         },
       ],
+      salesStats: null,
+      selectedMonth: `${String(currentMonth).padStart(2, "0")}`,
+      months: Array.from({ length: 12 }, (_, i) => {
+        const month = i + 1;
+        return {
+          value: `${String(month).padStart(2, "0")}`,
+          label: new Date(currentYear, i).toLocaleString("ar-EG", {
+            month: "long",
+          }),
+        };
+      }),
+      orderStatusLabels: {
+        processing: "قيد المعالجة",
+        delivered: "تم التوصيل",
+        shipped: "تم الشحن",
+        cancelled: "ملغي",
+        pending: "قيد الانتظار",
+        assigned: "تم التعيين",
+      },
     };
   },
   methods: {
     async getstatistics() {
-      // try {
-      //   if (this.useStaticData) {
-      //     this.items = this.staticData;
-      //     this.setupIcons();
-      //     return;
-      //   }
-
-      //   const res = await crudDataService.getAll("statistics");
-      //   this.items = res.data.data;
-      //   console.log(this.items);
-      //   this.setupIcons();
-      // } catch (err) {
-      //   console.error("Error fetching statistics:", err);
-      //   // Fallback to static data if API fails
-      //   this.items = this.staticData;
-      //   this.setupIcons();
-      // }
-      this.items = this.staticData;
-      this.setupIcons();
+      try {
+        const res = await crudDataService.getAll("dashboard/statistics");
+        this.items = res.data.data;
+        this.setupIcons();
+      } catch (err) {
+        console.error("Error fetching statistics:", err);
+      }
     },
     setupIcons() {
       const iconMap = {
-        admins: "si-user",
-        users: "si-people",
-        contacts: "si-bubbles",
-        coupons: "si-tag",
-        offers: "si-star",
         orders: "si-bag",
+        monthly_orders: "si-calendar",
         products: "si-grid",
-        questions: "si-question",
+        offers: "si-star",
+        coupons: "si-tag",
         reviews: "si-heart",
+        earnings: "si-wallet",
+        recent_earnings: "si-cash",
+        pending_withdrawals: "si-arrow-up-circle",
       };
-
-      for (const key in this.items) {
+      for (const key of this.statisticsOrder) {
         if (iconMap[key]) {
           this.admin[key] = iconMap[key];
         }
@@ -297,15 +387,15 @@ export default {
     },
     getColorForKey(key) {
       const colorMap = {
-        admins: "#6259ca",
-        users: "#5b73e8",
-        contacts: "#0162e8",
-        coupons: "#00b3ff",
-        offers: "#f7b731",
         orders: "#ff9b21",
+        monthly_orders: "#f7b731",
         products: "#38cb89",
-        questions: "#ef4b4b",
+        offers: "#f7b731",
+        coupons: "#00b3ff",
         reviews: "#e82646",
+        earnings: "#6259ca",
+        recent_earnings: "#5b73e8",
+        pending_withdrawals: "#ef4b4b",
       };
       return colorMap[key] || "#6259ca";
     },
@@ -318,9 +408,32 @@ export default {
       ];
       return statuses[Math.floor(Math.random() * statuses.length)];
     },
+    async getSalesStatistics(month = null) {
+      this.isSalesStatLoading = true;
+      try {
+        let periodParam = "";
+        if (month) {
+          periodParam = `period=${month}`;
+        } else if (this.selectedMonth) {
+          periodParam = `period=${this.selectedMonth}`;
+        }
+        const url = `dashboard/sales-statistics?${periodParam}`;
+
+        const res = await crudDataService.getAll(url);
+        this.salesStats = res.data.data;
+        this.isSalesStatLoading = false;
+      } catch (err) {
+        this.isSalesStatLoading = false;
+        console.error("Error fetching statistics:", err);
+      }
+    },
+    onMonthChange() {
+      this.getSalesStatistics(this.selectedMonth);
+    },
   },
   mounted() {
     this.getstatistics();
+    this.getSalesStatistics(this.selectedMonth);
   },
 };
 </script>
@@ -425,6 +538,32 @@ export default {
 .bg-warning-transparent {
   background-color: rgba(255, 155, 33, 0.2);
   color: #ff9b21;
+}
+
+.sales-stats-details .stat-box {
+  border-radius: 6px;
+  padding: 16px 12px;
+  margin-bottom: 8px;
+  text-align: center;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+  border: 1px solid #e66239;
+}
+.sales-stats-details .stat-label {
+  display: block;
+  color: #888;
+  font-size: 13px;
+  margin-bottom: 4px;
+}
+.sales-stats-details .stat-value {
+  font-size: 20px;
+  font-weight: bold;
+  color: #e66239;
+}
+
+.orders-status-table th,
+.orders-status-table td {
+  text-align: center;
+  font-size: 14px;
 }
 
 /* Right-to-left adjustments */
