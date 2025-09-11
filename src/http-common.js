@@ -3,7 +3,7 @@ import router from "./Router";
 import { useToast } from "vue-toastification";
 const toast = useToast();
 const http = axios.create({
-  baseURL: axios.defaults.baseURL ?? "https://mall.alharazy.com/vendor",
+  baseURL: axios.defaults.baseURL ?? "https://backend.molexapp.com/vendor",
   headers: {
     "Content-Type": "application/json",
     Accept: "application/json",
