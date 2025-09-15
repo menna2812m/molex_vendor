@@ -7,3 +7,10 @@ if (domain == "https://backend.molexapp.com/vendor") {
 } else {
   axios.defaults.token;
 }
+export const updateAxiosToken = (token) => {
+  if (token) {
+    axios.defaults.token = `Bearer ${token}`;
+  } else {
+    axios.defaults.token = null;
+  }
+};

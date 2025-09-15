@@ -225,8 +225,9 @@ export default {
         });
     },
     async country() {
-      const result = await axios.get("https://mall.alharazy.com/api/countries");
-      console.log(result);
+      const result = await axios.get(
+        "https://backend.molexapp.com/api/countries"
+      );
       this.countries = result.data.data;
       this.SelectOptions = this.countries.map((country) => ({
         value: country.id,

@@ -1,6 +1,7 @@
 <template>
   <div class="page main-signin-wrapper">
     <!-- Row -->
+
     <div class="row signpages text-center">
       <div class="col-md-12 my-auto">
         <div class="card">
@@ -106,6 +107,7 @@
   </div>
 </template>
 <script>
+import { updateAxiosToken } from "../../../axios.js";
 import crudDataService from "../../../Services/crudDataService.js";
 import { themeMixin } from "../../../Shared/mixins/themeMixin.js";
 export default {
@@ -131,6 +133,8 @@ export default {
         .create("login", this.form)
         .then((response) => {
           localStorage.setItem("authvendor", response.data.data.token);
+          updateAxiosToken(response.data.data.token);
+
           this.$router.push({ name: "Dashboard" });
           setTimeout(() => {
             window.location.reload();

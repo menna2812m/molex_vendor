@@ -2,7 +2,10 @@
   <div class="page main-signin-wrapper">
     <div class="d-flex header-setting-icon demo-icon fa-spin">
       <a class="nav-link icon" href="javascript:;">
-        <i class="fe fe-settings settings-icon" v-on:click="Switcherbutton()"></i>
+        <i
+          class="fe fe-settings settings-icon"
+          v-on:click="Switcherbutton()"
+        ></i>
       </a>
     </div>
     <!-- Row -->
@@ -76,7 +79,9 @@
                     </form>
                     <div class="text-start mt-5 ms-0">
                       <div class="mb-1">
-                        <router-link to="forgotpassword">Forgot password?</router-link>
+                        <router-link to="forgotpassword"
+                          >Forgot password?</router-link
+                        >
                       </div>
                       <div>
                         Don't have an account?
