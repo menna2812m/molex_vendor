@@ -58,7 +58,7 @@
       </div>
       <div class="d-flex align-items-center">
         <ThemeToggle class="me-3" />
-        <div class="avatar-select d-flex gap-1">
+        <div class="avatar-select d-flex gap-1" ref="dropdown">
           <i
             data-v-fe05682f=""
             class="mdi mdi-account-plus icon_color icon_color_2"
@@ -93,7 +93,6 @@ import ThemeToggle from "../Switcher/ThemeToggle.vue";
 
 export default {
   mixins: [themeMixin],
-
   data() {
     return {
       url: import.meta.env.BASE_URL,
@@ -105,7 +104,24 @@ export default {
   },
   name: "Header",
 
+  mounted() {
+    // Add click outside listener when component is mounted
+    document.addEventListener("click", this.handleClickOutside);
+  },
+
+  beforeUnmount() {
+    // Remove listener when component is destroyed to prevent memory leaks
+    document.removeEventListener("click", this.handleClickOutside);
+  },
+
   methods: {
+    handleClickOutside(event) {
+      // Check if the click was outside the dropdown
+      if (this.$refs.dropdown && !this.$refs.dropdown.contains(event.target)) {
+        this.isDropdownOpen = false;
+      }
+    },
+
     detail(id) {
       this.$router.push({ name: "SingleOrder", params: { id } });
       this.show = false;
@@ -113,6 +129,7 @@ export default {
         window.location.reload();
       }, 1000);
     },
+
     async performSearch() {
       let res = await crudDataService.getAll(
         `orders?filter[order_id]=${this.searchQuery}`
@@ -125,6 +142,7 @@ export default {
         this.show = false;
       }
     },
+
     async logout() {
       let res = await crudDataService.create("logout", ``);
       localStorage.clear();
@@ -133,15 +151,18 @@ export default {
       });
       this.toggleDropdown();
     },
+
     async profile() {
       this.$router.push({
         name: "Profile",
       });
       this.toggleDropdown();
     },
+
     toggleDropdown() {
       this.isDropdownOpen = !this.isDropdownOpen;
     },
+
     HeaderToggleButton() {
       let body = document.body;
       let innerWidth = window.innerWidth;
@@ -160,12 +181,12 @@ export default {
       }
     },
   },
-  mounted() {},
   components: {
     ThemeToggle,
   },
 };
 </script>
+
 <style lang="scss" scoped>
 .searchdiv {
   position: absolute;
@@ -211,6 +232,7 @@ export default {
   cursor: pointer;
   font-size: 20px;
 }
+
 .icon_color {
   padding: 12px;
   border-radius: 50%;
@@ -222,6 +244,7 @@ export default {
     background: #e7faff;
   }
 }
+
 .avatar-select select {
   border: none;
 }
