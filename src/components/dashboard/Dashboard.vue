@@ -193,11 +193,8 @@
                 </div>
               </div>
               <div v-else class="text-center p-4">
-                <i
-                  class="fe fe-activity text-muted mb-2"
-                  style="font-size: 24px"
-                ></i>
-                <p class="text-muted">لا يوجد نشاطات حديثة</p>
+                <i class="fe fe-activity mb-2" style="font-size: 24px"></i>
+                <p class="">لا يوجد نشاطات حديثة</p>
               </div>
             </div>
           </div>
@@ -261,9 +258,7 @@
                     </td>
                   </tr>
                   <tr v-if="recentOrders.length === 0">
-                    <td colspan="6" class="text-center text-muted">
-                      لا توجد طلبات حديثة
-                    </td>
+                    <td colspan="6" class="text-center">لا توجد طلبات حديثة</td>
                   </tr>
                 </tbody>
               </table>

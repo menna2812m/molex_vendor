@@ -796,7 +796,7 @@ export default {
     async country() {
       try {
         const result = await axios.get(
-          "https://mall.alharazy.com/api/countries"
+          "https://backend.molexapp.com/api/countries"
         );
         this.countries = result.data.data;
         this.SelectOptions = this.countries.map((country) => ({
