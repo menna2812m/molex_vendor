@@ -78,13 +78,14 @@
         hide-footer
         size="lg"
         centered
+        modal-class="offer-isolated-modal"
       >
         <div class="modal-content-wrapper">
           <div class="modal-header-icon">
             <img src="../../assets/img/dis.png" alt="offer icon" />
           </div>
 
-          <div class="modal-body-content">
+          <div class="modal-body-content offer-isolated-modal-content">
             <h5 class="modal-title text-center mb-4">إنشاء عرض جديد</h5>
 
             <form @submit.prevent="add" class="offer-form">
@@ -902,7 +903,8 @@ export default {
 }
 .modal-body-content {
   height: 85vh;
-  overflow: scroll;
+  overflow-y: scroll;
+  overflow-x: hidden;
   padding-bottom: 8px;
 }
 .modal-header-icon {
@@ -1030,7 +1032,7 @@ export default {
 </style>
 
 <style lang="scss">
-.modal {
+.offer-isolated-modal {
   overflow: auto;
 
   .modal-dialog {
@@ -1093,7 +1095,7 @@ export default {
 }
 
 // Ensure proper z-index layering
-.modal {
+.offer-isolated-modal {
   z-index: 1055;
 }
 

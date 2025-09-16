@@ -13,237 +13,234 @@
         hide-footer
         modal-class="discount-isolated-modal"
       >
-        <div class="imgtoadd">
-          <img src="../../assets/img/dis.png" alt="img2" />
-        </div>
-        <div
-          class="p-0 mt-5 pos-relative discount-isolated-modal-content"
-          style="z-index: 555"
-        >
-          <h6 style="color: #febcd5" class="text-center my-3">
-            إنشاء كوبون التخفيض
-          </h6>
-          <form @submit.prevent="add">
-            <div class="row">
-              <div class="col-md-6">
-                <div class="mt-1">
-                  <label>الاسم </label>
-                  <input
-                    type="text"
-                    class="form-control"
-                    v-model="formData.name"
-                  />
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="mt-1">
-                  <label>كود</label>
-                  <input
-                    type="text"
-                    placeholder="كود"
-                    v-model="formData.code"
-                    class="form-control"
-                  />
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="mt-1">
-                  <label>نوع الخصم</label>
-                  <Multiselect
-                    label="name"
-                    :searchable="true"
-                    :options="discount_type"
-                    placeholder="اختر النوع"
-                    v-model="formData.discount_type"
-                  />
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="mt-1">
-                  <label>قيمة الخصم</label>
-                  <input
-                    type="text"
-                    placeholder=""
-                    v-model="formData.discount_value"
-                    class="form-control"
-                  />
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="mt-1">
-                  <label>بداية التاريخ</label>
-                  <input
-                    type="date"
-                    class="form-control"
-                    v-model="formData.start_date"
-                  />
-                </div>
-              </div>
-
-              <div class="col-md-6">
-                <div class="mt-1">
-                  <label>نهاية التاريخ</label>
-                  <input
-                    type="date"
-                    class="form-control"
-                    v-model="formData.end_date"
-                  />
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="mt-1">
-                  <label> الحد الأقصى للاستخدام لكل مستخدم</label>
-                  <input
-                    type="number"
-                    class="form-control"
-                    v-model="formData.max_usage_per_user"
-                  />
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="mt-1">
-                  <label> الحد الأقصى للاستخدام</label>
-                  <input
-                    type="number"
-                    class="form-control"
-                    v-model="formData.max_usage"
-                  />
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="mt-1">
-                  <label>نوع العمولة </label>
-                  <Multiselect
-                    label="name"
-                    :searchable="true"
-                    :options="comission_type"
-                    placeholder="اختر النوع"
-                    v-model="formData.comission_type"
-                  />
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="mt-1">
-                  <label>قيمة العمولة </label>
-                  <input
-                    type="text"
-                    class="form-control"
-                    v-model="formData.comission_value"
-                  />
-                </div>
-              </div>
-              <div class="col-md-12">
-                <div class="mt-1">
-                  <label>الحد الأقصى لسعر الخصم </label>
-                  <input
-                    type="number"
-                    class="form-control"
-                    v-model="formData.max_discounted_price"
-                  />
-                </div>
-              </div>
-              <div class="col-md-12">
-                <div class="mt-1">
-                  <label>ملحوظات </label>
-                  <textarea
-                    rows="5"
-                    type="text"
-                    class="form-control"
-                    v-model="formData.notes"
-                  ></textarea>
-                </div>
-              </div>
-
-              <div class="col-md-12">
-                <div class="mt-1 d-flex align-items-center">
-                  <label class="mx-1">الحد الأقصى لرؤية السعر الخصم </label>
-
-                  <label class="custom-switch justify-content-center">
+        <div class="modal-content-wrapper">
+          <div class="modal-header-icon">
+            <img src="../../assets/img/dis.png" alt="offer icon" />
+          </div>
+          <div class="modal-body-content offer-isolated-modal-content">
+            <h6 class="modal-title text-center mb-4">إنشاء كوبون التخفيض</h6>
+            <form @submit.prevent="add">
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="mt-1">
+                    <label>الاسم </label>
                     <input
-                      type="checkbox"
-                      name="custom-switch-checkbox"
-                      class="custom-switch-input"
-                      v-model="formData.max_discounted_price_visibility"
+                      type="text"
+                      class="form-control"
+                      v-model="formData.name"
                     />
-
-                    <span class="custom-switch-indicator ms-auto"></span>
-                  </label>
+                  </div>
                 </div>
-              </div>
-              <div class="col-md-12">
-                <div class="mt-1 d-flex align-items-center">
-                  <label class="mx-1">توصيل مجاني </label>
-                  <label class="custom-switch justify-content-center">
+                <div class="col-md-6">
+                  <div class="mt-1">
+                    <label>كود</label>
                     <input
-                      type="checkbox"
-                      name="custom-switch-checkbox"
-                      class="custom-switch-input"
-                      v-model="formData.is_free_shipping"
+                      type="text"
+                      placeholder="كود"
+                      v-model="formData.code"
+                      class="form-control"
                     />
-
-                    <span class="custom-switch-indicator ms-auto"></span>
-                  </label>
+                  </div>
                 </div>
-              </div>
-              <div class="col-md-12">
-                <div class="mt-1 d-flex align-items-center">
-                  <label class="mx-1">متاح</label>
-                  <label class="custom-switch justify-content-center">
+                <div class="col-md-6">
+                  <div class="mt-1">
+                    <label>نوع الخصم</label>
+                    <Multiselect
+                      label="name"
+                      :searchable="true"
+                      :options="discount_type"
+                      placeholder="اختر النوع"
+                      v-model="formData.discount_type"
+                    />
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="mt-1">
+                    <label>قيمة الخصم</label>
                     <input
-                      type="checkbox"
-                      name="custom-switch-checkbox"
-                      class="custom-switch-input"
-                      v-model="formData.is_active"
+                      type="text"
+                      placeholder=""
+                      v-model="formData.discount_value"
+                      class="form-control"
                     />
-
-                    <span class="custom-switch-indicator ms-auto"></span>
-                  </label>
+                  </div>
                 </div>
-              </div>
-              <div class="col-md-12">
-                <div class="mt-1 d-flex align-items-center">
-                  <label class="mx-1">تم استبعاد العناصر المخفضة </label>
-                  <label class="custom-switch justify-content-center">
+                <div class="col-md-6">
+                  <div class="mt-1">
+                    <label>بداية التاريخ</label>
                     <input
-                      type="checkbox"
-                      name="custom-switch-checkbox"
-                      class="custom-switch-input"
-                      v-model="formData.discounted_items_excluded"
+                      type="date"
+                      class="form-control"
+                      v-model="formData.start_date"
                     />
-
-                    <span class="custom-switch-indicator ms-auto"></span>
-                  </label>
+                  </div>
                 </div>
-              </div>
-              <div class="col-md-12">
-                <div class="mt-1 d-flex align-items-center">
-                  <label class="mx-1">تابعة </label>
-                  <label class="custom-switch justify-content-center">
+
+                <div class="col-md-6">
+                  <div class="mt-1">
+                    <label>نهاية التاريخ</label>
                     <input
-                      type="checkbox"
-                      name="custom-switch-checkbox"
-                      class="custom-switch-input"
-                      v-model="formData.is_affiliated"
+                      type="date"
+                      class="form-control"
+                      v-model="formData.end_date"
                     />
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="mt-1">
+                    <label> الحد الأقصى للاستخدام لكل مستخدم</label>
+                    <input
+                      type="number"
+                      class="form-control"
+                      v-model="formData.max_usage_per_user"
+                    />
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="mt-1">
+                    <label> الحد الأقصى للاستخدام</label>
+                    <input
+                      type="number"
+                      class="form-control"
+                      v-model="formData.max_usage"
+                    />
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="mt-1">
+                    <label>نوع العمولة </label>
+                    <Multiselect
+                      label="name"
+                      :searchable="true"
+                      :options="comission_type"
+                      placeholder="اختر النوع"
+                      v-model="formData.comission_type"
+                    />
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="mt-1">
+                    <label>قيمة العمولة </label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      v-model="formData.comission_value"
+                    />
+                  </div>
+                </div>
+                <div class="col-md-12">
+                  <div class="mt-1">
+                    <label>الحد الأقصى لسعر الخصم </label>
+                    <input
+                      type="number"
+                      class="form-control"
+                      v-model="formData.max_discounted_price"
+                    />
+                  </div>
+                </div>
+                <div class="col-md-12">
+                  <div class="mt-1">
+                    <label>ملحوظات </label>
+                    <textarea
+                      rows="5"
+                      type="text"
+                      class="form-control"
+                      v-model="formData.notes"
+                    ></textarea>
+                  </div>
+                </div>
 
-                    <span class="custom-switch-indicator ms-auto"></span>
-                  </label>
+                <div class="col-md-12">
+                  <div class="mt-1 d-flex align-items-center">
+                    <label class="mx-1">الحد الأقصى لرؤية السعر الخصم </label>
+
+                    <label class="custom-switch justify-content-center">
+                      <input
+                        type="checkbox"
+                        name="custom-switch-checkbox"
+                        class="custom-switch-input"
+                        v-model="formData.max_discounted_price_visibility"
+                      />
+
+                      <span class="custom-switch-indicator ms-auto"></span>
+                    </label>
+                  </div>
+                </div>
+                <div class="col-md-12">
+                  <div class="mt-1 d-flex align-items-center">
+                    <label class="mx-1">توصيل مجاني </label>
+                    <label class="custom-switch justify-content-center">
+                      <input
+                        type="checkbox"
+                        name="custom-switch-checkbox"
+                        class="custom-switch-input"
+                        v-model="formData.is_free_shipping"
+                      />
+
+                      <span class="custom-switch-indicator ms-auto"></span>
+                    </label>
+                  </div>
+                </div>
+                <div class="col-md-12">
+                  <div class="mt-1 d-flex align-items-center">
+                    <label class="mx-1">متاح</label>
+                    <label class="custom-switch justify-content-center">
+                      <input
+                        type="checkbox"
+                        name="custom-switch-checkbox"
+                        class="custom-switch-input"
+                        v-model="formData.is_active"
+                      />
+
+                      <span class="custom-switch-indicator ms-auto"></span>
+                    </label>
+                  </div>
+                </div>
+                <div class="col-md-12">
+                  <div class="mt-1 d-flex align-items-center">
+                    <label class="mx-1">تم استبعاد العناصر المخفضة </label>
+                    <label class="custom-switch justify-content-center">
+                      <input
+                        type="checkbox"
+                        name="custom-switch-checkbox"
+                        class="custom-switch-input"
+                        v-model="formData.discounted_items_excluded"
+                      />
+
+                      <span class="custom-switch-indicator ms-auto"></span>
+                    </label>
+                  </div>
+                </div>
+                <div class="col-md-12">
+                  <div class="mt-1 d-flex align-items-center">
+                    <label class="mx-1">تابعة </label>
+                    <label class="custom-switch justify-content-center">
+                      <input
+                        type="checkbox"
+                        name="custom-switch-checkbox"
+                        class="custom-switch-input"
+                        v-model="formData.is_affiliated"
+                      />
+
+                      <span class="custom-switch-indicator ms-auto"></span>
+                    </label>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div class="form-actions">
-              <button class="btn btn-primary d-block" type="submit">
-                اضافة
-              </button>
-              <button
-                class="btn btn-light"
-                type="button"
-                @click="ShowModel = false"
-              >
-                إلغاء
-              </button>
-            </div>
-          </form>
+              <div class="form-actions">
+                <button class="btn btn-primary d-block" type="submit">
+                  اضافة
+                </button>
+                <button
+                  class="btn btn-light"
+                  type="button"
+                  @click="ShowModel = false"
+                >
+                  إلغاء
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       </b-modal>
     </teleport>
@@ -371,50 +368,113 @@ export default {
   display: block;
   color: #14112d;
 }
+/* Modal Styling */
+.modal-content-wrapper {
+  padding: 1rem;
+  position: relative;
+}
+.modal-body-content {
+  height: 85vh;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  padding-bottom: 8px;
+}
+.modal-header-icon {
+  position: absolute;
+  top: -50px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100px;
+  height: 100px;
+  background: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  z-index: 666;
+  img {
+    width: 80%;
+    height: 80%;
+    object-fit: contain;
+  }
+}
+
+.modal-body-content {
+  padding-top: 50px;
+}
+
+.modal-title {
+  color: #febcd5;
+  font-weight: 600;
+}
 </style>
 
 <style lang="scss">
 .discount-isolated-modal {
+  overflow: auto;
+
+  .modal-dialog {
+    margin: 1.75rem auto;
+    max-height: calc(100vh - 3.5rem);
+
+    @media (max-width: 576px) {
+      margin: 0.5rem;
+      max-width: none;
+      max-height: calc(100vh - 1rem);
+    }
+  }
+
   .modal-content {
     overflow: unset !important;
+
+    @media (max-width: 576px) {
+      max-height: calc(100vh - 1rem);
+    }
   }
-  .discount-isolated-modal-content {
-    height: 85vh;
-    overflow: scroll;
-    padding-bottom: 17px;
+
+  .modal-header {
+    display: none;
   }
+
   .modal-body {
+    max-height: calc(100vh - 50px);
     overflow-y: unset !important;
-    max-height: unset !important;
+
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 3px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: #c1c1c1;
+      border-radius: 3px;
+
+      &:hover {
+        background: #a8a8a8;
+      }
+    }
+  }
+
+  & .multiselect-placeholder,
+  & ::placeholder {
+    font-size: 13px;
+    color: #aaa;
   }
 }
-.imgtoadd {
-  background: #fff;
-  width: 100px;
-  height: 100px;
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  border-radius: 50%;
-  top: -3%;
-  text-align: center;
-  z-index: 666;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 
-  img {
-    width: 90%;
-    height: 90%;
-    object-fit: cover;
-    padding: 5px;
-  }
-}
-
+// Backdrop positioning
 .modal-backdrop {
   background-color: rgba(0, 0, 0, 0.6);
   z-index: 1050;
 }
 
-.modal {
+// Ensure proper z-index layering
+.discount-isolated-modal {
   z-index: 1055;
 }
 

@@ -80,9 +80,7 @@
         centered
         size="md"
       >
-        <template #modal-header>
-          <h5 class="modal-title">طلب السحب</h5>
-        </template>
+        <h5 class="modal-title">طلب السحب</h5>
 
         <div class="modal-body-content">
           <form @submit.prevent="add" class="withdrawal-form">
@@ -453,54 +451,55 @@ export default {
 }
 </style>
 
-<style lang="scss">
+<style lang="scss" scoped>
 // Modal positioning and overflow fixes
+
 .modal {
   overflow: auto;
 
   .modal-dialog {
     margin: 1.75rem auto;
-    max-height: calc(100vh - 3.5rem);
+    max-height: 90vh;
 
     @media (max-width: 576px) {
       margin: 0.5rem;
       max-width: none;
-      max-height: calc(100vh - 1rem);
+      max-height: 80vh;
     }
   }
+}
 
-  .modal-content {
-    border-radius: 8px;
-    border: none;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-    max-height: calc(100vh - 3.5rem);
-    overflow: hidden;
+.modal-content {
+  border-radius: 8px;
+  border: none;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  max-height: calc(100vh - 3.5rem);
+  overflow: hidden;
 
-    @media (max-width: 576px) {
-      max-height: calc(100vh - 1rem);
-    }
+  @media (max-width: 576px) {
+    max-height: calc(100vh - 1rem);
+  }
+}
+
+.modal-body {
+  // max-height: calc(100vh - 200px);
+  overflow-y: auto;
+
+  &::-webkit-scrollbar {
+    width: 6px;
   }
 
-  .modal-body {
-    max-height: calc(100vh - 200px);
-    overflow-y: auto;
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+  }
 
-    &::-webkit-scrollbar {
-      width: 6px;
-    }
+  &::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
 
-    &::-webkit-scrollbar-track {
-      background: #f1f1f1;
-      border-radius: 3px;
-    }
-
-    &::-webkit-scrollbar-thumb {
-      background: #c1c1c1;
-      border-radius: 3px;
-
-      &:hover {
-        background: #a8a8a8;
-      }
+    &:hover {
+      background: #a8a8a8;
     }
   }
 }

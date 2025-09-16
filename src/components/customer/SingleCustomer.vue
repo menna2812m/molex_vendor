@@ -1,5 +1,5 @@
 <template>
-  <section v-if="oneuser.length>0">
+  <section v-if="oneuser.length > 0">
     <div class="row row-sm mt-5 pt-5">
       <div class="col-12">
         <div class="card productdesc pb-3 border-1">
@@ -7,7 +7,6 @@
             class="card-header pb-2 d-flex align-items-center justify-content-between"
           >
             <h4 class="mb-0">العميل</h4>
-          
           </div>
           <div class="row align-items-center justify-content-center pt-3">
             <div class="col-lg-7">
@@ -20,7 +19,7 @@
                     style="width: 80px; height: 80px; border-radius: 50%"
                   />
                   <h5>{{ user.fname }} {{ user.lname }}</h5>
-                  <h5>{{ user?user.email:"" }}</h5>
+                  <h5>{{ user ? user.email : "" }}</h5>
                   <p>
                     {{ user.birth_date }}
                   </p>
@@ -44,7 +43,7 @@
                         class="p-2"
                         style="
                           border-radius: 25px;
-                          border: 1px solid #E66239;
+                          border: 1px solid #e66239;
                           width: max-content;
                         "
                       >
@@ -62,19 +61,15 @@
         </div>
       </div>
     </div>
-  
- 
   </section>
-  <section class="position-relative" style="height: 100vh;display: grid;
-    place-items: center;"
+  <section
+    class="position-relative"
+    style="height: 100vh; display: grid; place-items: center"
     v-else
-   >
-
-<section class="cate">
-</section>
- <progress class="pure-material-progress-circular"/> 
-
-   </section>  
+  >
+    <section class="cate"></section>
+    <progress class="pure-material-progress-circular" />
+  </section>
 </template>
 
 <script>
@@ -87,7 +82,7 @@ export default {
   },
   data() {
     return {
-      blocktext:"حظر المستخدم",
+      blocktext: "حظر المستخدم",
       ShowModel: false,
       isDropdownOpen: false,
       isDropendOpen: false,
@@ -115,7 +110,7 @@ export default {
       SelectOptions: [],
       regions: [],
       cities: [],
-      items:[],
+      items: [],
     };
   },
   methods: {
@@ -128,27 +123,31 @@ export default {
         `${this.$route.params.id}`
       );
       console.log(res.data.data);
-      if (res.data.data.blocked==1) {
-        this.blocktext='إلغاء الحظر'
-      }else{
-        this.blocktext="حظر المستخدم"
+      if (res.data.data.blocked == 1) {
+        this.blocktext = "إلغاء الحظر";
+      } else {
+        this.blocktext = "حظر المستخدم";
       }
       this.oneuser.push(res.data.data),
-      (this.formData.fname = res.data.data.fname),
+        (this.formData.fname = res.data.data.fname),
         (this.formData.lname = res.data.data.lname),
         (this.formData.birth_date = res.data.data.birth_date),
         (this.formData.gender = res.data.data.gender),
         (this.formData.email = res.data.data.email),
         (this.formData.phone = res.data.data.phone),
         (this.formData.country_id = res.data.data.country.id),
-        (this.formData.city_id = res.data.data.city?res.data.data.city.id:null),
-        (this.formData.region_id = res.data.data.region?res.data.data.region.id:null),
-        (this.formData.district_id = res.data.data.district?res.data.data.district.id:null)
+        (this.formData.city_id = res.data.data.city
+          ? res.data.data.city.id
+          : null),
+        (this.formData.region_id = res.data.data.region
+          ? res.data.data.region.id
+          : null),
+        (this.formData.district_id = res.data.data.district
+          ? res.data.data.district.id
+          : null);
     },
     async country() {
-      const result = await crudDataService.getAll(
-        "countries"
-      );
+      const result = await crudDataService.getAll("countries");
       this.countries = result.data.data;
       this.SelectOptions = this.countries.map((country) => ({
         value: country.id,
@@ -167,14 +166,13 @@ export default {
           city.cities.forEach((one) => {
             if (ele.city) {
               if (ele.city.id === one.id) {
-              this.cities = city.cities.map((dist) => ({
-                value: dist.id,
-                name: dist.name,
-                districts: dist.districts,
-              }));
+                this.cities = city.cities.map((dist) => ({
+                  value: dist.id,
+                  name: dist.name,
+                  districts: dist.districts,
+                }));
+              }
             }
-            }
-          
           });
         });
       });
@@ -192,20 +190,26 @@ export default {
       });
     },
     async edit() {
-      const res = await crudDataService.put(`users/${this.$route.params.id}` ,this.formData);
-   console.log(res);
-   this.ShowModel= false;
-   this.oneuser=[]
-   this.getCustomer();
+      const res = await crudDataService.put(
+        `users/${this.$route.params.id}`,
+        this.formData
+      );
+      console.log(res);
+      this.ShowModel = false;
+      this.oneuser = [];
+      this.getCustomer();
     },
-  
-    async blocked(){
-      const res = await crudDataService.create(`users/${this.$route.params.id}/toggle`,'');
+
+    async blocked() {
+      const res = await crudDataService.create(
+        `users/${this.$route.params.id}/toggle`,
+        ""
+      );
       console.log();
       if (res.data.data.blocked) {
-        this.blocktext="إلغاء الحظر"
-      }else{
-        this.blocktext="حظر المستخدم"
+        this.blocktext = "إلغاء الحظر";
+      } else {
+        this.blocktext = "حظر المستخدم";
       }
     },
     changecode() {
@@ -267,9 +271,7 @@ export default {
 
   right: 0;
 }
-.modal .modal-header {
-  display: none;
-}
+
 .imgtoadd {
   background: #fff;
   width: 100px;
@@ -286,8 +288,5 @@ export default {
   }
 }
 @media (min-width: 576px) {
-  .modal-dialog {
-    margin: 8.75rem auto;
-  }
 }
 </style>

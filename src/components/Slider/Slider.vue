@@ -87,9 +87,7 @@
         centered
         size="md"
       >
-        <template #modal-header>
-          <h5 class="modal-title">إضافة اسلايد جديد</h5>
-        </template>
+        <h5 class="modal-title">إضافة اسلايد جديد</h5>
 
         <div class="modal-body-content">
           <form @submit.prevent="add" class="slide-form">
@@ -768,7 +766,7 @@ export default {
 
 <style lang="scss">
 // Modal positioning and overflow fixes
-.modal {
+#add-slide-modal {
   overflow: auto;
 
   .modal-dialog {
@@ -799,7 +797,7 @@ export default {
   }
 
   .modal-body {
-    max-height: calc(100vh - 200px);
+    // max-height: calc(100vh - 200px);
     overflow-y: auto;
 
     &::-webkit-scrollbar {

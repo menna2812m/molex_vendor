@@ -477,9 +477,7 @@ export default {
 
   right: 0;
 }
-.modal .modal-header {
-  display: none;
-}
+
 .imgtoadd {
   background: #fff;
   width: 100px;
@@ -496,8 +494,5 @@ export default {
   }
 }
 @media (min-width: 576px) {
-  .modal-dialog {
-    margin: 8.75rem auto;
-  }
 }
 </style>

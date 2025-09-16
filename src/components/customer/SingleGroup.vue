@@ -8,13 +8,13 @@
           >
             <img :src="item.image" alt="" />
             <h4 class="mb-0">
-              {{ item.name?item.name.ar:'' }}
+              {{ item.name ? item.name.ar : "" }}
             </h4>
             <div class="pos-relative">
               <button
                 @click="toggleDropdown"
                 class="twobtn bg-white border"
-                style="border-color: #E66239 !important; color: #E66239"              
+                style="border-color: #e66239 !important; color: #e66239"
               >
                 خيارات الصفحة <i class="fas fa-caret-down ms-1"></i>
               </button>
@@ -29,13 +29,12 @@
               <h5>الخيارات :</h5>
               <div v-if="item.conditions">
                 <ul>
-
                   <li v-for="(con, i) in item.conditions" :key="i">
-                    {{ con.type?con.type:''}}
-                    {{ con.min_value?con.min_value:''}}
-                    {{ con.operator?con.operator:''}}
-                    {{ con.value?con.value:''}}
-                    {{ con.max_value?con.max_value:''}}
+                    {{ con.type ? con.type : "" }}
+                    {{ con.min_value ? con.min_value : "" }}
+                    {{ con.operator ? con.operator : "" }}
+                    {{ con.value ? con.value : "" }}
+                    {{ con.max_value ? con.max_value : "" }}
                   </li>
                 </ul>
               </div>
@@ -65,27 +64,26 @@
                 v-for="(con, ii) in formData.condition"
                 :key="ii"
               >
-        
-                <label>{{ con.title?con.title:con.type }}</label>
+                <label>{{ con.title ? con.title : con.type }}</label>
                 <input
-                v-if="con.min_value"
-                type="text"
+                  v-if="con.min_value"
+                  type="text"
                   name=""
                   id=""
                   class="form-control my-1"
                   v-model="con.min_value"
                 />
                 <input
-                v-if="con.min_value"
+                  v-if="con.min_value"
                   type="text"
                   name=""
                   id=""
                   class="form-control my-1"
                   v-model="con.max_value"
-                /> 
+                />
                 <input
-                v-else
-                 type="text"
+                  v-else
+                  type="text"
                   name=""
                   id=""
                   class="form-control"
@@ -136,8 +134,7 @@ export default {
         image: "",
         condition: [],
       },
-      conditions:[],
-
+      conditions: [],
     };
   },
   methods: {
@@ -182,7 +179,6 @@ export default {
           headers: {
             "Content-Type": "multipart/form-data",
           },
-          
         }
       );
       this.getPage();
@@ -210,10 +206,10 @@ export default {
 </style>
 <style lang="scss">
 input::file-selector-button {
-  background-image: linear-gradient(to right, #E66239, #E66239) !important;
+  background-image: linear-gradient(to right, #e66239, #e66239) !important;
 }
 
-.modal .modal-header {
+#add-page .modal-header {
   display: none;
 }
 .imgtoadd {
@@ -232,7 +228,7 @@ input::file-selector-button {
   }
 }
 @media (min-width: 576px) {
-  .modal-dialog {
+  #add-page .modal-dialog {
     margin: 5.75rem auto;
   }
 }
