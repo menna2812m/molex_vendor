@@ -842,6 +842,9 @@ export default {
       this.clearFieldError("region_id");
 
       const regionId = events || this.formDataupdate.region_id;
+      console.log("Looking for region ID:", regionId);
+      console.log("Available regions:", this.regions);
+
       const selectedRegion = this.regions.find(
         (region) => region.value === regionId
       );
@@ -850,7 +853,8 @@ export default {
         this.cities = selectedRegion.cities.map((city) => ({
           value: city.id,
           name: city.name,
-          districts: city.districts,
+          districts: city.districts, // Make sure districts are preserved
+          id: city.id, // Add id as backup
         }));
       } else {
         this.cities = [];
@@ -866,13 +870,18 @@ export default {
       this.clearFieldError("city_id");
 
       const cityId = events || this.formDataupdate.city_id;
-      const selectedCity = this.cities.find((city) => city.value === cityId);
+
+      // Try both value and id properties to find the city
+      const selectedCity = this.cities.find(
+        (city) => city.value === cityId || city.id === cityId
+      );
 
       if (selectedCity && selectedCity.districts) {
         this.districta = selectedCity.districts.map((dist) => ({
           value: dist.id,
           name: dist.name,
         }));
+        console.log("Districts found:", this.districta);
       } else {
         this.districta = [];
       }
