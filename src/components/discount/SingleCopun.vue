@@ -550,7 +550,7 @@ export default {
       this.formData.discounted_items_excluded =
         this.item.discounted_items_excluded;
       this.formData.is_affiliated = this.item.is_affiliated;
-      this.formData.name = this.item.name;
+      this.formData.name = this.item.name || this.item.affiliate.name;
       this.formData.comission_type = this.item.affiliate.comission_type;
       this.formData.comission_value = this.item.affiliate.comission_value;
       this.formData.notes = this.item.note;

@@ -22,7 +22,7 @@
             <form @submit.prevent="add">
               <div class="row">
                 <div class="col-md-6">
-                  <div class="mt-1">
+                  <div class="mt-3">
                     <label>الاسم </label>
                     <input
                       type="text"
@@ -32,7 +32,7 @@
                   </div>
                 </div>
                 <div class="col-md-6">
-                  <div class="mt-1">
+                  <div class="mt-3">
                     <label>كود</label>
                     <input
                       type="text"
@@ -43,7 +43,7 @@
                   </div>
                 </div>
                 <div class="col-md-6">
-                  <div class="mt-1">
+                  <div class="mt-3">
                     <label>نوع الخصم</label>
                     <Multiselect
                       label="name"
@@ -55,7 +55,7 @@
                   </div>
                 </div>
                 <div class="col-md-6">
-                  <div class="mt-1">
+                  <div class="mt-3">
                     <label>قيمة الخصم</label>
                     <input
                       type="text"
@@ -66,7 +66,7 @@
                   </div>
                 </div>
                 <div class="col-md-6">
-                  <div class="mt-1">
+                  <div class="mt-3">
                     <label>بداية التاريخ</label>
                     <input
                       type="date"
@@ -77,7 +77,7 @@
                 </div>
 
                 <div class="col-md-6">
-                  <div class="mt-1">
+                  <div class="mt-3">
                     <label>نهاية التاريخ</label>
                     <input
                       type="date"
@@ -87,7 +87,7 @@
                   </div>
                 </div>
                 <div class="col-md-6">
-                  <div class="mt-1">
+                  <div class="mt-3">
                     <label> الحد الأقصى للاستخدام لكل مستخدم</label>
                     <input
                       type="number"
@@ -97,7 +97,7 @@
                   </div>
                 </div>
                 <div class="col-md-6">
-                  <div class="mt-1">
+                  <div class="mt-3">
                     <label> الحد الأقصى للاستخدام</label>
                     <input
                       type="number"
@@ -107,7 +107,7 @@
                   </div>
                 </div>
                 <div class="col-md-6">
-                  <div class="mt-1">
+                  <div class="mt-3">
                     <label>نوع العمولة </label>
                     <Multiselect
                       label="name"
@@ -119,7 +119,7 @@
                   </div>
                 </div>
                 <div class="col-md-6">
-                  <div class="mt-1">
+                  <div class="mt-3">
                     <label>قيمة العمولة </label>
                     <input
                       type="text"
@@ -129,7 +129,7 @@
                   </div>
                 </div>
                 <div class="col-md-12">
-                  <div class="mt-1">
+                  <div class="mt-3">
                     <label>الحد الأقصى لسعر الخصم </label>
                     <input
                       type="number"
@@ -139,7 +139,7 @@
                   </div>
                 </div>
                 <div class="col-md-12">
-                  <div class="mt-1">
+                  <div class="mt-3">
                     <label>ملحوظات </label>
                     <textarea
                       rows="5"
@@ -151,7 +151,7 @@
                 </div>
 
                 <div class="col-md-12">
-                  <div class="mt-1 d-flex align-items-center">
+                  <div class="mt-3 d-flex align-items-center">
                     <label class="mx-1">الحد الأقصى لرؤية السعر الخصم </label>
 
                     <label class="custom-switch justify-content-center">
@@ -167,7 +167,7 @@
                   </div>
                 </div>
                 <div class="col-md-12">
-                  <div class="mt-1 d-flex align-items-center">
+                  <div class="mt-3 d-flex align-items-center">
                     <label class="mx-1">توصيل مجاني </label>
                     <label class="custom-switch justify-content-center">
                       <input
@@ -182,7 +182,7 @@
                   </div>
                 </div>
                 <div class="col-md-12">
-                  <div class="mt-1 d-flex align-items-center">
+                  <div class="mt-3 d-flex align-items-center">
                     <label class="mx-1">متاح</label>
                     <label class="custom-switch justify-content-center">
                       <input
@@ -197,7 +197,7 @@
                   </div>
                 </div>
                 <div class="col-md-12">
-                  <div class="mt-1 d-flex align-items-center">
+                  <div class="mt-3 d-flex align-items-center">
                     <label class="mx-1">تم استبعاد العناصر المخفضة </label>
                     <label class="custom-switch justify-content-center">
                       <input
@@ -212,7 +212,7 @@
                   </div>
                 </div>
                 <div class="col-md-12">
-                  <div class="mt-1 d-flex align-items-center">
+                  <div class="mt-3 d-flex align-items-center">
                     <label class="mx-1">تابعة </label>
                     <label class="custom-switch justify-content-center">
                       <input

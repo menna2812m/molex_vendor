@@ -97,51 +97,124 @@
 
                 <div class="col-md-6">
                   <div class="form-group">
-                    <label class="form-label">اسم العرض عربي</label>
+                    <label class="form-label"
+                      >اسم العرض عربي <span class="text-danger">*</span></label
+                    >
                     <input
                       type="text"
                       class="form-control"
+                      :class="{
+                        'is-invalid':
+                          hasFieldError('title.ar') && !formData.title.ar,
+                        'is-valid':
+                          !hasFieldError('title.ar') && formData.title.ar,
+                      }"
                       v-model="formData.title.ar"
+                      @input="clearFieldError('title.ar')"
+                      @blur="clearFieldError('title.ar')"
+                      placeholder="أدخل اسم العرض بالعربية"
+                      required
                     />
+                    <div
+                      class="invalid-feedback"
+                      v-if="hasFieldError('title.ar') && !formData.title.ar"
+                    >
+                      {{ getFieldError("title.ar") }}
+                    </div>
                   </div>
                 </div>
 
                 <div class="col-md-6">
                   <div class="form-group">
-                    <label class="form-label">اسم العرض انجليزي</label>
+                    <label class="form-label"
+                      >اسم العرض انجليزي
+                      <span class="text-danger">*</span></label
+                    >
                     <input
                       type="text"
                       class="form-control"
+                      :class="{
+                        'is-invalid':
+                          hasFieldError('title.en') && !formData.title.en,
+                        'is-valid':
+                          !hasFieldError('title.en') && formData.title.en,
+                      }"
                       v-model="formData.title.en"
+                      @input="clearFieldError('title.en')"
+                      @blur="clearFieldError('title.en')"
+                      placeholder="أدخل اسم العرض بالإنجليزية"
+                      required
                     />
+                    <div
+                      class="invalid-feedback"
+                      v-if="hasFieldError('title.en') && !formData.title.en"
+                    >
+                      {{ getFieldError("title.en") }}
+                    </div>
                   </div>
                 </div>
 
                 <div class="col-md-6">
                   <div class="form-group">
-                    <label class="form-label">بداية العرض</label>
+                    <label class="form-label"
+                      >بداية العرض <span class="text-danger">*</span></label
+                    >
                     <input
                       type="date"
                       class="form-control"
+                      :class="{
+                        'is-invalid':
+                          hasFieldError('start_date') && !formData.start_date,
+                        'is-valid':
+                          !hasFieldError('start_date') && formData.start_date,
+                      }"
                       v-model="formData.start_date"
+                      @input="clearFieldError('start_date')"
                       @change="
-                        conflicts(formData.start_date, formData.expire_date)
+                        clearFieldError('start_date');
+                        conflicts(formData.start_date, formData.expire_date);
                       "
+                      required
                     />
+                    <div
+                      class="invalid-feedback"
+                      v-if="hasFieldError('start_date') && !formData.start_date"
+                    >
+                      {{ getFieldError("start_date") }}
+                    </div>
                   </div>
                 </div>
 
                 <div class="col-md-6">
                   <div class="form-group">
-                    <label class="form-label">نهاية العرض</label>
+                    <label class="form-label"
+                      >نهاية العرض <span class="text-danger">*</span></label
+                    >
                     <input
                       type="date"
                       class="form-control"
+                      :class="{
+                        'is-invalid':
+                          hasFieldError('expire_date') && !formData.expire_date,
+                        'is-valid':
+                          !hasFieldError('expire_date') && formData.expire_date,
+                      }"
                       v-model="formData.expire_date"
+                      @input="clearFieldError('expire_date')"
                       @change="
-                        conflicts(formData.start_date, formData.expire_date)
+                        clearFieldError('expire_date');
+                        conflicts(formData.start_date, formData.expire_date);
                       "
+                      required
                     />
+                    <div
+                      class="invalid-feedback"
+                      v-if="
+                        hasFieldError('expire_date') && !formData.expire_date
+                      "
+                    >
+                      {{ getFieldError("expire_date") }}
+                    </div>
                   </div>
                 </div>
 
@@ -176,16 +249,32 @@
 
                 <div class="col-md-6">
                   <div class="form-group">
-                    <label class="form-label">نوع العرض</label>
-                    <Multiselect
-                      label="name"
-                      :searchable="true"
-                      :options="type"
-                      placeholder="اختر النوع"
-                      v-model="formData.type"
-                      @change="handleTypeChange($event)"
-                      class="custom-multiselect"
-                    />
+                    <label class="form-label"
+                      >نوع العرض <span class="text-danger">*</span></label
+                    >
+                    <div
+                      :class="{
+                        'border border-danger rounded':
+                          hasFieldError('type') && !formData.type,
+                      }"
+                    >
+                      <Multiselect
+                        label="name"
+                        :searchable="true"
+                        :options="type"
+                        placeholder="اختر النوع"
+                        v-model="formData.type"
+                        @change="handleTypeChange($event)"
+                        @select="clearFieldError('type')"
+                        class="custom-multiselect"
+                      />
+                    </div>
+                    <div
+                      class="text-danger small mt-1"
+                      v-if="hasFieldError('type') && !formData.type"
+                    >
+                      {{ getFieldError("type") }}
+                    </div>
                   </div>
                 </div>
 
@@ -432,14 +521,34 @@
                 </div>
               </div>
 
+              <!-- Form Validation Summary -->
+              <div v-if="!isFormValid" class="alert alert-warning mb-3">
+                <small>
+                  <i class="fe fe-info"></i>
+                  يرجى ملء جميع الحقول المطلوبة المميزة بعلامة النجمة (*) قبل
+                  الحفظ
+                </small>
+              </div>
+
               <div class="form-actions">
-                <button class="btn btn-primary" type="submit">
-                  اضافة العرض
+                <button
+                  class="btn btn-primary"
+                  type="submit"
+                  :disabled="isSubmitting || !isFormValid"
+                >
+                  <span
+                    v-if="isSubmitting"
+                    class="spinner-border spinner-border-sm me-1"
+                    role="status"
+                    aria-hidden="true"
+                  ></span>
+                  {{ isSubmitting ? "جاري الإضافة..." : "اضافة العرض" }}
                 </button>
                 <button
                   class="btn btn-light"
                   type="button"
                   @click="ShowModel = false"
+                  :disabled="isSubmitting"
                 >
                   إلغاء
                 </button>
@@ -457,11 +566,12 @@ import { useToast } from "vue-toastification";
 import Multiselect from "@vueform/multiselect";
 import crudDataService from "../../Services/crudDataService.js";
 import offerimage from "../../assets/img/offer.png";
-import { error } from "jquery";
+import { FormErrorMixin } from "../../Shared/mixins/FormErrorMixin.js";
 export default {
   components: {
     Multiselect,
   },
+  mixins: [FormErrorMixin],
   data() {
     return {
       imageUrl: offerimage,
@@ -470,6 +580,50 @@ export default {
       showvalue: false,
       percshow: false,
       showx: false,
+
+      // ✅ Form validation rules
+      formValidationRules: {
+        "title.ar": {
+          required: true,
+          label: "اسم العرض بالعربية",
+          minLength: 2,
+        },
+        "title.en": {
+          required: true,
+          label: "اسم العرض بالإنجليزية",
+          minLength: 2,
+        },
+        start_date: {
+          required: true,
+          label: "تاريخ بداية العرض",
+        },
+        expire_date: {
+          required: true,
+          label: "تاريخ انتهاء العرض",
+        },
+        type: {
+          required: true,
+          label: "نوع العرض",
+        },
+        image: {
+          required: false,
+          label: "صورة العرض",
+          maxSize: 5120, // 5MB in KB
+        },
+      },
+
+      // ✅ Fields to watch for clearing errors
+      watchedFields: [
+        "formData.title.ar",
+        "formData.title.en",
+        "formData.start_date",
+        "formData.expire_date",
+        "formData.type",
+        "formData.value",
+        "formData.discount_type",
+        "formData.min_value",
+      ],
+
       discount_type: [
         { value: "free", name: "مجانا" },
         { value: "percent", name: "سية مئوية" },
@@ -518,7 +672,26 @@ export default {
       },
       conflictsdata: [],
       allpro: [],
+      isSubmitting: false,
     };
+  },
+
+  computed: {
+    // ✅ Check if there are any errors
+    hasAnyErrors() {
+      return Object.keys(this.fieldErrors).length > 0;
+    },
+
+    // ✅ Check if form is valid for submission
+    isFormValid() {
+      return this.formData.title.ar &&
+        this.formData.title.en &&
+        this.formData.start_date &&
+        this.formData.expire_date &&
+        this.formData.type
+        ? true
+        : false;
+    },
   },
   methods: {
     changecoupon(e) {
@@ -529,7 +702,34 @@ export default {
       }
     },
     onFileSelected(event) {
-      this.formData.image = event.target.files[0];
+      this.clearFieldError("image");
+
+      const file = event.target.files[0];
+      if (!file) return;
+
+      // Validate file size (5MB)
+      const maxSize = 5 * 1024 * 1024;
+      if (file.size > maxSize) {
+        const toast = useToast();
+        toast.error("حجم الصورة كبير جداً. الحد الأقصى 5 ميجابايت", {
+          position: "top-right",
+          timeout: 5000,
+        });
+        return;
+      }
+
+      // Validate file type
+      const allowedTypes = ["image/jpeg", "image/jpg", "image/png"];
+      if (!allowedTypes.includes(file.type)) {
+        const toast = useToast();
+        toast.error("نوع الملف غير مدعوم. الأنواع المدعومة: JPG, PNG", {
+          position: "top-right",
+          timeout: 5000,
+        });
+        return;
+      }
+
+      this.formData.image = file;
       const reader = new FileReader();
       reader.onload = () => {
         this.imageUrl = reader.result;
@@ -756,48 +956,127 @@ export default {
     },
 
     async add() {
-      if (!this.formData.image && this.imageUrl) {
-        try {
-          const response = await fetch(this.imageUrl);
-          const blob = await response.blob();
-          this.formData.image = new File([blob], "filename.jpg", {
-            type: "image/jpeg",
-          });
-        } catch (error) {
-          console.error("Error downloading image:", error);
-          return;
-        }
-      }
+      const toast = useToast();
 
-      let res = await crudDataService
-        .create(`offers`, this.formData, {
+      // Clear previous errors
+      this.clearAllErrors();
+
+      this.isSubmitting = true;
+
+      try {
+        // Handle image file preparation
+        if (!this.formData.image && this.imageUrl) {
+          try {
+            const response = await fetch(this.imageUrl);
+            const blob = await response.blob();
+            this.formData.image = new File([blob], "filename.jpg", {
+              type: "image/jpeg",
+            });
+          } catch (error) {
+            console.error("Error downloading image:", error);
+            toast.error("خطأ في تحضير الصورة", {
+              position: "top-right",
+              timeout: 5000,
+            });
+            return;
+          }
+        }
+
+        const res = await crudDataService.create(`offers`, this.formData, {
           headers: {
             "Content-Type": "multipart/form-data",
           },
-        })
-        .then((response) => {
+        });
+
+        if (res.data.status) {
+          toast.success(res.data.message || "تم إضافة العرض بنجاح", {
+            position: "top-right",
+            timeout: 5000,
+          });
+
           this.ShowModel = false;
           this.offers();
-          (this.formData.title.ar = ""),
-            (this.formData.title.en = ""),
-            (this.formData.is_active = ""),
-            (this.formData.start_date = ""),
-            (this.formData.expire_date = ""),
-            (this.formData.type = ""),
-            (this.formData.message = ""),
-            (this.formData.value = ""),
-            (this.formData.x_quantity = ""),
-            (this.formData.y_quantity = ""),
-            (this.formData.discount_type = ""),
-            (this.formData.products_x = ""),
-            (this.formData.products_y = ""),
-            (this.formData.categories_x = ""),
-            (this.formData.categories_y = "");
-        });
+          this.resetForm();
+        }
+      } catch (error) {
+        console.error("Offer creation error:", error);
+        this.handleApiErrors(error, toast);
+      } finally {
+        this.isSubmitting = false;
+      }
+    },
+
+    // ✅ Reset form to initial state
+    resetForm() {
+      this.formData = {
+        title: {
+          ar: "",
+          en: "",
+        },
+        message: {
+          ar: "",
+          en: "",
+        },
+        coupon_active: false,
+        start_date: "",
+        expire_date: "",
+        type: "",
+        value: "",
+        discount_type: "",
+        max_discounted_value: "",
+        min_value: "",
+        min_type: "",
+        x_quantity: "",
+        y_quantity: "",
+        offerables: [],
+        image: "",
+      };
+      this.imageUrl = offerimage;
+      this.showdiscount = false;
+      this.showField = false;
+      this.showvalue = false;
+      this.percshow = false;
+      this.showx = false;
+    },
+
+    // ✅ Enhanced type change with error clearing
+    handleTypeChange(e) {
+      this.clearFieldError("type");
+
+      if (e === "fixed") {
+        this.showdiscount = false;
+        this.showField = true;
+        this.showvalue = true;
+        this.percshow = false;
+        this.showx = false;
+      } else if (e === "percent") {
+        this.showField = true;
+        this.percshow = true;
+        this.showdiscount = false;
+        this.showvalue = true;
+        this.showx = false;
+      } else {
+        (this.showField = false), (this.pp = "");
+        this.percshow = false;
+        this.formData.coupon_active = false;
+        this.showvalue = false;
+        this.showx = true;
+        this.showdiscount = true;
+      }
     },
   },
   mounted() {
     this.offers();
+  },
+
+  watch: {
+    // ✅ Reset errors when modal closes
+    ShowModel(val) {
+      if (!val) {
+        this.clearAllErrors();
+        this.resetForm();
+      }
+    },
   },
 };
 </script>
@@ -1023,10 +1302,83 @@ export default {
   :deep(.multiselect-option.is-selected) {
     background: #e66239;
   }
+}
 
-  :deep(.multiselect-option.is-pointed) {
-    background: #f8f8f8;
-    color: #333;
+/* Form Validation Styles */
+.text-danger.small {
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-top: 0.25rem;
+  display: block;
+}
+
+.form-label .text-danger {
+  color: #dc3545 !important;
+  font-weight: bold;
+  margin-left: 2px;
+}
+
+.alert-warning {
+  color: #856404;
+  background-color: #fff3cd;
+  border-color: #ffecb5;
+  border-radius: 0.375rem;
+  padding: 0.75rem 1.25rem;
+  margin-bottom: 1rem;
+  border: 1px solid transparent;
+}
+
+.border-danger {
+  border-color: #dc3545 !important;
+}
+
+.spinner-border-sm {
+  width: 1rem;
+  height: 1rem;
+  border-width: 0.125rem;
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Animation for Error Display */
+.invalid-feedback,
+.text-danger.small {
+  animation: fadeInError 0.3s ease-in-out;
+}
+
+@keyframes fadeInError {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .invalid-feedback,
+  .text-danger.small {
+    font-size: 0.8rem;
+  }
+
+  .alert-warning {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+  }
+
+  .btn {
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
+
+  .btn:last-child {
+    margin-bottom: 0;
   }
 }
 </style>

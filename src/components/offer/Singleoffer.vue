@@ -1032,11 +1032,6 @@ export default {
   :deep(.multiselect-option.is-selected) {
     background: #e66239;
   }
-
-  :deep(.multiselect-option.is-pointed) {
-    background: #f8f8f8;
-    color: #333;
-  }
 }
 
 .custom-switch {
