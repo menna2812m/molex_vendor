@@ -721,6 +721,7 @@
                   class="form-control"
                   :class="{ 'is-invalid': hasFieldError('images') }"
                   multiple
+                  required
                 />
                 <div v-if="hasFieldError('images')" class="invalid-feedback">
                   {{ getFieldError("images") }}
