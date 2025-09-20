@@ -320,6 +320,7 @@
                       group-values="options"
                       group-label="name"
                       placeholder="الخصم علي"
+                      v-model="selectedDiscountItems"
                       @change="allmulti($event)"
                       class="custom-multiselect"
                     />
@@ -506,7 +507,7 @@
                 </div>
 
                 <!-- Coupon Option -->
-                <div class="col-12" v-if="showvalue">
+                <!-- <div class="col-12" v-if="showvalue">
                   <div class="form-group coupon-checkbox">
                     <label class="custom-switch">
                       <input
@@ -518,7 +519,7 @@
                       <span class="custom-switch-description">متاح كوبون</span>
                     </label>
                   </div>
-                </div>
+                </div> -->
               </div>
 
               <!-- Form Validation Summary -->
@@ -646,6 +647,7 @@ export default {
       myList: [],
       loading: false,
       allitempro: [],
+      selectedDiscountItems: [],
       pp: "",
       formData: {
         title: {
@@ -763,6 +765,9 @@ export default {
       }
     },
     changpro(e) {
+      // Reset selected discount items when changing product type
+      this.selectedDiscountItems = [];
+
       this.getall(e);
       if (e === "products") {
         this.formData.offerables.push({ type: null, model_name: "product" });
@@ -865,6 +870,7 @@ export default {
         }
       } else {
         if (e === "products") {
+          this.allitempro = [];
           let res = await crudDataService
             .getAll("products-without-pagination")
             .then((response) => {
@@ -877,6 +883,8 @@ export default {
               console.log(error);
             });
         } else if (e === "categories") {
+          this.allitempro = [];
+
           let res = await crudDataService
             .getAll("categories")
             .then((response) => {
@@ -1031,6 +1039,7 @@ export default {
         offerables: [],
         image: "",
       };
+      this.selectedDiscountItems = [];
       this.imageUrl = offerimage;
       this.showdiscount = false;
       this.showField = false;
@@ -1270,7 +1279,7 @@ export default {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    right: 10px;
+    right: 82%;
     background: #e66239;
     color: white;
     padding: 2px 10px;

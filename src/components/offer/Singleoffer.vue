@@ -106,7 +106,7 @@
                 }}</span>
               </div>
 
-              <div class="offer-detail-item">
+              <!-- <div class="offer-detail-item">
                 <span class="detail-label">متاح:</span>
                 <label class="custom-switch">
                   <input
@@ -117,7 +117,7 @@
                   />
                   <span class="custom-switch-indicator ms-auto"></span>
                 </label>
-              </div>
+              </div> -->
             </div>
           </div>
         </div>
@@ -283,6 +283,7 @@
                       group-values="options"
                       group-label="name"
                       placeholder="الخصم علي"
+                      v-model="selectedDiscountItems"
                       @change="allmulti($event)"
                       class="custom-multiselect"
                     />
@@ -332,6 +333,7 @@
                         group-values="options"
                         group-label="name"
                         placeholder="الخصم علي"
+                        v-model="selectedDiscountItemsX"
                         @change="allmultix($event)"
                         class="custom-multiselect"
                       />
@@ -382,6 +384,7 @@
                         group-values="options"
                         group-label="name"
                         placeholder="الخصم علي"
+                        v-model="selectedDiscountItemsY"
                         @change="allmultiy($event)"
                         class="custom-multiselect"
                       />
@@ -469,7 +472,7 @@
                 </div>
 
                 <!-- Coupon Option -->
-                <div class="col-12" v-if="showvalue">
+                <!-- <div class="col-12" v-if="showvalue">
                   <div class="form-group coupon-checkbox">
                     <label class="custom-switch">
                       <input
@@ -481,7 +484,7 @@
                       <span class="custom-switch-description">متاح كوبون</span>
                     </label>
                   </div>
-                </div>
+                </div> -->
               </div>
 
               <div class="form-actions">
@@ -548,6 +551,9 @@ export default {
       percshow: false,
       showx: false,
       allitempro: [],
+      selectedDiscountItems: [],
+      selectedDiscountItemsX: [],
+      selectedDiscountItemsY: [],
       pp: "",
       formData: {
         title: {
@@ -649,6 +655,9 @@ export default {
       }
     },
     changpro(e) {
+      // Reset selected discount items when changing product type
+      this.selectedDiscountItems = [];
+
       this.getall(e);
       if (e === "products") {
         this.formData.offerables.push({ type: null, model_name: "product" });
@@ -665,6 +674,9 @@ export default {
       }
     },
     changcatx(e) {
+      // Reset selected discount items X when changing product type
+      this.selectedDiscountItemsX = [];
+
       this.getall(e);
       if (e === "products") {
         this.formData.offerables.push({ type: "x", model_name: "product" });
@@ -695,18 +707,20 @@ export default {
       }
     },
     async getall(e) {
+      console.log(e, "vggj", this.conflictsdata);
+
       if (this.conflictsdata.product || this.conflictsdata.category) {
         if (
           this.conflictsdata.product.length > 0 ||
           this.conflictsdata.category.length > 0
         ) {
-          console.log(e);
-
           if (e === "products") {
+            console.log("sksk");
+
             console.log(e);
             this.allitempro = [];
             let res = await crudDataService
-              .getAll("products-without-paginated")
+              .getAll("products-without-pagination")
               .then((response) => {
                 this.allpro = response.data.data.map((ele) => ({
                   value: ele.id,
@@ -730,7 +744,7 @@ export default {
           } else if (e === "categories") {
             this.allitempro = [];
             let res = await crudDataService
-              .getAll("categories-without-paginated")
+              .getAll("categories")
               .then((response) => {
                 this.allpro = response.data.data.map((ele) => ({
                   value: ele.id,
@@ -753,11 +767,13 @@ export default {
       } else {
         if (e === "products") {
           let res = await crudDataService
-            .getAll("products-without-paginated")
+            .getAll("products-without-pagination")
             .then((response) => {
+              console.log(response.data.data, "jereee");
+
               this.allitempro = response.data.data.map((ele) => ({
                 value: ele.id,
-                name: ele.name.ar,
+                name: ele.name,
               }));
             })
             .catch((error) => {
@@ -765,7 +781,7 @@ export default {
             });
         } else if (e === "categories") {
           let res = await crudDataService
-            .getAll("categories-without-paginated")
+            .getAll("categories")
             .then((response) => {
               this.allitempro = response.data.data.map((ele) => ({
                 value: ele.id,
@@ -1000,7 +1016,7 @@ export default {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    right: 10px;
+    right: 82%;
     background: #e66239;
     color: white;
     padding: 2px 10px;
