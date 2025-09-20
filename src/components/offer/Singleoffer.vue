@@ -707,17 +707,12 @@ export default {
       }
     },
     async getall(e) {
-      console.log(e, "vggj", this.conflictsdata);
-
       if (this.conflictsdata.product || this.conflictsdata.category) {
         if (
           this.conflictsdata.product.length > 0 ||
           this.conflictsdata.category.length > 0
         ) {
           if (e === "products") {
-            console.log("sksk");
-
-            console.log(e);
             this.allitempro = [];
             let res = await crudDataService
               .getAll("products-without-pagination")
@@ -734,7 +729,6 @@ export default {
                   );
                   if (!this.conflictsdata.product.includes(element.value)) {
                     this.allitempro.push(element);
-                    console.log(this.allitempro);
                   }
                 });
               })
@@ -751,9 +745,6 @@ export default {
                   name: ele.name,
                 }));
                 this.allpro.forEach((element) => {
-                  console.log(
-                    this.conflictsdata.category.includes(element.value)
-                  );
                   if (!this.conflictsdata.category.includes(element.value)) {
                     this.allitempro.push(element);
                   }
@@ -769,8 +760,6 @@ export default {
           let res = await crudDataService
             .getAll("products-without-pagination")
             .then((response) => {
-              console.log(response.data.data, "jereee");
-
               this.allitempro = response.data.data.map((ele) => ({
                 value: ele.id,
                 name: ele.name,
