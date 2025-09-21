@@ -33,10 +33,8 @@
           <p
             class="mt-4 border text-center p-1"
             style="border-radius: 25px; cursor: pointer"
-            @click="showmodal = true"
           >
             {{ list.status_translated }}
-            <i class="fa fa-angle-left ms-1"></i>
           </p>
         </div>
       </div>
@@ -88,24 +86,22 @@
         <div>
           <h5 class="mb-0 text-muted">
             <i class="fa fa-motorcycle"></i>
-            اختيار مندوب للتسليم
+            مندوب للتسليم
           </h5>
           <p
             class="mt-4 border text-center p-1"
             style="border-radius: 25px; cursor: pointer"
-            @click="showdeliveries = true"
           >
             {{ list.delivery?.full_name }}
-            <i class="fa fa-angle-left ms-1"></i>
           </p>
         </div>
       </div>
-      <div class="text-danger" v-if="list.delivery">
+      <!-- <div class="text-danger" v-if="list.delivery">
         * اذا كنت تريد الغاء هذا المندوب من هذا الاوردر
         <button class="btn" @click="removedelivery(list.delivery, list.id)">
           اضغط هنا
         </button>
-      </div>
+      </div> -->
     </div>
   </div>
   <div class="card custom-card border-0 mg-b-20" v-if="userData">
