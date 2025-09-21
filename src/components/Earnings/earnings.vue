@@ -180,7 +180,6 @@ export default {
 
 /* Summary Cards */
 .summary-card {
-  background-color: #fff;
   border-radius: 8px;
   box-shadow: 0px 3px 10px rgba(230, 237, 240, 0.5);
   padding: 20px;
@@ -247,7 +246,6 @@ export default {
   margin-bottom: 2rem;
 
   .card-header {
-    background-color: #fff;
     border-bottom: 1px solid #eee;
     padding: 16px 20px;
 
@@ -261,8 +259,6 @@ export default {
   margin-bottom: 0;
 
   thead tr {
-    background-color: #f9f9f9;
-
     th {
       font-weight: 600;
       padding: 12px 16px;
