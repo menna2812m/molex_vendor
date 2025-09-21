@@ -37,17 +37,11 @@
                 v-for="(item, index) in myList"
                 :key="index"
                 class="list_item py-3 w-100 align-items-center justify-content-between"
+                style="cursor: pointer"
+                @click="SingleCustomer(item.id)"
               >
                 <td>
                   <div class="checkbox-container">
-                    <label>
-                      <input
-                        type="checkbox"
-                        v-model="item.selected"
-                        @change="selectuser(item.id)"
-                      />
-                    </label>
-
                     <div class="customer-info">
                       <img
                         src="../../assets/img/avatar_male.jpg"
@@ -61,8 +55,7 @@
                           @click="SingleCustomer(item.id)"
                           style="cursor: pointer"
                         >
-                          {{ item.fname }}
-                          {{ item.lname }}
+                          {{ item.name }}
                         </h5>
                       </div>
                     </div>

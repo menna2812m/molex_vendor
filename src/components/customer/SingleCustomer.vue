@@ -18,7 +18,7 @@
                     class="mx-auto"
                     style="width: 80px; height: 80px; border-radius: 50%"
                   />
-                  <h5>{{ user.fname }} {{ user.lname }}</h5>
+                  <h5>{{ user.name }}</h5>
                   <h5>{{ user ? user.email : "" }}</h5>
                   <p>
                     {{ user.birth_date }}
@@ -30,7 +30,8 @@
                       <i class="si si-location-pin"></i>
                       المنطقة:
                       <span>
-                        {{ user.country.name }}
+                        {{ user.country?.name }}, {{ user.city?.name }},
+                        {{ user.region?.name }}{{ user.district?.name }}
                       </span>
                     </li>
                     <li class="pb-3">
@@ -48,7 +49,9 @@
                         "
                       >
                         <i class="si si-phone"></i>
-                        <a href="tel:`+${user.country.phonecode}${user.phone}`">
+                        <a
+                          :href="`tel:${user.country?.phonecode}${user.phone}`"
+                        >
                           اتصل {{ user.phone }}
                         </a>
                       </p>
@@ -122,7 +125,6 @@ export default {
         "users",
         `${this.$route.params.id}`
       );
-      console.log(res.data.data);
       if (res.data.data.blocked == 1) {
         this.blocktext = "إلغاء الحظر";
       } else {
@@ -135,7 +137,7 @@ export default {
         (this.formData.gender = res.data.data.gender),
         (this.formData.email = res.data.data.email),
         (this.formData.phone = res.data.data.phone),
-        (this.formData.country_id = res.data.data.country.id),
+        (this.formData.country_id = res.data.data.country?.id),
         (this.formData.city_id = res.data.data.city
           ? res.data.data.city.id
           : null),
@@ -147,16 +149,18 @@ export default {
           : null);
     },
     async country() {
-      const result = await crudDataService.getAll("countries");
+      const result = await axios.get(
+        "https://backend.molexapp.com/api/countries"
+      );
       this.countries = result.data.data;
       this.SelectOptions = this.countries.map((country) => ({
-        value: country.id,
-        name: country.name,
-        regions: country.regions,
+        value: country?.id,
+        name: country?.name,
+        regions: country?.regions,
       }));
       this.countries.find((country) => {
-        this.regions = country.regions.map((reg) => ({
-          value: reg.id,
+        this.regions = country?.regions.map((reg) => ({
+          value: reg?.id,
           name: reg.name,
           cities: reg.cities,
         }));
@@ -214,7 +218,7 @@ export default {
     },
     changecode() {
       this.countries.find((country) => {
-        this.codephone = "+" + country.phonecode;
+        this.codephone = "+" + country?.phonecode;
       });
     },
     changecities(events, regions) {
