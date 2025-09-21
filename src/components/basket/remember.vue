@@ -3,9 +3,9 @@
     <button
       class="bg-transparent twobtn"
       style="
-        color: #E66239;
-        border: 1px solid #E66239;
-        border-bottom: 1px solid #E66239 !important;
+        color: #e66239;
+        border: 1px solid #e66239;
+        border-bottom: 1px solid #e66239 !important;
       "
       @click="showModal()"
     >
@@ -20,7 +20,6 @@
           <h6 style="color: #febcd5" class="text-center">إنشاء تذكير جديد</h6>
           <form @submit.prevent="add(id)">
             <div class="row">
-             
               <div class="col-12">
                 <h6 class="fw-semibold">شروط التذكر</h6>
                 <p class="text-muted fs-10">
@@ -47,7 +46,7 @@
                   v-model="formData.total_cart"
                 />
                 <p class="pos-absolute fw-semibold" style="top: 25%; left: 9%">
-                  ر.س
+                  دينار عراقي
                 </p>
               </div>
               <div class="col-12 mb-3">
@@ -139,7 +138,9 @@
             </div>
             <div class="text-center">
               <button class="fs-15 btn-save mx-1">حفظ</button>
-              <button class="fs-15 btn-cancel mx-1" @click="ShowModel=false">الغاء</button>
+              <button class="fs-15 btn-cancel mx-1" @click="ShowModel = false">
+                الغاء
+              </button>
             </div>
           </form>
         </div>
@@ -175,7 +176,7 @@ export default {
         discount_valid_for_hours: "",
         cart_left_days: "",
         total_cart: "",
-        user_ids:[]
+        user_ids: [],
       },
     };
   },
@@ -185,49 +186,50 @@ export default {
 
   methods: {
     async showModal() {
-      this.ShowModel=true;
-    
+      this.ShowModel = true;
     },
     async add(id) {
       // user_ids
       if (id) {
-        this.formData.total_cart=null;
-      this.formData.cart_left_days=null;
-        this.formData.user_ids.push(id)
-        const res = await crudDataService.create("cart_reminders", this.formData).then((response)=>{
-          this.ShowModel = false;
-          this.formData.is_free_shipping= true,
-          this.formData.is_cart_discounted= true,
-          this.formData.discount_type= '',
-          this.formData.discount_value= '',
-          this.formData.discount_end_date= '',
-          this.formData.send_channel= '',
-          this.formData.message= '',
-          this.formData.subject= '',
-          this.formData.discount_valid_for_hours= '',
-          this.formData.cart_left_days= '',
-          this.formData.total_cart= '',
-          this.formData.user_ids= ''
-        })
-     
-      }else{
-        const res = await crudDataService.create("cart_reminders", this.formData).then((response)=>{
-          this.ShowModel = false;
-          this.formData.is_free_shipping= true,
-          this.formData.is_cart_discounted= true,
-          this.formData.discount_type= '',
-          this.formData.discount_value= '',
-          this.formData.discount_end_date= '',
-          this.formData.send_channel= '',
-          this.formData.message= '',
-          this.formData.subject= '',
-          this.formData.discount_valid_for_hours= '',
-          this.formData.cart_left_days= '',
-          this.formData.total_cart= '',
-          this.formData.user_ids= ''
-        })
+        this.formData.total_cart = null;
+        this.formData.cart_left_days = null;
+        this.formData.user_ids.push(id);
+        const res = await crudDataService
+          .create("cart_reminders", this.formData)
+          .then((response) => {
+            this.ShowModel = false;
+            (this.formData.is_free_shipping = true),
+              (this.formData.is_cart_discounted = true),
+              (this.formData.discount_type = ""),
+              (this.formData.discount_value = ""),
+              (this.formData.discount_end_date = ""),
+              (this.formData.send_channel = ""),
+              (this.formData.message = ""),
+              (this.formData.subject = ""),
+              (this.formData.discount_valid_for_hours = ""),
+              (this.formData.cart_left_days = ""),
+              (this.formData.total_cart = ""),
+              (this.formData.user_ids = "");
+          });
+      } else {
+        const res = await crudDataService
+          .create("cart_reminders", this.formData)
+          .then((response) => {
+            this.ShowModel = false;
+            (this.formData.is_free_shipping = true),
+              (this.formData.is_cart_discounted = true),
+              (this.formData.discount_type = ""),
+              (this.formData.discount_value = ""),
+              (this.formData.discount_end_date = ""),
+              (this.formData.send_channel = ""),
+              (this.formData.message = ""),
+              (this.formData.subject = ""),
+              (this.formData.discount_valid_for_hours = ""),
+              (this.formData.cart_left_days = ""),
+              (this.formData.total_cart = ""),
+              (this.formData.user_ids = "");
+          });
       }
-      
     },
   },
 };

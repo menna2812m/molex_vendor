@@ -157,7 +157,7 @@ export default {
 
       try {
         let res = await crudDataService.getAll("tags");
-        this.myList = res.data.data;
+        this.myList = res.data.data.data;
       } catch (error) {
         console.error("Failed to fetch data:", error);
         // Handle error

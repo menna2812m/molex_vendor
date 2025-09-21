@@ -177,7 +177,7 @@ export default {
           icon: "mdi mdi-account-plus icon_color icon_color_1",
           name: " عبد الرحمن محمد",
           span: "منذ 14 ساعة",
-          price: " 1500 ر.س   ",
+          price: " 1500  دينار عراقي    ",
           status_icon: "typcn typcn-media-record balck",
           dev: "typcn typcn-device-laptop text-black pe-1",
           device: "مستعرض كمبيوتر",
@@ -191,7 +191,7 @@ export default {
           icon: "mdi mdi-account-plus icon_color icon_color_2",
           name: " عبد الرحمن محمد",
           span: "منذ 14 ساعة",
-          price: " 1500 ر.س   ",
+          price: " 1500  دينار عراقي    ",
           status_icon: "typcn typcn-media-record balck",
           dev: "typcn typcn-device-phone text-black pe-1",
           device: "مستعرض جوال",
@@ -205,7 +205,7 @@ export default {
           icon: "mdi mdi-account-plus icon_color icon_color_3",
           name: " عبد الرحمن محمد",
           span: "منذ 14 ساعة",
-          price: " 1500 ر.س   ",
+          price: " 1500  دينار عراقي    ",
           status_icon: "typcn typcn-media-record balck",
           dev: "typcn typcn-device-laptop text-black pe-1",
           device: "مستعرض كمبيوتر",
@@ -219,7 +219,7 @@ export default {
           icon: "mdi mdi-account-plus icon_color icon_color_4",
           name: " عبد الرحمن محمد",
           span: "منذ 14 ساعة",
-          price: " 1500 ر.س   ",
+          price: " 1500  دينار عراقي    ",
           status_icon: "typcn typcn-media-record balck",
           dev: "typcn typcn-device-phone text-black pe-1",
           device: "مستعرض جوال",
@@ -233,7 +233,7 @@ export default {
           icon: "mdi mdi-account-plus icon_color icon_color_2",
           name: " عبد الرحمن محمد",
           span: "منذ 14 ساعة",
-          price: " 1500 ر.س   ",
+          price: " 1500  دينار عراقي    ",
           status_icon: "typcn typcn-media-record balck",
           status: "بانتظار المراجعه",
           location: "الرياض",
@@ -245,7 +245,7 @@ export default {
           icon: "mdi mdi-account-plus icon_color icon_color_3",
           name: " عبد الرحمن محمد",
           span: "منذ 14 ساعة",
-          price: " 1500 ر.س   ",
+          price: " 1500  دينار عراقي    ",
           status_icon: "typcn typcn-media-record balck",
           status: "بانتظار المراجعه",
           location: "الرياض",
@@ -257,7 +257,7 @@ export default {
           icon: "mdi mdi-account-plus icon_color icon_color_4",
           name: " عبد الرحمن محمد",
           span: "منذ 14 ساعة",
-          price: " 1500 ر.س   ",
+          price: " 1500  دينار عراقي    ",
           status_icon: "typcn typcn-media-record balck",
           status: "بانتظار المراجعه",
           location: "الرياض",
@@ -266,8 +266,8 @@ export default {
         },
       ],
       selectAll: false,
-      isDropdownOpen:false,
-      isDropendOpen:false
+      isDropdownOpen: false,
+      isDropendOpen: false,
     };
   },
   methods: {
@@ -290,9 +290,9 @@ export default {
 }
 .icon_color {
   padding: 12px;
-    border-radius: 50%;
-    height: 40px;
-    padding-right: 13px;
+  border-radius: 50%;
+  height: 40px;
+  padding-right: 13px;
   &.icon_color_1 {
     color: #929aff;
     background: #e8e7ff;

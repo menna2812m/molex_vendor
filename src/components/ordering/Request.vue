@@ -47,7 +47,7 @@
                         </th>
                         <th></th>
                         <th></th>
-                        <th >
+                        <th>
                           <div class="text-end ms-auto pos-relative">
                             <button
                               @click="toggleDropdown"
@@ -209,7 +209,7 @@
                         <td style="color: #fb99bf">
                           {{ item.price }}
                         </td>
-                        <td class="text-secondary text-center " >
+                        <td class="text-secondary text-center">
                           {{ item.span }}
                         </td>
                       </tr>
@@ -235,7 +235,6 @@
                 <div class="tab-pane" id="tab8"></div>
                 <div class="tab-pane" id="tab9"></div>
                 <div class="tab-pane" id="tab10"></div> -->
-
               </div>
             </div>
           </div>
@@ -249,9 +248,9 @@
 import NewRequest from "./NewRequest.vue";
 import Waiting_for_payment from "./Waiting_for_payment.vue";
 import Waiting_for_review from "./Waiting_for_review.vue";
-import Underway from './Underway.vue'
-import Done from './Done.vue'
-import Delivery_in_progress from './Delivery_in_progress.vue'
+import Underway from "./Underway.vue";
+import Done from "./Done.vue";
+import Delivery_in_progress from "./Delivery_in_progress.vue";
 export default {
   components: {
     NewRequest,
@@ -259,8 +258,8 @@ export default {
     Waiting_for_review,
     Underway,
     Done,
-    Delivery_in_progress
-},
+    Delivery_in_progress,
+  },
   data() {
     return {
       isDropdownOpen: false,
@@ -283,7 +282,7 @@ export default {
           icon: "mdi mdi-account-plus icon_color icon_color_1",
           name: " عبد الرحمن محمد",
           span: "منذ 14 ساعة",
-          price: " 1500 ر.س   ",
+          price: " 1500  دينار عراقي    ",
           status_icon: "typcn typcn-media-record success",
           dev: "typcn typcn-device-laptop text-black pe-1",
           device: "مستعرض كمبيوتر",
@@ -297,7 +296,7 @@ export default {
           icon: "mdi mdi-account-plus icon_color icon_color_2",
           name: " عبد الرحمن محمد",
           span: "منذ 14 ساعة",
-          price: " 1500 ر.س   ",
+          price: " 1500  دينار عراقي    ",
           status_icon: "typcn typcn-media-record faild",
           dev: "typcn typcn-device-phone text-black pe-1",
           device: "مستعرض جوال",
@@ -311,7 +310,7 @@ export default {
           icon: "mdi mdi-account-plus icon_color icon_color_3",
           name: " عبد الرحمن محمد",
           span: "منذ 14 ساعة",
-          price: " 1500 ر.س   ",
+          price: " 1500  دينار عراقي    ",
           status_icon: "typcn typcn-media-record progres",
           dev: "typcn typcn-device-laptop text-black pe-1",
           device: "مستعرض كمبيوتر",
@@ -325,7 +324,7 @@ export default {
           icon: "mdi mdi-account-plus icon_color icon_color_4",
           name: " عبد الرحمن محمد",
           span: "منذ 14 ساعة",
-          price: " 1500 ر.س   ",
+          price: " 1500  دينار عراقي    ",
           status_icon: "typcn typcn-media-record success",
           dev: "typcn typcn-device-phone text-black pe-1",
           device: "مستعرض جوال",
@@ -339,7 +338,7 @@ export default {
           icon: "mdi mdi-account-plus icon_color icon_color_2",
           name: " عبد الرحمن محمد",
           span: "منذ 14 ساعة",
-          price: " 1500 ر.س   ",
+          price: " 1500  دينار عراقي    ",
           status_icon: "typcn typcn-media-record progres",
           status: "بانتظار المراجعه",
           location: "الرياض",
@@ -351,7 +350,7 @@ export default {
           icon: "mdi mdi-account-plus icon_color icon_color_3",
           name: " عبد الرحمن محمد",
           span: "منذ 14 ساعة",
-          price: " 1500 ر.س   ",
+          price: " 1500  دينار عراقي    ",
           status_icon: "typcn typcn-media-record faild",
           status: "ملغي ",
           location: "الرياض",
@@ -363,7 +362,7 @@ export default {
           icon: "mdi mdi-account-plus icon_color icon_color_4",
           name: " عبد الرحمن محمد",
           span: "منذ 14 ساعة",
-          price: " 1500 ر.س   ",
+          price: " 1500  دينار عراقي    ",
           status_icon: "typcn typcn-media-record progres",
           status: "بانتظار المراجعه",
           location: "الرياض",
@@ -389,15 +388,14 @@ export default {
 </script>
 
 <style scoped lang="scss">
-
 .list_item:not(:last-child) {
   border-bottom: 1px solid #e8e7ff;
 }
 .icon_color {
   padding: 12px;
-    border-radius: 50%;
-    height: 40px;
-    padding-right: 13px;
+  border-radius: 50%;
+  height: 40px;
+  padding-right: 13px;
   &.icon_color_1 {
     color: #929aff;
     background: #e8e7ff;
@@ -416,7 +414,7 @@ export default {
   }
 }
 .progres {
-  color: #E66239;
+  color: #e66239;
   font-weight: 600;
   font-size: 16px;
 }
