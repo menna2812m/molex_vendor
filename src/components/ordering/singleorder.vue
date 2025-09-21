@@ -279,7 +279,7 @@
             </button>
             <button
               class="fs-15 btn-cancel mx-1 d-flex justify-content-center"
-              @click="showmodal = false"
+              @click="showdeliveries = false"
             >
               الغاء
             </button>
@@ -299,11 +299,14 @@ export default {
   data() {
     return {
       status_type: [
-        { value: "pending", name: "قيد المراجعة" },
-        { value: "processing", name: "قيد التنفيذ" },
-        { value: "completed", name: "مكتمل" },
         { value: "waitingForPayment", name: "انتظار الدفع " },
-        { value: "cancelled", name: "إلغاء " },
+        { value: "pending", name: "قيد المراجعة" },
+        { value: "assigned", name: "مخصص" },
+        { value: "processing", name: "قيد المعالجة" },
+        { value: "withDelivery", name: "مع التوصيل" },
+        { value: "completed", name: "مكتمل" },
+        { value: "cancelled", name: "ملغى" },
+        { value: "hasProblem", name: "يوجد مشكلة" },
       ],
       list: "",
       userData: "",
