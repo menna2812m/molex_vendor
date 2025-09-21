@@ -17,12 +17,12 @@
         <div class="col-md-4">
           <div class="summary-card">
             <div class="summary-card-content">
-              <div class="summary-icon">
-                <i class="fe fe-dollar-sign"></i>
-              </div>
               <div class="summary-data">
                 <h6 class="summary-title">ارباح المتجر</h6>
-                <h3 class="summary-value">{{ getTotalStoreEarning() }}</h3>
+                <h3 class="summary-value">
+                  {{ getTotalStoreEarning() }}
+                </h3>
+                <span>دينار عراقي</span>
               </div>
             </div>
           </div>
@@ -31,12 +31,12 @@
         <div class="col-md-4">
           <div class="summary-card">
             <div class="summary-card-content">
-              <div class="summary-icon bg-success">
-                <i class="fe fe-credit-card"></i>
-              </div>
               <div class="summary-data">
                 <h6 class="summary-title">المبلغ المدفوع</h6>
-                <h3 class="summary-value">{{ getTotalPaidAmount() }}</h3>
+                <h3 class="summary-value">
+                  {{ getTotalPaidAmount() }}
+                </h3>
+                <span>دينار عراقي</span>
               </div>
             </div>
           </div>
@@ -45,12 +45,12 @@
         <div class="col-md-4">
           <div class="summary-card">
             <div class="summary-card-content">
-              <div class="summary-icon bg-info">
-                <i class="fe fe-percent"></i>
-              </div>
               <div class="summary-data">
                 <h6 class="summary-title">رسوم المنصة</h6>
-                <h3 class="summary-value">{{ getTotalPlatformFee() }}</h3>
+                <h3 class="summary-value">
+                  {{ getTotalPlatformFee() }}
+                </h3>
+                <span>دينار عراقي</span>
               </div>
             </div>
           </div>
@@ -79,9 +79,15 @@
                   :key="index"
                   class="list_item"
                 >
-                  <td class="store-earning">{{ item.store_earning }}</td>
-                  <td class="paid-amount">{{ item.paid_amount }}</td>
-                  <td class="platform-fee">{{ item.platform_fee }}</td>
+                  <td class="store-earning">
+                    {{ item.store_earning }} دينار عراقي
+                  </td>
+                  <td class="paid-amount">
+                    {{ item.paid_amount }} دينار عراقي
+                  </td>
+                  <td class="platform-fee">
+                    {{ item.platform_fee }} دينار عراقي
+                  </td>
                   <td class="date">{{ formatDate(item.created_at || "") }}</td>
                 </tr>
               </tbody>

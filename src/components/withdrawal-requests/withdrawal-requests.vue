@@ -54,7 +54,7 @@
                       class="status-badge"
                       :class="getStatusClass(item.status)"
                     >
-                      {{ item.status }}
+                      {{ getStatusText(item.status) }}
                     </span>
                   </td>
                   <td>{{ item.bank_account?.bank_name || "غير محدد" }}</td>
@@ -87,7 +87,7 @@
             <div class="form-group">
               <label class="form-label">الكمية</label>
               <div class="input-with-icon">
-                <i class="fe fe-dollar-sign input-icon"></i>
+                <i class="fe input-icon">دينار عراقي</i>
                 <input
                   type="number"
                   placeholder="أدخل المبلغ المراد سحبه"
@@ -217,8 +217,25 @@ export default {
           return "status-approved";
         case "rejected":
           return "status-rejected";
+        case "transferred":
+          return "status-transferred";
         default:
           return "";
+      }
+    },
+
+    getStatusText(status) {
+      switch (status) {
+        case "pending":
+          return "قيد الانتظار";
+        case "approved":
+          return "مقبولة";
+        case "rejected":
+          return "ملغية";
+        case "transferred":
+          return "محولة";
+        default:
+          return status;
       }
     },
 
@@ -335,6 +352,11 @@ export default {
   &.status-rejected {
     background-color: rgba(220, 53, 69, 0.15);
     color: #dc3545;
+  }
+
+  &.status-transferred {
+    background-color: rgba(23, 162, 184, 0.15);
+    color: #17a2b8;
   }
 }
 
