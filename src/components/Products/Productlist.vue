@@ -713,7 +713,14 @@
 
               <!-- Images Upload -->
               <div class="col-12 mb-3">
-                <label class="form-label">الصور والفيديوهات</label>
+                <label class="form-label">
+                  الصور والفيديوهات
+                  <span
+                    v-if="!imageUrls.length && !videoUrls.length"
+                    class="text-danger"
+                    >*</span
+                  >
+                </label>
                 <input
                   type="file"
                   @change="handleFileChange"
@@ -721,7 +728,7 @@
                   class="form-control"
                   :class="{ 'is-invalid': hasFieldError('images') }"
                   multiple
-                  required
+                  :required="!imageUrls.length && !videoUrls.length"
                 />
                 <div v-if="hasFieldError('images')" class="invalid-feedback">
                   {{ getFieldError("images") }}
@@ -736,6 +743,17 @@
                   class="media-preview mt-3"
                   v-if="imageUrls.length || videoUrls.length"
                 >
+                  <div
+                    class="d-flex align-items-center justify-content-between mb-2"
+                  >
+                    <h6 class="mb-0 text-primary">
+                      <i class="mdi mdi-folder-image"></i>
+                      الملفات الحالية ({{
+                        imageUrls.length + videoUrls.length
+                      }})
+                    </h6>
+                    <small class="text-muted">انقر على × لحذف الملف</small>
+                  </div>
                   <div class="d-flex flex-wrap gap-3">
                     <!-- Image Previews -->
                     <div
@@ -794,8 +812,14 @@
             <div v-if="!isFormValid" class="alert alert-warning mb-3">
               <small>
                 <i class="mdi mdi-information"></i>
-                يرجى ملء جميع الحقول المطلوبة المميزة بعلامة النجمة (*) قبل
-                الحفظ
+                <span v-if="!imageUrls.length && !videoUrls.length">
+                  يرجى ملء جميع الحقول المطلوبة المميزة بعلامة النجمة (*) وإضافة
+                  صورة واحدة على الأقل قبل الحفظ
+                </span>
+                <span v-else>
+                  يرجى ملء جميع الحقول المطلوبة المميزة بعلامة النجمة (*) قبل
+                  الحفظ
+                </span>
               </small>
             </div>
 
@@ -865,6 +889,8 @@
                   placeholder="الرقم التسلسلي"
                   :class="{ 'is-invalid': hasFieldError(`options.${i}.id`) }"
                   @input="clearFieldError(`options.${i}.id`)"
+                  @click.stop
+                  @focus.stop
                 />
                 <div
                   v-if="hasFieldError(`options.${i}.id`)"
@@ -882,6 +908,8 @@
                     'is-invalid': hasFieldError(`options.${i}.name.ar`),
                   }"
                   @input="clearFieldError(`options.${i}.name.ar`)"
+                  @click.stop
+                  @focus.stop
                 />
                 <div
                   v-if="hasFieldError(`options.${i}.name.ar`)"
@@ -927,6 +955,8 @@
                     'is-invalid': hasFieldError(`options.${i}.name.en`),
                   }"
                   @input="clearFieldError(`options.${i}.name.en`)"
+                  @click.stop
+                  @focus.stop
                 />
                 <div
                   v-if="hasFieldError(`options.${i}.name.en`)"
@@ -949,6 +979,8 @@
                       ),
                     }"
                     @input="clearFieldError(`options.${i}.values.${index}.id`)"
+                    @click.stop
+                    @focus.stop
                   />
                   <div
                     v-if="hasFieldError(`options.${i}.values.${index}.id`)"
@@ -967,6 +999,8 @@
                       @change="
                         clearFieldError(`options.${i}.values.${index}.color`)
                       "
+                      @click.stop
+                      @focus.stop
                     />
                     <input
                       type="text"
@@ -982,6 +1016,8 @@
                       @input="
                         clearFieldError(`options.${i}.values.${index}.value.ar`)
                       "
+                      @click.stop
+                      @focus.stop
                     />
                     <div
                       v-if="
@@ -1009,6 +1045,8 @@
                     @input="
                       clearFieldError(`options.${i}.values.${index}.value.en`)
                     "
+                    @click.stop
+                    @focus.stop
                   />
                   <div
                     v-if="
@@ -1111,8 +1149,8 @@
                   data-bs-parent="#accordion"
                   role="tabpanel"
                 >
-                  <div class="card-body">
-                    <form @submit.prevent class="p-3">
+                  <div class="card-body" @click.stop>
+                    <form @submit.prevent class="p-3" @click.stop>
                       <div class="row">
                         <div class="col-md-12 mb-2">
                           <input
@@ -1126,6 +1164,8 @@
                               ),
                             }"
                             @input="clearFieldError(`variants.${iover}.id`)"
+                            @click.stop
+                            @focus.stop
                           />
                           <div
                             v-if="hasFieldError(`variants.${iover}.id`)"
@@ -1144,6 +1184,8 @@
                                 `variants.${iover}.optionfirstid`
                               );
                             "
+                            @click.stop
+                            @focus.stop
                             style="
                               width: 100%;
                               padding: 4px;
@@ -1196,6 +1238,8 @@
                             @change="
                               clearFieldError(`variants.${iover}.valfirstid`)
                             "
+                            @click.stop
+                            @focus.stop
                           >
                             <option value="">اختر القيمة الأولى</option>
                             <option
@@ -1230,6 +1274,8 @@
                               ),
                             }"
                             @input="clearFieldError(`variants.${iover}.price`)"
+                            @click.stop
+                            @focus.stop
                           />
                           <div
                             v-if="hasFieldError(`variants.${iover}.price`)"
@@ -1255,6 +1301,8 @@
                             @input="
                               clearFieldError(`variants.${iover}.cost_price`)
                             "
+                            @click.stop
+                            @focus.stop
                           />
                           <div
                             v-if="hasFieldError(`variants.${iover}.cost_price`)"
@@ -1282,6 +1330,8 @@
                                 `variants.${iover}.discounted_price`
                               )
                             "
+                            @click.stop
+                            @focus.stop
                           />
                           <div
                             v-if="
@@ -1314,6 +1364,8 @@
                             @input="
                               clearFieldError(`variants.${iover}.quantity`)
                             "
+                            @click.stop
+                            @focus.stop
                           />
                           <div
                             v-if="hasFieldError(`variants.${iover}.quantity`)"
@@ -1550,6 +1602,19 @@ export default {
         return;
       }
 
+      // Additional validation for images when editing
+      if (
+        !this.imageUrls.length &&
+        !this.videoUrls.length &&
+        (!this.formData.images || this.formData.images.length === 0)
+      ) {
+        toast.error("يرجى إضافة صورة واحدة على الأقل للمنتج", {
+          position: "top-right",
+          timeout: 5000,
+        });
+        return;
+      }
+
       this.isUpdating = true;
 
       try {
@@ -1772,6 +1837,8 @@ export default {
     },
     addalloptions() {
       this.cartdetail = true;
+      const newVariantIndex = this.variants.length; // Get the index of the new variant before adding it
+
       this.variants.push({
         id: null,
         is_default: false,
@@ -1797,6 +1864,11 @@ export default {
           valueoptionsec: [],
         },
       });
+
+      // Automatically expand the newly added variant
+      if (!this.expandedVariants.includes(newVariantIndex)) {
+        this.expandedVariants.push(newVariantIndex);
+      }
     },
     addoption(data) {
       this.addModel = true;
@@ -2099,30 +2171,18 @@ export default {
 
     // ✅ Collapse handling methods
     toggleVariantCollapse(index) {
-      const collapseElement = document.getElementById(`collapse_${index}`);
-      if (!collapseElement) return;
-
-      // Check current state
-      const isCurrentlyExpanded = collapseElement.classList.contains("show");
+      const isCurrentlyExpanded = this.isVariantExpanded(index);
 
       if (isCurrentlyExpanded) {
         // Currently expanded, so collapse it
         this.expandedVariants = this.expandedVariants.filter(
           (i) => i !== index
         );
-        const bsCollapse = new bootstrap.Collapse(collapseElement, {
-          toggle: false,
-        });
-        bsCollapse.hide();
       } else {
         // Currently collapsed, so expand it
         if (!this.expandedVariants.includes(index)) {
           this.expandedVariants.push(index);
         }
-        const bsCollapse = new bootstrap.Collapse(collapseElement, {
-          toggle: false,
-        });
-        bsCollapse.show();
       }
     },
 
@@ -2133,29 +2193,11 @@ export default {
     expandAllVariants() {
       // Expand all variant cards
       this.expandedVariants = this.variants.map((_, index) => index);
-      this.variants.forEach((_, index) => {
-        const collapseElement = document.getElementById(`collapse_${index}`);
-        if (collapseElement && !collapseElement.classList.contains("show")) {
-          const bsCollapse = new bootstrap.Collapse(collapseElement, {
-            toggle: false,
-          });
-          bsCollapse.show();
-        }
-      });
     },
 
     collapseAllVariants() {
       // Collapse all variant cards
       this.expandedVariants = [];
-      this.variants.forEach((_, index) => {
-        const collapseElement = document.getElementById(`collapse_${index}`);
-        if (collapseElement && collapseElement.classList.contains("show")) {
-          const bsCollapse = new bootstrap.Collapse(collapseElement, {
-            toggle: false,
-          });
-          bsCollapse.hide();
-        }
-      });
     },
 
     handleCollapseShow(index) {
@@ -2201,20 +2243,31 @@ export default {
     },
 
     isFormValid() {
-      return (
+      const hasRequiredFields =
         this.formData.name.ar &&
         this.formData.name.en &&
         this.formData.base_price &&
         this.formData.brand_id &&
-        this.formData.categories_ids.length > 0
-      );
+        this.formData.categories_ids.length > 0;
+
+      // Images are only required if no existing images are present
+      const hasImages = this.imageUrls.length > 0 || this.videoUrls.length > 0;
+
+      return hasRequiredFields && hasImages;
     },
   },
   watch: {
     variants: {
       handler(newVariants) {
-        // Reset collapsed state when variants change
-        this.expandedVariants = [];
+        // When variants are loaded or changed, automatically expand the first one if none are expanded
+        if (newVariants.length > 0 && this.expandedVariants.length === 0) {
+          this.expandedVariants = [0]; // Expand the first variant by default
+        }
+
+        // Ensure expandedVariants doesn't contain indices that exceed the current variants length
+        this.expandedVariants = this.expandedVariants.filter(
+          (index) => index < newVariants.length
+        );
 
         // Re-initialize event listeners for new variants
         this.$nextTick(() => {
@@ -2222,6 +2275,19 @@ export default {
         });
       },
       deep: true,
+    },
+    cartdetail: {
+      handler(newValue) {
+        // When cartdetail becomes true and we have variants, expand the first one
+        if (
+          newValue &&
+          this.variants.length > 0 &&
+          this.expandedVariants.length === 0
+        ) {
+          this.expandedVariants = [0];
+        }
+      },
+      immediate: true,
     },
   },
   mounted() {
