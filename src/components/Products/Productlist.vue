@@ -1024,7 +1024,7 @@
               <div class="col-12 mb-2">
                 <button
                   @click="addNewInput(i)"
-                  class="w-100 p-2 bg-transparent rounded"
+                  class="w-100 p-2 bg-transparent rounded text-primary"
                   style="border: 1px dashed #87a9e3"
                   type="button"
                 >
@@ -1036,7 +1036,7 @@
 
             <button
               @click="addNewOption"
-              class="w-100 p-2 bg-transparent rounded mb-2"
+              class="w-100 p-2 bg-transparent rounded mb-2 text-primary"
               style="border: 1px dashed #87a9e3"
               type="button"
             >
@@ -1061,6 +1061,29 @@
               role="tablist"
               v-if="cartdetail"
             >
+              <!-- Accordion Control Buttons -->
+              <div
+                class="d-flex justify-content-between mb-3"
+                v-if="variants.length > 1"
+              >
+                <button
+                  @click="expandAllVariants"
+                  class="btn btn-outline-primary btn-sm"
+                  type="button"
+                >
+                  <i class="fas fa-expand-arrows-alt"></i>
+                  توسيع الكل
+                </button>
+                <button
+                  @click="collapseAllVariants"
+                  class="btn btn-outline-secondary btn-sm"
+                  type="button"
+                >
+                  <i class="fas fa-compress-arrows-alt"></i>
+                  طي الكل
+                </button>
+              </div>
+
               <div
                 class="card mb-2"
                 v-for="(onevar, iover) in variants"
@@ -1069,23 +1092,27 @@
                 <div class="card-header" :id="`heading_${iover}`" role="tab">
                   <a
                     :aria-controls="`collapse_${iover}`"
-                    aria-expanded="false"
-                    class="collapsed"
-                    data-bs-toggle="collapse"
-                    :href="`#collapse_${iover}`"
+                    :aria-expanded="isVariantExpanded(iover)"
+                    :class="{ collapsed: !isVariantExpanded(iover) }"
+                    href="javascript:void(0)"
+                    @click.prevent="toggleVariantCollapse(iover)"
+                    class="accordion-toggle"
                   >
                     متغير {{ iover + 1 }}
+                    <span v-if="onevar.is_default" class="badge bg-primary ms-2"
+                      >افتراضي</span
+                    >
                   </a>
                 </div>
                 <div
                   :aria-labelledby="`heading_${iover}`"
-                  class="collapse"
+                  :class="['collapse', { show: isVariantExpanded(iover) }]"
                   :id="`collapse_${iover}`"
                   data-bs-parent="#accordion"
                   role="tabpanel"
                 >
                   <div class="card-body">
-                    <form @submit.prevent>
+                    <form @submit.prevent class="p-3">
                       <div class="row">
                         <div class="col-md-12 mb-2">
                           <input
@@ -1404,6 +1431,7 @@ export default {
         },
       ],
       variants: [],
+      expandedVariants: [], // Track which variant cards are expanded
       addModel: false,
       Selectbrand: [],
       imageUrls: [],
@@ -1775,25 +1803,56 @@ export default {
       this.id = data.id;
     },
     async newvariant() {
-      this.variants.forEach((element) => {
-        console.log(element);
-        element.options.push(
-          {
-            option_id: element.selectSettings.optionfirstid,
-            value_id: element.selectSettings.valfirstid,
-          },
-          {
-            option_id: element.selectSettings.optionsecondid,
-            value_id: element.selectSettings.valsecondid,
-          }
-        );
-      });
+      try {
+        this.isUpdating = true;
 
-      let res = await crudDataService.create(`products/${this.id}/variants`, {
-        options: this.options,
-        variants: this.variants,
-      });
-      this.addModel = false;
+        this.variants.forEach((element) => {
+          // Clear existing options array to avoid duplicates
+          element.options = [];
+
+          // Add first option if both option_id and value_id are valid
+          if (
+            element.selectSettings.optionfirstid &&
+            element.selectSettings.valfirstid
+          ) {
+            element.options.push({
+              option_id: element.selectSettings.optionfirstid,
+              value_id: element.selectSettings.valfirstid,
+            });
+          }
+
+          // Add second option only if both option_id and value_id are valid
+          if (
+            element.selectSettings.optionsecondid &&
+            element.selectSettings.valsecondid
+          ) {
+            element.options.push({
+              option_id: element.selectSettings.optionsecondid,
+              value_id: element.selectSettings.valsecondid,
+            });
+          }
+        });
+
+        let res = await crudDataService.create(`products/${this.id}/variants`, {
+          options: this.options,
+          variants: this.variants,
+        });
+
+        const toast = useToast();
+        if (res.data.status) {
+          toast.success(res.data.message || "تم حفظ المتغيرات بنجاح", {
+            position: "top-center",
+            timeout: 5000,
+          });
+          this.addModel = false;
+        }
+      } catch (error) {
+        console.error("Error saving variants:", error);
+        const toast = useToast();
+        this.handleApiErrors(error, toast);
+      } finally {
+        this.isUpdating = false;
+      }
     },
 
     addNewInput(index) {
@@ -2010,9 +2069,105 @@ export default {
     handleCustomEvent(data) {
       this.items = data;
     },
+
+    // ✅ Initialize collapse event listeners
+    initializeCollapseEventListeners() {
+      // We don't need to add event listeners since we're handling collapse through Vue methods
+      // This method is kept for consistency but can be empty
+      console.log("Collapse handlers initialized through Vue methods");
+    },
+
+    // ✅ Clean up event listeners
+    cleanupCollapseEventListeners() {
+      // Clean up any potential Bootstrap instances
+      this.variants.forEach((_, index) => {
+        const collapseElement = document.getElementById(`collapse_${index}`);
+        if (collapseElement) {
+          // Dispose of any Bootstrap Collapse instances
+          const bsCollapse = bootstrap.Collapse.getInstance(collapseElement);
+          if (bsCollapse) {
+            bsCollapse.dispose();
+          }
+        }
+      });
+    },
+
     async paginag(p) {
       let res = await crudDataService.getAll(`products?page=${this.page}`);
       this.items = res.data.data.data;
+    },
+
+    // ✅ Collapse handling methods
+    toggleVariantCollapse(index) {
+      const collapseElement = document.getElementById(`collapse_${index}`);
+      if (!collapseElement) return;
+
+      // Check current state
+      const isCurrentlyExpanded = collapseElement.classList.contains("show");
+
+      if (isCurrentlyExpanded) {
+        // Currently expanded, so collapse it
+        this.expandedVariants = this.expandedVariants.filter(
+          (i) => i !== index
+        );
+        const bsCollapse = new bootstrap.Collapse(collapseElement, {
+          toggle: false,
+        });
+        bsCollapse.hide();
+      } else {
+        // Currently collapsed, so expand it
+        if (!this.expandedVariants.includes(index)) {
+          this.expandedVariants.push(index);
+        }
+        const bsCollapse = new bootstrap.Collapse(collapseElement, {
+          toggle: false,
+        });
+        bsCollapse.show();
+      }
+    },
+
+    isVariantExpanded(index) {
+      return this.expandedVariants.includes(index);
+    },
+
+    expandAllVariants() {
+      // Expand all variant cards
+      this.expandedVariants = this.variants.map((_, index) => index);
+      this.variants.forEach((_, index) => {
+        const collapseElement = document.getElementById(`collapse_${index}`);
+        if (collapseElement && !collapseElement.classList.contains("show")) {
+          const bsCollapse = new bootstrap.Collapse(collapseElement, {
+            toggle: false,
+          });
+          bsCollapse.show();
+        }
+      });
+    },
+
+    collapseAllVariants() {
+      // Collapse all variant cards
+      this.expandedVariants = [];
+      this.variants.forEach((_, index) => {
+        const collapseElement = document.getElementById(`collapse_${index}`);
+        if (collapseElement && collapseElement.classList.contains("show")) {
+          const bsCollapse = new bootstrap.Collapse(collapseElement, {
+            toggle: false,
+          });
+          bsCollapse.hide();
+        }
+      });
+    },
+
+    handleCollapseShow(index) {
+      // Called when a collapse is shown
+      if (!this.expandedVariants.includes(index)) {
+        this.expandedVariants.push(index);
+      }
+    },
+
+    handleCollapseHide(index) {
+      // Called when a collapse is hidden
+      this.expandedVariants = this.expandedVariants.filter((i) => i !== index);
     },
 
     confirmDelete() {
@@ -2055,11 +2210,34 @@ export default {
       );
     },
   },
+  watch: {
+    variants: {
+      handler(newVariants) {
+        // Reset collapsed state when variants change
+        this.expandedVariants = [];
+
+        // Re-initialize event listeners for new variants
+        this.$nextTick(() => {
+          this.initializeCollapseEventListeners();
+        });
+      },
+      deep: true,
+    },
+  },
   mounted() {
     this.getAllData();
     this.getbrands();
     this.getcategories();
     // this.generateCombinations();
+
+    // Initialize collapse event listeners after DOM is ready
+    this.$nextTick(() => {
+      this.initializeCollapseEventListeners();
+    });
+  },
+  beforeUnmount() {
+    // Clean up any Bootstrap collapse instances
+    this.cleanupCollapseEventListeners();
   },
 };
 </script>
@@ -2353,5 +2531,57 @@ export default {
       background: #a8a8a8;
     }
   }
+}
+
+/* ✅ Accordion Collapse Styles */
+.accordion-toggle {
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 15px 20px;
+  font-weight: 500;
+  color: #333;
+
+  &:hover {
+    text-decoration: none;
+    color: #007bff;
+  }
+
+  &.collapsed {
+    color: #666;
+  }
+
+  .fas {
+    transition: transform 0.3s ease;
+  }
+
+  &:not(.collapsed) .fas {
+    transform: rotate(90deg);
+  }
+}
+
+.accordion .card {
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+  .card-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+    border-radius: 8px 8px 0 0 !important;
+
+    &:hover {
+      background-color: #e9ecef;
+    }
+  }
+
+  .collapse {
+    transition: all 0.35s ease;
+  }
+}
+
+.badge {
+  font-size: 0.75em;
 }
 </style>

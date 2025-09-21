@@ -8510,7 +8510,9 @@ body.dark-theme {
     color: var(--dark-color);
     background-color: transparent;
 }
-
+.dark-theme input[type=checkbox] {
+    background-color: white;
+}
 .dark-theme select option {
     background-color: var(--dark-body);
 }
