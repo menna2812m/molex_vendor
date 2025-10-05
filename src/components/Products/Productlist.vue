@@ -667,13 +667,20 @@
                   type="number"
                   step="0.01"
                   min="0"
+                  :max="formData.price"
                   v-model="formData.discounted_price"
                   class="form-control"
                   :class="{
-                    'is-invalid': hasFieldError('discounted_price'),
+                    'is-invalid':
+                      hasFieldError('discounted_price') ||
+                      (formData.discounted_price &&
+                        formData.price &&
+                        formData.discounted_price >= formData.price),
                     'is-valid':
                       !hasFieldError('discounted_price') &&
-                      formData.discounted_price,
+                      formData.discounted_price &&
+                      formData.price &&
+                      formData.discounted_price < formData.price,
                   }"
                   @input="clearFieldError('discounted_price')"
                   @blur="clearFieldError('discounted_price')"
@@ -684,6 +691,16 @@
                   class="invalid-feedback"
                 >
                   {{ getFieldError("discounted_price") }}
+                </div>
+                <div
+                  v-if="
+                    formData.price &&
+                    formData.discounted_price &&
+                    formData.discounted_price >= formData.price
+                  "
+                  class="invalid-feedback"
+                >
+                  يجب أن يكون السعر بعد الخصم أقل من السعر الأصلي
                 </div>
               </div>
 

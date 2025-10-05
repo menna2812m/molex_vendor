@@ -88,6 +88,36 @@
                     {{ formatDate(myList.created_at) }}
                   </div>
                 </div>
+                <div class="info-row">
+                  <div class="info-label">الماركات:</div>
+                  <div
+                    v-if="myList.brands && myList.brands.length > 0"
+                    class="d-flex flex-wrap gap-2"
+                  >
+                    <span
+                      v-for="brand in myList.brands"
+                      :key="brand.id"
+                      class="badge bg-light text-dark border px-3 py-2"
+                    >
+                      {{ brand.name }}
+                    </span>
+                  </div>
+                </div>
+                <div class="info-row">
+                  <div class="info-label">الأقسام:</div>
+                  <div
+                    v-if="myList.categories && myList.categories.length > 0"
+                    class="d-flex flex-wrap gap-2"
+                  >
+                    <span
+                      v-for="category in myList.categories"
+                      :key="category.id"
+                      class="badge bg-light text-dark border px-3 py-2"
+                    >
+                      {{ category.name }}
+                    </span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
