@@ -728,7 +728,9 @@ export default {
         this.formData.name.en &&
         this.formData.base_price &&
         this.formData.brand_id &&
-        this.formData.categories_ids.length > 0
+        this.formData.categories_ids.length > 0 &&
+        this.formData.price &&
+        this.formData.discounted_price < this.formData.price
       );
     },
   },

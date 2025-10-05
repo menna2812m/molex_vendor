@@ -2270,7 +2270,12 @@ export default {
       // Images are only required if no existing images are present
       const hasImages = this.imageUrls.length > 0 || this.videoUrls.length > 0;
 
-      return hasRequiredFields && hasImages;
+      return (
+        hasRequiredFields &&
+        hasImages &&
+        this.formData.price &&
+        this.formData.discounted_price < this.formData.price
+      );
     },
   },
   watch: {
