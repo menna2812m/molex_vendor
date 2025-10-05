@@ -349,7 +349,7 @@
               <!-- Region Selection -->
               <div class="col-md-6 mb-3">
                 <label class="form-label required">
-                  الاقليم <span class="text-danger">*</span>
+                  المنطقة <span class="text-danger">*</span>
                 </label>
                 <div
                   :class="{
@@ -359,9 +359,11 @@
                 >
                   <Multiselect
                     label="name"
+                    track-by="value"
+                    value-prop="value"
                     :searchable="true"
                     :options="regions"
-                    placeholder="اختر الاقليم"
+                    placeholder=" اختر المنطقة "
                     v-model="formDataupdate.region_id"
                     @change="changecities($event, regions)"
                     @select="clearFieldError('region_id')"
@@ -409,7 +411,7 @@
               <!-- District Selection -->
               <div class="col-md-6 mb-3">
                 <label class="form-label required">
-                  المنطقة <span class="text-danger">*</span>
+                  الاقليم <span class="text-danger">*</span>
                 </label>
                 <div
                   :class="{
@@ -422,7 +424,7 @@
                     label="name"
                     :searchable="true"
                     :options="districta"
-                    placeholder="اختر المنطقة"
+                    placeholder="اختر الاقليم"
                     v-model="formDataupdate.district_id"
                     @select="clearFieldError('district_id')"
                     :disabled="!formDataupdate.city_id"
@@ -607,27 +609,61 @@ export default {
       this.isEditMode = true;
       this.ShowModeledit = true;
       this.id = data.id;
+      console.log(data.region_id, "edit");
 
       // Populate form data
       this.formDataupdate.name = data.name || "";
       this.formDataupdate.store_phone = data.phone || "";
       this.formDataupdate.country_id = data.country_id || 1;
-      this.formDataupdate.region_id = data.region_id || "";
-      this.formDataupdate.city_id = data.city_id || "";
-      this.formDataupdate.district_id = data.district_id || "";
 
       this.imageUrl = data.image || "";
       this.videoUrl = data.video || "";
 
-      // Load dependent data if IDs exist
+      // Load dependent data first, then set the values
       if (this.formDataupdate.country_id) {
         await this.changecountry();
+
+        // Set region_id after regions are loaded
+        if (data.region_id) {
+          this.formDataupdate.region_id = data.region_id;
+          await this.changecities(data.region_id, this.regions);
+        }
       }
-      if (this.formDataupdate.region_id) {
-        await this.changecities(this.formDataupdate.region_id, this.regions);
+
+      if (data.city_id) {
+        this.formDataupdate.city_id = data.city_id;
+        await this.district(data.city_id, this.cities);
       }
-      if (this.formDataupdate.city_id) {
-        await this.district(this.formDataupdate.city_id, this.cities);
+
+      if (data.district_id) {
+        this.formDataupdate.district_id = data.district_id;
+      }
+    },
+
+    changecountry() {
+      this.clearFieldError("country_id");
+
+      const selectedCountry = this.countries.find(
+        (country) => country.id === this.formDataupdate.country_id
+      );
+
+      if (selectedCountry && selectedCountry.regions) {
+        this.regions = selectedCountry.regions.map((reg) => ({
+          value: reg.id,
+          name: reg.name,
+          cities: reg.cities,
+        }));
+      } else {
+        this.regions = [];
+      }
+
+      // Only reset dependent fields if not in edit mode with existing data
+      if (!this.isEditMode) {
+        this.formDataupdate.region_id = "";
+        this.formDataupdate.city_id = "";
+        this.formDataupdate.district_id = "";
+        this.cities = [];
+        this.districta = [];
       }
     },
 
@@ -841,31 +877,6 @@ export default {
           timeout: 5000,
         });
       }
-    },
-
-    changecountry() {
-      this.clearFieldError("country_id");
-
-      const selectedCountry = this.countries.find(
-        (country) => country.id === this.formDataupdate.country_id
-      );
-
-      if (selectedCountry && selectedCountry.regions) {
-        this.regions = selectedCountry.regions.map((reg) => ({
-          value: reg.id,
-          name: reg.name,
-          cities: reg.cities,
-        }));
-      } else {
-        this.regions = [];
-      }
-
-      // Reset dependent fields
-      this.formDataupdate.region_id = "";
-      this.formDataupdate.city_id = "";
-      this.formDataupdate.district_id = "";
-      this.cities = [];
-      this.districta = [];
     },
 
     changecities(events, regions) {
