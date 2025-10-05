@@ -436,15 +436,15 @@ const menu_items = [
   // notifications: 1,
   // name:'contacts-index'
   // },
-  {
-    path: `${import.meta.env.BASE_URL}sliders`,
-    title: "اسلايدر",
-    type: "link",
-    icon: "typcn typcn-code-outline",
-    active: true,
-    defaultActive: false,
-    name: "sliders-index",
-  },
+  // {
+  //   path: `${import.meta.env.BASE_URL}sliders`,
+  //   title: "اسلايدر",
+  //   type: "link",
+  //   icon: "typcn typcn-code-outline",
+  //   active: true,
+  //   defaultActive: false,
+  //   name: "sliders-index",
+  // },
   {
     path: `${import.meta.env.BASE_URL}earnings`,
     title: "الارباح",
